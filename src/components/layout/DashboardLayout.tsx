@@ -1,7 +1,9 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { getSession, logout, type User } from "@/lib/auth";
 import {
     Sidebar,
     SidebarContent,
@@ -57,28 +59,48 @@ const navItems = [
     },
 ];
 
-function FallbackAvatar() {
-    return (
-        <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-[var(--cyber-surface-2)] ring-1 ring-[rgba(0,240,255,0.3)] flex items-center justify-center">
-                <svg className="w-4 h-4 text-[var(--neon)]" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
-                </svg>
-            </div>
-            <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-foreground truncate">User</p>
-                <p className="text-[10px] text-[var(--muted-foreground)] truncate">Local Mode</p>
-            </div>
-        </div>
-    );
-}
-
 export default function DashboardLayout({
     children,
 }: {
     children: React.ReactNode;
 }) {
     const pathname = usePathname();
+    const router = useRouter();
+    const [user, setUser] = useState<User | null>(null);
+    const [checked, setChecked] = useState(false);
+
+    useEffect(() => {
+        const session = getSession();
+        if (!session) {
+            router.replace("/sign-in");
+        } else {
+            setUser(session);
+            setChecked(true);
+        }
+    }, [router]);
+
+    const handleLogout = () => {
+        logout();
+        router.replace("/sign-in");
+    };
+
+    // Don't render until auth check is done
+    if (!checked) {
+        return (
+            <div className="min-h-screen bg-[var(--cyber-bg)] flex items-center justify-center">
+                <div className="w-8 h-8 border-2 border-[var(--neon)] border-t-transparent rounded-full animate-spin" />
+            </div>
+        );
+    }
+
+    const initials = user?.name
+        ? user.name
+            .split(" ")
+            .map((w) => w[0])
+            .join("")
+            .toUpperCase()
+            .slice(0, 2)
+        : "U";
 
     return (
         <SidebarProvider>
@@ -133,7 +155,6 @@ export default function DashboardLayout({
                             </SidebarGroupContent>
                         </SidebarGroup>
 
-                        {/* System Status */}
                         <SidebarGroup className="mt-auto">
                             <SidebarGroupLabel className="text-[10px] uppercase tracking-[0.15em] text-[var(--muted-foreground)] px-4">
                                 System
@@ -156,13 +177,32 @@ export default function DashboardLayout({
                     </SidebarContent>
 
                     <SidebarFooter className="p-4 border-t border-[rgba(0,240,255,0.1)]">
-                        <FallbackAvatar />
+                        <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-full bg-[rgba(0,240,255,0.1)] ring-1 ring-[rgba(0,240,255,0.3)] flex items-center justify-center">
+                                <span className="text-[10px] font-bold text-[var(--neon)]">{initials}</span>
+                            </div>
+                            <div className="flex-1 min-w-0">
+                                <p className="text-sm font-medium text-foreground truncate">
+                                    {user?.name || "User"}
+                                </p>
+                                <p className="text-[10px] text-[var(--muted-foreground)] truncate">
+                                    {user?.email || ""}
+                                </p>
+                            </div>
+                            <button
+                                onClick={handleLogout}
+                                title="Sign out"
+                                className="p-1.5 rounded-lg text-[var(--muted-foreground)] hover:text-[var(--destructive)] hover:bg-[rgba(255,62,108,0.05)] transition-all"
+                            >
+                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" />
+                                </svg>
+                            </button>
+                        </div>
                     </SidebarFooter>
                 </Sidebar>
 
-                {/* Main content */}
                 <main className="flex-1 flex flex-col min-h-screen">
-                    {/* Top bar */}
                     <header className="h-14 border-b border-[rgba(0,240,255,0.1)] bg-[var(--cyber-bg)]/80 backdrop-blur-xl flex items-center px-4 gap-4 sticky top-0 z-30">
                         <SidebarTrigger className="text-[var(--muted-foreground)] hover:text-[var(--neon)]" />
                         <div className="h-5 w-px bg-[rgba(0,240,255,0.1)]" />
@@ -173,7 +213,6 @@ export default function DashboardLayout({
                         </div>
                     </header>
 
-                    {/* Page content */}
                     <div className="flex-1 p-6 cyber-grid overflow-auto">
                         {children}
                     </div>

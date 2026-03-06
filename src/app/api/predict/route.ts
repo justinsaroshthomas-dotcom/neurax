@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { seedDiseases, seedSymptoms } from "@/db/seed";
-import { analyzeSymptoms, type AIAnalysis } from "@/lib/groq";
+import { analyzeSymptoms } from "@/lib/groq";
 
 // ─────────────────────────────────────────
 // POST /api/predict
@@ -110,11 +110,7 @@ export async function POST(req: NextRequest) {
 
         // ── Run AI analysis + audit log in parallel (non-blocking) ──
         const [aiAnalysis] = await Promise.all([
-            // Groq AI analysis
-            analyzeSymptoms(symptoms, topPredictions).catch((err) => {
-                console.warn("[Groq] AI analysis failed:", err);
-                return null as AIAnalysis | null;
-            }),
+            analyzeSymptoms(symptoms, topPredictions),
             // MongoDB audit log (best effort)
             logToMongoDB(symptoms, topPredictions).catch((err) =>
                 console.warn("[Audit] MongoDB log failed:", err)

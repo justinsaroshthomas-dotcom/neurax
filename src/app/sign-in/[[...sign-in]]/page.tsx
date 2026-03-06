@@ -1,80 +1,117 @@
 "use client";
 
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { login } from "@/lib/auth";
 
 export default function SignInPage() {
+    const router = useRouter();
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setError("");
+        setLoading(true);
+
+        const result = await login(email, password);
+
+        if (result.success) {
+            router.push("/dashboard");
+        } else {
+            setError(result.error || "Login failed");
+            setLoading(false);
+        }
+    };
+
     return (
-        <div className="min-h-screen bg-[var(--cyber-bg)] cyber-grid flex items-center justify-center relative overflow-hidden">
+        <div className="min-h-screen bg-[var(--cyber-bg)] cyber-grid flex items-center justify-center relative overflow-hidden px-4">
             <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] bg-[radial-gradient(circle,rgba(0,240,255,0.08)_0%,transparent_70%)] pointer-events-none" />
 
-            <div className="relative z-10 w-full max-w-md p-8 rounded-2xl neon-border bg-[var(--cyber-surface)] space-y-6">
-                <div className="text-center space-y-2">
-                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-xl neon-border neon-glow bg-[var(--cyber-bg)] mb-2">
+            <div className="relative z-10 w-full max-w-sm">
+                {/* Logo */}
+                <div className="text-center mb-8">
+                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl neon-border neon-glow bg-[var(--cyber-surface)] mb-4">
                         <svg viewBox="0 0 24 24" className="w-8 h-8 text-[var(--neon)]" fill="none" stroke="currentColor" strokeWidth="1.5">
                             <path d="M12 2v20M2 12h20" strokeLinecap="round" />
                             <circle cx="12" cy="12" r="4" />
                         </svg>
                     </div>
-                    <h1 className="text-2xl font-bold neon-text">Sign In</h1>
-                    <p className="text-sm text-[var(--muted-foreground)]">
-                        Access the NeuraMed Prediction Engine
+                    <h1 className="text-2xl font-bold text-foreground">Welcome back</h1>
+                    <p className="text-sm text-[var(--muted-foreground)] mt-1">
+                        Sign in to NeuraMed
                     </p>
                 </div>
 
-                <div className="space-y-4">
-                    <div className="space-y-2">
-                        <label className="text-xs uppercase tracking-wider text-[var(--muted-foreground)] font-medium">
+                {/* Form */}
+                <form onSubmit={handleSubmit} className="rounded-2xl neon-border bg-[var(--cyber-surface)] p-6 space-y-5">
+                    {error && (
+                        <div className="p-3 rounded-xl bg-[rgba(255,62,108,0.08)] border border-[rgba(255,62,108,0.2)]">
+                            <p className="text-xs text-[var(--destructive)]">{error}</p>
+                        </div>
+                    )}
+
+                    <div className="space-y-1.5">
+                        <label htmlFor="email" className="text-xs text-[var(--muted-foreground)] font-medium block">
                             Email
                         </label>
                         <input
+                            id="email"
                             type="email"
-                            placeholder="doctor@neuramed.ai"
-                            className="w-full px-4 py-2.5 rounded-xl text-sm
-                bg-[var(--cyber-bg)] neon-border text-foreground
-                placeholder:text-[var(--muted-foreground)]
-                focus:outline-none focus:ring-1 focus:ring-[var(--neon)]
-                transition-all duration-200"
+                            required
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            placeholder="you@example.com"
+                            className="w-full px-4 py-3 rounded-xl text-sm
+                                bg-[var(--cyber-bg)] neon-border text-foreground
+                                placeholder:text-[var(--muted-foreground)]
+                                focus:outline-none focus:ring-2 focus:ring-[var(--neon)] focus:ring-opacity-50
+                                transition-all duration-200"
                         />
                     </div>
-                    <div className="space-y-2">
-                        <label className="text-xs uppercase tracking-wider text-[var(--muted-foreground)] font-medium">
+
+                    <div className="space-y-1.5">
+                        <label htmlFor="password" className="text-xs text-[var(--muted-foreground)] font-medium block">
                             Password
                         </label>
                         <input
+                            id="password"
                             type="password"
+                            required
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
                             placeholder="••••••••"
-                            className="w-full px-4 py-2.5 rounded-xl text-sm
-                bg-[var(--cyber-bg)] neon-border text-foreground
-                placeholder:text-[var(--muted-foreground)]
-                focus:outline-none focus:ring-1 focus:ring-[var(--neon)]
-                transition-all duration-200"
+                            className="w-full px-4 py-3 rounded-xl text-sm
+                                bg-[var(--cyber-bg)] neon-border text-foreground
+                                placeholder:text-[var(--muted-foreground)]
+                                focus:outline-none focus:ring-2 focus:ring-[var(--neon)] focus:ring-opacity-50
+                                transition-all duration-200"
                         />
                     </div>
-                </div>
 
-                <Link
-                    href="/dashboard"
-                    className="block w-full text-center px-6 py-3 rounded-xl font-semibold text-sm
-            bg-[var(--neon)] text-[var(--cyber-bg)]
-            hover:shadow-[0_0_30px_rgba(0,240,255,0.4)]
-            transition-all duration-300 active:scale-95"
-                >
-                    Sign In
-                </Link>
+                    <button
+                        type="submit"
+                        disabled={loading}
+                        className="w-full px-6 py-3.5 rounded-xl font-semibold text-sm
+                            bg-[var(--neon)] text-[var(--cyber-bg)]
+                            hover:shadow-[0_0_30px_rgba(0,240,255,0.4)]
+                            disabled:opacity-50 disabled:cursor-not-allowed
+                            transition-all duration-300 active:scale-[0.98]"
+                    >
+                        {loading ? "Signing in..." : "Sign In"}
+                    </button>
+                </form>
 
-                <div className="text-center space-y-2">
-                    <p className="text-xs text-[var(--muted-foreground)]">
-                        Don&apos;t have an account?{" "}
-                        <Link href="/sign-up" className="text-[var(--neon)] hover:underline">
-                            Sign up
-                        </Link>
-                    </p>
-                    <div className="pt-2 border-t border-[rgba(0,240,255,0.08)]">
-                        <p className="text-[10px] text-[var(--muted-foreground)] opacity-60">
-                            Configure Clerk API keys in .env.local for production auth
-                        </p>
-                    </div>
-                </div>
+                {/* Footer */}
+                <p className="text-center text-xs text-[var(--muted-foreground)] mt-6">
+                    Don&apos;t have an account?{" "}
+                    <Link href="/sign-up" className="text-[var(--neon)] hover:underline font-medium">
+                        Create one
+                    </Link>
+                </p>
             </div>
         </div>
     );

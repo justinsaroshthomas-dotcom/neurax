@@ -1,21 +1,15 @@
-import * as Sentry from "@sentry/nextjs";
-
 export async function register() {
-    if (process.env.NEXT_RUNTIME === "nodejs") {
-        Sentry.init({
-            dsn: process.env.SENTRY_DSN || "",
-            tracesSampleRate: 1.0,
-            debug: false,
-            enabled: !!process.env.SENTRY_DSN,
-        });
-    }
-
-    if (process.env.NEXT_RUNTIME === "edge") {
-        Sentry.init({
-            dsn: process.env.SENTRY_DSN || "",
-            tracesSampleRate: 1.0,
-            debug: false,
-            enabled: !!process.env.SENTRY_DSN,
-        });
+    // Sentry integration is optional — only loads when SENTRY_DSN is configured
+    if (process.env.SENTRY_DSN) {
+        try {
+            const Sentry = await import("@sentry/nextjs");
+            Sentry.init({
+                dsn: process.env.SENTRY_DSN,
+                tracesSampleRate: 1.0,
+                debug: false,
+            });
+        } catch {
+            // Sentry not available, skip silently
+        }
     }
 }

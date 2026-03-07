@@ -86,16 +86,16 @@ export default function DashboardLayout({
 
     return (
         <SidebarProvider>
-            <div className="flex min-h-screen w-full bg-gray-50 dark:bg-slate-950">
-                <Sidebar className="border-r border-gray-200 dark:border-slate-800">
-                    <SidebarHeader className="p-4 border-b border-gray-200 dark:border-slate-800">
+            <div className="flex min-h-screen w-full bg-background">
+                <Sidebar className="border-r border-border">
+                    <SidebarHeader className="p-4 border-b border-border">
                         <Link href="/dashboard" className="flex items-center gap-3">
-                            <div className="w-9 h-9 rounded-lg bg-[#00B140] flex items-center justify-center text-white font-bold text-lg shadow-sm">
+                            <div className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center text-white font-bold text-lg shadow-sm">
                                 N
                             </div>
                             <div>
-                                <span className="font-bold text-sm text-gray-900 dark:text-slate-100">NeuraMed</span>
-                                <p className="text-[10px] text-gray-500 dark:text-slate-500 tracking-wider uppercase">
+                                <span className="font-bold text-sm text-foreground">NeuraMed</span>
+                                <p className="text-[10px] text-muted-foreground tracking-wider uppercase">
                                     Disease Predictor
                                 </p>
                             </div>
@@ -104,7 +104,7 @@ export default function DashboardLayout({
 
                     <SidebarContent>
                         <SidebarGroup>
-                            <SidebarGroupLabel className="text-[10px] uppercase tracking-[0.15em] text-gray-400 px-4">
+                            <SidebarGroupLabel className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground/60 px-4">
                                 Navigation
                             </SidebarGroupLabel>
                             <SidebarGroupContent>
@@ -118,8 +118,8 @@ export default function DashboardLayout({
                                                     isActive={isActive}
                                                     className={
                                                         isActive
-                                                            ? "bg-[#00B140]/10 text-[#00B140] border border-[#00B140]/20 dark:bg-[#00B140]/20 dark:border-[#00B140]/30"
-                                                            : "text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-slate-100 hover:bg-gray-50 dark:hover:bg-slate-900"
+                                                            ? "bg-primary/10 text-primary border border-primary/20"
+                                                            : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
                                                     }
                                                 >
                                                     <Link href={item.url} className="flex items-center gap-3">
@@ -135,18 +135,18 @@ export default function DashboardLayout({
                         </SidebarGroup>
 
                         <SidebarGroup className="mt-auto">
-                            <SidebarGroupLabel className="text-[10px] uppercase tracking-[0.15em] text-gray-400 px-4">
+                            <SidebarGroupLabel className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground/60 px-4">
                                 System
                             </SidebarGroupLabel>
                              <SidebarGroupContent>
-                                <div className="px-4 py-3 mx-2 rounded-lg bg-gray-50 dark:bg-slate-900/50 border border-gray-200 dark:border-slate-800">
+                                <div className="px-4 py-3 mx-2 rounded-lg bg-muted/30 border border-border">
                                     <div className="flex items-center gap-2 mb-2">
                                         <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                                        <span className="text-[11px] text-gray-600">
+                                        <span className="text-[11px] text-muted-foreground">
                                             ML Engine Active
                                         </span>
                                     </div>
-                                    <div className="flex items-center justify-between text-[10px] text-gray-500">
+                                    <div className="flex items-center justify-between text-[10px] text-muted-foreground/80">
                                         <span>Diseases: 505</span>
                                         <span>Symptoms: 131</span>
                                     </div>
@@ -155,14 +155,14 @@ export default function DashboardLayout({
                         </SidebarGroup>
                     </SidebarContent>
 
-                    <SidebarFooter className="p-4 border-t border-gray-200">
+                    <SidebarFooter className="p-4 border-t border-border">
                         <div className="flex items-center gap-3">
-                            <UserButton afterSignOutUrl="/" appearance={{ elements: { userButtonAvatarBox: "w-8 h-8 rounded-full ring-1 ring-[#00B140]/20" } }} />
+                            <UserButton afterSignOutUrl="/" appearance={{ elements: { userButtonAvatarBox: "w-8 h-8 rounded-full ring-1 ring-primary/20" } }} />
                              <div className="flex-1 min-w-0">
-                                <p className="text-sm font-medium text-gray-900 dark:text-slate-100 truncate">
+                                <p className="text-sm font-medium text-foreground truncate">
                                     {user.fullName || user.username || "User"}
                                 </p>
-                                <p className="text-[10px] text-gray-500 dark:text-slate-500 truncate">
+                                <p className="text-[10px] text-muted-foreground truncate">
                                     {user.primaryEmailAddress?.emailAddress || ""}
                                 </p>
                             </div>
@@ -171,19 +171,19 @@ export default function DashboardLayout({
                 </Sidebar>
 
                  <main className="flex-1 flex flex-col min-h-screen">
-                    <header className="h-14 border-b border-gray-200 dark:border-slate-800 bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl flex items-center px-4 gap-4 sticky top-0 z-30">
-                        <SidebarTrigger className="text-gray-400 dark:text-slate-500 hover:text-gray-700 dark:hover:text-slate-300" />
-                        <div className="h-5 w-px bg-gray-200 dark:bg-slate-800" />
+                    <header className="h-14 border-b border-border bg-background/80 backdrop-blur-xl flex items-center px-4 gap-4 sticky top-0 z-30">
+                        <SidebarTrigger className="text-muted-foreground hover:text-foreground" />
+                        <div className="h-5 w-px bg-border" />
                         <div className="flex-1" />
                         <ThemeToggle />
-                        <div className="h-5 w-px bg-gray-200 dark:bg-slate-800 mx-1" />
-                        <div className="flex items-center gap-2 text-[11px] text-gray-500 dark:text-slate-500">
+                        <div className="h-5 w-px bg-border mx-1" />
+                        <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
                             <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
                             <span>Local Mode</span>
                         </div>
                     </header>
 
-                    <div className="flex-1 p-6 overflow-auto bg-gray-50 dark:bg-slate-950">
+                    <div className="flex-1 p-6 overflow-auto bg-background">
                         {children}
                     </div>
                 </main>

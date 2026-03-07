@@ -128,7 +128,10 @@
 [data-theme='dark'],
 [data-theme='emerald'],
 [data-theme='midnight'],
-[data-theme='cyber'] {
+[data-theme='cyber'],
+[data-theme='corporate'],
+[data-theme='ultraviolet'],
+[data-theme='crimson'] {
   --background: #020617;
   --foreground: #f8fafc;
   --card: #0f172a;
@@ -176,13 +179,16 @@
   --cyber-surface-2: #1e293b;
 }
 
-/* ── Emerald Theme (Current Baseline) ──── */
+/* ── Emerald Theme ──── */
 [data-theme='emerald'] {
   --primary: #00B140;
   --neon: #00B140;
   --neon-dim: rgba(0, 177, 64, 0.3);
   --neon-glow: rgba(0, 177, 64, 0.15);
   --ring: rgba(0, 177, 64, 0.6);
+  --accent: rgba(0, 177, 64, 0.15);
+  --accent-foreground: #00d24c;
+  --sidebar-primary: #00B140;
 }
 
 /* ── Midnight Theme ──── */
@@ -209,6 +215,45 @@
   --accent-foreground: #fbbf24;
   --sidebar-primary: #f59e0b;
   --sidebar-accent-foreground: #fbbf24;
+}
+
+/* ── Corporate Theme (Professional Blue) ──── */
+[data-theme='corporate'] {
+  --primary: #2563eb;
+  --neon: #3b82f6;
+  --neon-dim: rgba(59, 130, 246, 0.3);
+  --neon-glow: rgba(37, 99, 235, 0.15);
+  --ring: rgba(37, 99, 235, 0.6);
+  --accent: rgba(37, 99, 235, 0.15);
+  --accent-foreground: #60a5fa;
+  --sidebar-primary: #2563eb;
+  --sidebar-accent-foreground: #60a5fa;
+}
+
+/* ── Ultraviolet Theme (Deep Purple) ──── */
+[data-theme='ultraviolet'] {
+  --primary: #7c3aed;
+  --neon: #8b5cf6;
+  --neon-dim: rgba(139, 92, 246, 0.3);
+  --neon-glow: rgba(124, 58, 237, 0.15);
+  --ring: rgba(124, 58, 237, 0.6);
+  --accent: rgba(124, 58, 237, 0.15);
+  --accent-foreground: #a78bfa;
+  --sidebar-primary: #7c3aed;
+  --sidebar-accent-foreground: #a78bfa;
+}
+
+/* ── Crimson Theme (Command Red) ──── */
+[data-theme='crimson'] {
+  --primary: #dc2626;
+  --neon: #ef4444;
+  --neon-dim: rgba(239, 68, 68, 0.3);
+  --neon-glow: rgba(220, 38, 38, 0.15);
+  --ring: rgba(220, 38, 38, 0.6);
+  --accent: rgba(220, 38, 38, 0.15);
+  --accent-foreground: #f87171;
+  --sidebar-primary: #dc2626;
+  --sidebar-accent-foreground: #f87171;
 }
 
 /* ── Base Styles ─────────────────────── */
@@ -253,8 +298,11 @@
 [data-theme='dark'] .neon-border,
 [data-theme='emerald'] .neon-border,
 [data-theme='midnight'] .neon-border,
-[data-theme='cyber'] .neon-border {
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2), 0 0 1px rgba(0, 177, 64, 0.1);
+[data-theme='cyber'] .neon-border,
+[data-theme='corporate'] .neon-border,
+[data-theme='ultraviolet'] .neon-border,
+[data-theme='crimson'] .neon-border {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2), 0 0 1px var(--neon-dim);
 }
 
 .neon-glow {
@@ -264,8 +312,11 @@
 [data-theme='dark'] .neon-glow,
 [data-theme='emerald'] .neon-glow,
 [data-theme='midnight'] .neon-glow,
-[data-theme='cyber'] .neon-glow {
-  box-shadow: 0 4px 20px rgba(0, 177, 64, 0.25);
+[data-theme='cyber'] .neon-glow,
+[data-theme='corporate'] .neon-glow,
+[data-theme='ultraviolet'] .neon-glow,
+[data-theme='crimson'] .neon-glow {
+  box-shadow: 0 4px 20px var(--neon-glow);
 }
 
 .glass-card {
@@ -275,7 +326,10 @@
 [data-theme='dark'] .glass-card,
 [data-theme='emerald'] .glass-card,
 [data-theme='midnight'] .glass-card,
-[data-theme='cyber'] .glass-card {
+[data-theme='cyber'] .glass-card,
+[data-theme='corporate'] .glass-card,
+[data-theme='ultraviolet'] .glass-card,
+[data-theme='crimson'] .glass-card {
   @apply bg-slate-900/70 border-slate-800/50;
 }
 
@@ -301,7 +355,10 @@
 [data-theme='dark'] .cyber-grid,
 [data-theme='emerald'] .cyber-grid,
 [data-theme='midnight'] .cyber-grid,
-[data-theme='cyber'] .cyber-grid {
+[data-theme='cyber'] .cyber-grid,
+[data-theme='corporate'] .cyber-grid,
+[data-theme='ultraviolet'] .cyber-grid,
+[data-theme='crimson'] .cyber-grid {
   background-image: 
     linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
     linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
@@ -368,27 +425,4 @@
   border: 1px solid rgba(0, 177, 64, 0.25);
   color: #00B140;
   background: rgba(0, 177, 64, 0.08);
-}
-/* Corporate Theme (Professional Blue) */
-[data-theme='corporate'] {
-  --primary: #2563eb;
-  --neon: #3b82f6;
-  --neon-dim: #60a5fa;
-  --neon-glow: rgba(37, 99, 235, 0.4);
-}
-
-/* Ultraviolet Theme (Deep Purple) */
-[data-theme='ultraviolet'] {
-  --primary: #7c3aed;
-  --neon: #8b5cf6;
-  --neon-dim: #a78bfa;
-  --neon-glow: rgba(124, 58, 237, 0.4);
-}
-
-/* Crimson Theme (Command Red) */
-[data-theme='crimson'] {
-  --primary: #dc2626;
-  --neon: #ef4444;
-  --neon-dim: #f87171;
-  --neon-glow: rgba(220, 38, 38, 0.4);
 }

@@ -94,9 +94,9 @@ export default function DashboardLayout({
                                 N
                             </div>
                             <div>
-                                <span className="font-bold text-sm text-foreground">Neurax</span>
+                                <span className="font-black text-sm text-foreground">Neurax <span className="text-primary italic">Core</span></span>
                                 <p className="text-[10px] text-muted-foreground tracking-wider uppercase">
-                                    Disease Predictor
+                                    Clinical Intelligence
                                 </p>
                             </div>
                         </Link>

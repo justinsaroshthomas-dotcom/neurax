@@ -97,31 +97,35 @@ export default function DashboardPage() {
         <div className="max-w-5xl mx-auto space-y-10 animate-in fade-in duration-1000 relative">
             <NeuralBackground />
             {/* Header — always visible */}
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-2 border-b border-slate-200/50 dark:border-slate-800/50">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-slate-200/50 dark:border-slate-800/50">
                 <div className="space-y-1">
-                    <h1 className="text-3xl font-black tracking-tighter flex items-center gap-3">
+                    <h1 className="text-4xl font-black tracking-tighter flex items-center gap-3">
                          <span className="text-primary">Neurax</span>{" "}
-                         <span className="text-slate-900 dark:text-slate-100 italic">Core</span>
+                         <span className="text-slate-950 dark:text-slate-100 italic font-medium">Core</span>
                     </h1>
-                    <p className="text-xs font-mono text-slate-500 flex items-center gap-2">
+                    <p className="text-[10px] font-black text-slate-500 flex items-center gap-2 uppercase tracking-[0.2em]">
                         <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
                         SYSTEM: CLINICAL ENGINE ACTIVE
                     </p>
                 </div>
 
                 {!hasResults && !isAnalyzing && (
-                    <div className="flex bg-slate-100/80 dark:bg-slate-900/80 backdrop-blur-md p-1 rounded-xl border border-slate-200/50 dark:border-slate-800/50 shadow-inner">
+                    <div className="flex bg-slate-100 dark:bg-slate-900/50 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-inner">
                         <button
                             onClick={() => setTab("diagnostics")}
-                            className={`px-5 py-2.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all duration-300
-                                ${tab === "diagnostics" ? "bg-white dark:bg-slate-800 text-primary shadow-sm" : "text-slate-500 hover:text-slate-700"}`}
+                            className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-[0.15em] transition-all duration-300
+                                ${tab === "diagnostics" 
+                                    ? "bg-primary text-white shadow-[0_0_15px_rgba(0,177,64,0.3)]" 
+                                    : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"}`}
                         >
                             Diagnostics
                         </button>
                         <button
                             onClick={() => setTab("encyclopedia")}
-                            className={`px-5 py-2.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all duration-300
-                                ${tab === "encyclopedia" ? "bg-white dark:bg-slate-800 text-primary shadow-sm" : "text-slate-500 hover:text-slate-700"}`}
+                            className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-[0.15em] transition-all duration-300
+                                ${tab === "encyclopedia" 
+                                    ? "bg-primary text-white shadow-[0_0_15px_rgba(0,177,64,0.3)]" 
+                                    : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"}`}
                         >
                             Encyclopedia
                         </button>

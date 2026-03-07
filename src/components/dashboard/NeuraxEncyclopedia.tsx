@@ -26,9 +26,9 @@ export const NeuraxEncyclopedia: React.FC = () => {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h2 className="text-2xl font-black tracking-tight text-slate-900 dark:text-slate-100">
-                        Neurax Encyclopedia
+                        Neurax <span className="text-primary italic">Encyclopedia</span>
                     </h2>
-                    <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mt-1">
+                    <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mt-1">
                         Local Clinical Reference Matrix
                     </p>
                 </div>
@@ -47,16 +47,16 @@ export const NeuraxEncyclopedia: React.FC = () => {
                 </div>
             </div>
 
-            <div className="flex bg-slate-100 dark:bg-slate-900 p-1 rounded-xl w-fit border border-slate-200 dark:border-slate-800">
+            <div className="flex bg-slate-100 dark:bg-slate-900/50 p-1 rounded-xl w-fit border border-slate-200 dark:border-slate-800">
                 <button 
                     onClick={() => setActiveTab("symptoms")}
-                    className={`px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'symptoms' ? 'bg-white dark:bg-slate-800 text-primary shadow-sm' : 'text-slate-500'}`}
+                    className={`px-5 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'symptoms' ? 'bg-primary text-white shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
                 >
                     Symptoms [{seedSymptoms.length}]
                 </button>
                 <button 
                     onClick={() => setActiveTab("diseases")}
-                    className={`px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'diseases' ? 'bg-white dark:bg-slate-800 text-primary shadow-sm' : 'text-slate-500'}`}
+                    className={`px-5 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'diseases' ? 'bg-primary text-white shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
                 >
                     Diseases [505]
                 </button>

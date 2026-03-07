@@ -13,7 +13,7 @@ export default function SettingsPage() {
     useEffect(() => {
         setMounted(true);
         try {
-            const raw = localStorage.getItem("neuramed_history");
+            const raw = localStorage.getItem("neurax_history");
             const history = raw ? JSON.parse(raw) : [];
             setHistoryCount(history.length);
         } catch {
@@ -44,7 +44,7 @@ export default function SettingsPage() {
                     <h1 className="text-4xl font-black tracking-tighter text-slate-900 dark:text-slate-100 italic">
                         CONTROL <span className="text-primary not-italic">CENTER</span>
                     </h1>
-                    <p className="text-sm text-slate-500 font-bold uppercase tracking-widest mt-2">Neural OS v4.0 — Tactical Configuration</p>
+                    <p className="text-sm text-slate-500 font-bold uppercase tracking-widest mt-2">Neural OS — Tactical Configuration</p>
                 </div>
                 <div className="flex items-center gap-3 px-4 py-2 rounded-2xl bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-inner">
                     <div className="w-2 h-2 rounded-full bg-primary animate-pulse shadow-[0_0_10px_var(--neon)]" />
@@ -134,7 +134,7 @@ export default function SettingsPage() {
                     {/* ML Analytics */}
                     <div className="glass-card neon-border p-8 space-y-8 h-full">
                         <div className="flex items-center justify-between">
-                            <h2 className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">ML Engine v4.0</h2>
+                            <h2 className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">ML Engine</h2>
                             <span className="text-[10px] font-black text-primary px-2 py-0.5 rounded-lg bg-primary/10 italic">ACTIVE</span>
                         </div>
 

@@ -5,6 +5,7 @@ import { seedSymptoms, seedDiseases } from '@/db/seed';
 export const NeuraxEncyclopedia: React.FC = () => {
     const [search, setSearch] = useState("");
     const [activeTab, setActiveTab] = useState<"symptoms" | "diseases">("symptoms");
+    const [selectedDisease, setSelectedDisease] = useState<any | null>(null);
     
     const filteredSymptoms = useMemo(() => {
         return seedSymptoms.filter(s => 
@@ -57,7 +58,7 @@ export const NeuraxEncyclopedia: React.FC = () => {
                     onClick={() => setActiveTab("diseases")}
                     className={`px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'diseases' ? 'bg-white dark:bg-slate-800 text-primary shadow-sm' : 'text-slate-500'}`}
                 >
-                    Diseases [{seedDiseases.length}]
+                    Diseases [505]
                 </button>
             </div>
 
@@ -79,7 +80,11 @@ export const NeuraxEncyclopedia: React.FC = () => {
                 ) : (
                     filteredDiseases.length > 0 ? (
                         filteredDiseases.map(d => (
-                            <div key={d.id} className="group p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-primary/30 transition-all shadow-sm relative overflow-hidden">
+                            <div 
+                                key={d.id} 
+                                onClick={() => setSelectedDisease(d)}
+                                className="group p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-primary/30 transition-all shadow-sm relative overflow-hidden cursor-pointer active:scale-95"
+                            >
                                 <div className={`absolute top-0 right-0 px-3 py-1 text-[9px] font-black uppercase tracking-tighter text-white ${d.severity === 'critical' ? 'bg-red-500' : d.severity === 'high' ? 'bg-orange-500' : 'bg-blue-500'}`}>
                                     {d.severity}
                                 </div>
@@ -92,6 +97,7 @@ export const NeuraxEncyclopedia: React.FC = () => {
                                         </span>
                                     ))}
                                 </div>
+                                <div className="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors pointer-events-none" />
                             </div>
                         ))
                     ) : (
@@ -101,6 +107,75 @@ export const NeuraxEncyclopedia: React.FC = () => {
                     )
                 )}
             </div>
+
+            {/* --- Disease Detail Modal --- */}
+            {selectedDisease && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-md animate-in fade-in duration-300">
+                    <div className="bg-white dark:bg-slate-900 w-full max-w-lg rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden animate-in zoom-in-95 duration-300">
+                        <div className={`h-2 ${selectedDisease.severity === 'critical' ? 'bg-red-500' : selectedDisease.severity === 'high' ? 'bg-orange-500' : 'bg-blue-500'}`} />
+                        <div className="p-8">
+                            <div className="flex justify-between items-start mb-6">
+                                <div>
+                                    <h3 className="text-2xl font-black text-slate-900 dark:text-slate-100 uppercase tracking-tight">{selectedDisease.name}</h3>
+                                    <span className="text-[10px] font-black text-primary uppercase tracking-[0.3em] mt-2 block">
+                                        Clinical Profile ID: {selectedDisease.id}
+                                    </span>
+                                </div>
+                                <button 
+                                    onClick={() => setSelectedDisease(null)}
+                                    className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
+                                >
+                                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+                            </div>
+
+                            <div className="space-y-6">
+                                <div>
+                                    <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Description</h4>
+                                    <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
+                                        {selectedDisease.description}
+                                    </p>
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800">
+                                        <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Clinical Severity</h4>
+                                        <span className={`text-xs font-black uppercase ${selectedDisease.severity === 'critical' ? 'text-red-500' : selectedDisease.severity === 'high' ? 'text-orange-500' : 'text-blue-500'}`}>
+                                            {selectedDisease.severity}
+                                        </span>
+                                    </div>
+                                    <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800">
+                                        <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Symptom Density</h4>
+                                        <span className="text-xs font-black text-primary">
+                                            {selectedDisease.symptoms.length} Clinical Indicators
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">Clinical Precautions</h4>
+                                    <div className="flex flex-wrap gap-2">
+                                        {selectedDisease.precautions.map((p: string, i: number) => (
+                                            <span key={i} className="px-3 py-1 rounded-full bg-primary/10 text-primary text-[10px] font-bold border border-primary/20">
+                                                {p}
+                                            </span>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button 
+                                onClick={() => setSelectedDisease(null)}
+                                className="w-full mt-8 py-4 rounded-2xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-black text-[11px] uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-all shadow-xl"
+                            >
+                                Close Profile
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
             
             <style jsx>{`
                 .custom-scrollbar::-webkit-scrollbar {

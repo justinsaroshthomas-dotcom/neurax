@@ -21,7 +21,7 @@ export interface HistoryEntry {
     timestamp: string; // ISO string
 }
 
-const STORAGE_KEY = "neuramed_history";
+const STORAGE_KEY = "neurax_history";
 
 function getHistory(): HistoryEntry[] {
     if (typeof window === "undefined") return [];

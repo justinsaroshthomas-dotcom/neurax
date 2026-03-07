@@ -13,7 +13,15 @@ export default function SignUpPage() {
                 <p className="text-sm text-gray-500">Join Neurax</p>
             </div>
 
-            <SignUp fallbackRedirectUrl="/dashboard" signInUrl="/sign-in" />
+            <SignUp 
+                fallbackRedirectUrl="/dashboard" 
+                signInUrl="/sign-in" 
+                appearance={{
+                    elements: {
+                        headerTitle: "Join Neurax"
+                    }
+                }}
+            />
         </div>
     );
 }

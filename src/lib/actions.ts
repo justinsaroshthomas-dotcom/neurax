@@ -48,6 +48,11 @@ export async function submitTestimonial(content: string, rating: number) {
     }
 
     // Fallback to SQLite
+    if (!db) {
+       console.warn("[NeuraMed] Cloud database failed and no local fallback available.");
+       return { success: false, error: "Cloud database is currently unavailable." };
+    }
+
     const id = randomBytes(16).toString("hex");
     const createdAt = new Date().toISOString();
 
@@ -80,6 +85,8 @@ export async function getRecentTestimonials(limit: number = 6): Promise<Testimon
     }
 
     // Fallback to SQLite
+    if (!db) return [];
+
     const rows = db.prepare(`
         SELECT id, user_name, content, rating, created_at 
         FROM testimonials 

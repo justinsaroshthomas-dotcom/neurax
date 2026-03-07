@@ -369,3 +369,26 @@
   color: #00B140;
   background: rgba(0, 177, 64, 0.08);
 }
+/* Corporate Theme (Professional Blue) */
+[data-theme='corporate'] {
+  --primary: #2563eb;
+  --neon: #3b82f6;
+  --neon-dim: #60a5fa;
+  --neon-glow: rgba(37, 99, 235, 0.4);
+}
+
+/* Ultraviolet Theme (Deep Purple) */
+[data-theme='ultraviolet'] {
+  --primary: #7c3aed;
+  --neon: #8b5cf6;
+  --neon-dim: #a78bfa;
+  --neon-glow: rgba(124, 58, 237, 0.4);
+}
+
+/* Crimson Theme (Command Red) */
+[data-theme='crimson'] {
+  --primary: #dc2626;
+  --neon: #ef4444;
+  --neon-dim: #f87171;
+  --neon-glow: rgba(220, 38, 38, 0.4);
+}

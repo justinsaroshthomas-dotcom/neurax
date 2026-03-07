@@ -10,7 +10,7 @@ export default function SignUpPage() {
                     </div>
                 </div>
                 <h1 className="text-xl font-bold text-gray-900">Create Account</h1>
-                <p className="text-sm text-gray-500">Join NeuraMed</p>
+                <p className="text-sm text-gray-500">Join Neurax</p>
             </div>
 
             <SignUp fallbackRedirectUrl="/dashboard" signInUrl="/sign-in" />

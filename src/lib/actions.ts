@@ -49,7 +49,7 @@ export async function submitTestimonial(content: string, rating: number) {
 
     // Fallback to SQLite
     if (!db) {
-       console.warn("[NeuraMed] Cloud database failed and no local fallback available.");
+       console.warn("[Neurax] Cloud database failed and no local fallback available.");
        return { success: false, error: "Cloud database is currently unavailable." };
     }
 

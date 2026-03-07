@@ -27,7 +27,7 @@ export default function TestimonialSection() {
                 <div className="text-center mb-16">
                     <h2 className="text-3xl font-bold mb-4 text-slate-900">Trusted by Professionals</h2>
                     <p className="text-slate-600 text-lg max-w-2xl mx-auto">
-                        See how NeuraMed's Deep Learning models are assisting accurate medical correlations in real-world scenarios.
+                        See how Neurax's Deep Learning models are assisting accurate medical correlations in real-world scenarios.
                     </p>
                 </div>
 
@@ -78,7 +78,7 @@ export default function TestimonialSection() {
                             <h3 className="text-lg font-bold text-slate-900">No Clinical Reviews Yet</h3>
                             <p className="text-slate-500 max-w-sm mx-auto mt-2">
                                 We are currently collecting verified feedback from our clinical partners. 
-                                Be the first to share your experience with NeuraMed.
+                                Be the first to share your experience with Neurax.
                             </p>
                         </div>
                     )}

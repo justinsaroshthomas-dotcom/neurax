@@ -67,7 +67,7 @@ export default function TestimonialForm() {
                     value={content}
                     onChange={(e) => setContent(e.target.value)}
                     className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#00B140] focus:border-transparent outline-none resize-none"
-                    placeholder="How did NeuraMed assist in your diagnosis?"
+                    placeholder="How did Neurax assist in your diagnosis?"
                 />
             </div>
 

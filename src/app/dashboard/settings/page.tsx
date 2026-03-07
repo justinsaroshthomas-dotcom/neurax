@@ -194,8 +194,8 @@ export default function SettingsPage() {
                 <div className="flex items-center gap-6">
                     <div className="w-12 h-12 rounded-2xl bg-slate-950 flex items-center justify-center text-white font-black italic text-xl shadow-lg ring-1 ring-white/10 text-primary">N</div>
                     <div>
-                        <p className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-500">NeuraMed Neural OS</p>
-                        <p className="text-[9px] font-bold text-slate-400 mt-1 uppercase tracking-widest">Build 4.0.2_Production-L63 — IBM Team 63</p>
+                        <p className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-500">Neurax Neural OS</p>
+                        <p className="text-[9px] font-bold text-slate-400 mt-1 uppercase tracking-widest">Clinical Protocol — IBM Team 63</p>
                     </div>
                 </div>
                 

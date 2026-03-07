@@ -10,7 +10,7 @@ const isServerless = process.env.VERCEL === '1' || process.env.NODE_ENV === 'pro
 if (!isServerless) {
   try {
     const Database = require('better-sqlite3');
-    const dbPath = path.join(process.cwd(), 'neuramed.db');
+    const dbPath = path.join(process.cwd(), 'neurax.db');
     db = new Database(dbPath, { verbose: console.log });
     db.pragma('journal_mode = WAL');
 

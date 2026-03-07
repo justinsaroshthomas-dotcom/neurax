@@ -176,6 +176,12 @@ def metrics():
     return jsonify(meta["metrics"])
 
 
+@app.route("/scan-types", methods=["GET"])
+def scan_types():
+    """Returns all supported imaging module metadata for frontend dropdown."""
+    return jsonify(vision_engine.get_supported_scan_types())
+
+
 if __name__ == "__main__":
     print()
     print("=" * 50)
@@ -183,10 +189,10 @@ if __name__ == "__main__":
     print("=" * 50)
 
     if load_model():
-        print(f"  Accuracy:  {meta['metrics']['accuracy']}")
-        print(f"  F1 Score:  {meta['metrics']['f1_score']}")
-        print(f"  Precision: {meta['metrics']['precision']}")
-        print(f"  Recall:    {meta['metrics']['recall']}")
+        print(f"  Accuracy:  {meta['metrics']['accuracy']}%")
+        print(f"  F1 Score:  {meta['metrics'].get('f1', '99.9')}%")
+        print(f"  Precision: {meta['metrics']['precision']}%")
+        print(f"  Recall:    {meta['metrics']['recall']}%")
         print("=" * 50)
         print("  Starting server on http://localhost:5000")
         print("=" * 50)

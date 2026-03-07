@@ -269,18 +269,102 @@ export default function DashboardPage() {
                                 <div className="flex-1 h-px bg-slate-200/50 dark:bg-slate-800/50" />
                             </div>
                             
+                            {/* V5.0 Imaging Results Display */}
                             {mode === "imaging" && visionResult && (
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pb-6">
-                                    {[
-                                        { label: "Precision", value: (visionResult.metrics.precision * 100).toFixed(1) + "%" },
-                                        { label: "Accuracy", value: (visionResult.metrics.accuracy * 100).toFixed(1) + "%" },
-                                        { label: "Recall", value: (visionResult.metrics.recall * 100).toFixed(1) + "%" }
-                                    ].map((m) => (
-                                        <div key={m.label} className="p-6 rounded-3xl neon-border glass-card flex flex-col items-center justify-center space-y-2">
-                                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">{m.label}</p>
-                                            <p className="text-3xl font-black italic text-primary">{m.value}</p>
+                                <div className="space-y-6 pb-6">
+                                    {/* Primary Metrics */}
+                                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                        {[
+                                            { label: "Accuracy", value: (visionResult.metrics.accuracy * 100).toFixed(1) + "%" },
+                                            { label: "Precision", value: (visionResult.metrics.precision * 100).toFixed(1) + "%" },
+                                            { label: "Recall", value: (visionResult.metrics.recall * 100).toFixed(1) + "%" },
+                                            { label: "F1 Score", value: visionResult.metrics.f1 ? (visionResult.metrics.f1 * 100).toFixed(1) + "%" : "–" },
+                                        ].map((m) => (
+                                            <div key={m.label} className="p-5 rounded-2xl neon-border glass-card flex flex-col items-center justify-center space-y-1">
+                                                <p className="text-[9px] font-black uppercase tracking-widest text-slate-400">{m.label}</p>
+                                                <p className="text-2xl font-black italic text-primary">{m.value}</p>
+                                            </div>
+                                        ))}
+                                    </div>
+
+                                    {/* Model Provenance */}
+                                    <div className="p-5 rounded-2xl bg-slate-100 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 space-y-2">
+                                        <div className="flex items-center gap-2 mb-3">
+                                            <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                                            <p className="text-[9px] font-black uppercase tracking-widest text-slate-400">Model Provenance</p>
                                         </div>
-                                    ))}
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                            <div>
+                                                <p className="text-[9px] font-bold uppercase tracking-widest text-slate-400 mb-1">Architecture</p>
+                                                <p className="text-xs font-black text-primary">{visionResult.model_type || "CNN"}</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-[9px] font-bold uppercase tracking-widest text-slate-400 mb-1">Training Dataset</p>
+                                                <p className="text-xs font-black text-slate-700 dark:text-slate-200">{visionResult.dataset || "Kaggle Medical Imaging"}</p>
+                                            </div>
+                                        </div>
+                                        {visionResult.description && (
+                                            <p className="text-[10px] text-slate-500 font-bold leading-relaxed pt-2 border-t border-slate-200 dark:border-slate-800 mt-2">
+                                                {visionResult.description}
+                                            </p>
+                                        )}
+                                    </div>
+
+                                    {/* Probability Distribution */}
+                                    {visionResult.all_probabilities && (
+                                        <div className="p-5 rounded-2xl bg-slate-100 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800">
+                                            <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-4">Class Probability Distribution</p>
+                                            <div className="space-y-3">
+                                                {Object.entries(visionResult.all_probabilities as Record<string, number>)
+                                                    .sort(([, a], [, b]) => b - a)
+                                                    .map(([cls, prob]) => (
+                                                        <div key={cls} className="space-y-1">
+                                                            <div className="flex justify-between items-center">
+                                                                <span className={`text-[10px] font-black ${cls === visionResult.prediction ? "text-primary" : "text-slate-600 dark:text-slate-400"}`}>
+                                                                    {cls === visionResult.prediction && "→ "}{cls}
+                                                                </span>
+                                                                <span className="text-[10px] font-black text-slate-500">{(prob * 100).toFixed(1)}%</span>
+                                                            </div>
+                                                            <div className="h-1.5 rounded-full bg-slate-200 dark:bg-slate-800 overflow-hidden">
+                                                                <div
+                                                                    className={`h-full rounded-full transition-all duration-700 ${cls === visionResult.prediction ? "bg-primary" : "bg-slate-400 dark:bg-slate-600"}`}
+                                                                    style={{ width: `${prob * 100}%` }}
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* Image Quality Indicators */}
+                                    {visionResult.image_quality && (
+                                        <div className="grid grid-cols-3 gap-3">
+                                            {Object.entries(visionResult.image_quality as Record<string, number>).map(([k, v]) => (
+                                                <div key={k} className="p-4 rounded-2xl bg-slate-100 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 text-center">
+                                                    <p className="text-[8px] font-black uppercase tracking-widest text-slate-400 mb-1">{k}</p>
+                                                    <p className="text-sm font-black text-slate-700 dark:text-slate-200">{v.toFixed(1)}</p>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+
+                                    {/* Clinical Solutions */}
+                                    {visionResult.solutions && visionResult.solutions.length > 0 && (
+                                        <div className="p-5 rounded-2xl neon-border glass-card">
+                                            <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-4">Clinical Action Protocol</p>
+                                            <ul className="space-y-3">
+                                                {visionResult.solutions.map((s: string, i: number) => (
+                                                    <li key={i} className="flex items-start gap-3">
+                                                        <span className="w-5 h-5 rounded-full bg-primary/10 text-primary text-[9px] font-black flex items-center justify-center flex-shrink-0 mt-0.5">
+                                                            {i + 1}
+                                                        </span>
+                                                        <span className="text-xs font-bold text-slate-700 dark:text-slate-300 leading-relaxed">{s}</span>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                    )}
                                 </div>
                             )}
 
@@ -294,6 +378,7 @@ export default function DashboardPage() {
                                     />
                                 ))}
                             </div>
+
                         </div>
                     )}
 

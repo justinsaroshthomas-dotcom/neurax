@@ -18,7 +18,7 @@ taskkill /F /IM python.exe /T 2>nul
 
 echo.
 echo [2/5] Installing Python Dependencies (scikit-learn, pandas, etc.)...
-pip install -r requirements.txt
+pip install -r ml/requirements.txt
 
 echo.
 echo [3/5] Fetching 41-Disease Kaggle Dataset ^& Training Neural Network...

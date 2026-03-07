@@ -5,9 +5,10 @@ import { useState, useCallback } from "react";
 interface ImageScannerProps {
     onAnalysisComplete: (result: any) => void;
     onScanningStateChange: (isScanning: boolean) => void;
+    onError: (message: string) => void;
 }
 
-export function ImageScanner({ onAnalysisComplete, onScanningStateChange }: ImageScannerProps) {
+export function ImageScanner({ onAnalysisComplete, onScanningStateChange, onError }: ImageScannerProps) {
     const [dragActive, setDragActive] = useState(false);
     const [preview, setPreview] = useState<string | null>(null);
     const [scanType, setScanType] = useState<"chest_xray" | "mri_brain">("chest_xray");
@@ -23,7 +24,7 @@ export function ImageScanner({ onAnalysisComplete, onScanningStateChange }: Imag
             // Start Neural Scan
             onScanningStateChange(true);
             try {
-                const res = await fetch("http://localhost:5000/predict-image", {
+                const res = await fetch("http://127.0.0.1:5000/predict-image", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
@@ -32,11 +33,16 @@ export function ImageScanner({ onAnalysisComplete, onScanningStateChange }: Imag
                     }),
                 });
 
-                if (!res.ok) throw new Error("Local engine failed");
+                if (!res.ok) {
+                    const errData = await res.json().catch(() => ({}));
+                    throw new Error(errData.error || "Local engine analysis failed");
+                }
+                
                 const result = await res.json();
                 onAnalysisComplete(result);
             } catch (err) {
                 console.error("[VisionEngine]", err);
+                onError(err instanceof Error ? err.message : "Connection to local ML engine failed");
             } finally {
                 onScanningStateChange(false);
             }

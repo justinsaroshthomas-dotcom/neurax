@@ -181,60 +181,65 @@ export default function DashboardPage() {
             </div>
 
             {/* ── STEP 1: Input (Symptoms or Imaging) ── */}
-            {!hasResults && !isAnalyzing && (
+            {!hasResults && (
                 <div className="space-y-10">
-                    {mode === "symptoms" ? (
-                        <>
-                            <SymptomPicker
-                                selectedSymptoms={selectedSymptoms}
-                                onSymptomsChange={setSelectedSymptoms}
-                            />
-
-                            <div className="flex flex-col items-center gap-4 pt-4">
-                                <button
-                                    id="predict-button"
-                                    onClick={handlePredict}
-                                    disabled={selectedSymptoms.length === 0}
-                                    className="group relative w-full max-w-sm px-8 py-5 rounded-2xl font-black text-lg uppercase tracking-widest
-                                        bg-gradient-to-br from-primary to-primary/80 text-white
-                                        shadow-[0_4px_20px_rgba(0,177,64,0.3)] hover:shadow-[0_8px_30px_rgba(0,177,64,0.5)]
-                                        dark:shadow-[0_4px_20px_rgba(0,177,64,0.15)] dark:hover:shadow-[0_8px_40px_rgba(0,177,64,0.3)]
-                                        disabled:opacity-20 disabled:cursor-not-allowed disabled:hover:shadow-none
-                                        transition-all duration-300 active:scale-[0.97]
-                                        flex items-center justify-center gap-3 overflow-hidden"
-                                >
-                                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
-                                    <svg className="w-6 h-6 animate-pulse" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
-                                    </svg>
-                                    Run Analysis {selectedSymptoms.length > 0 ? `[${selectedSymptoms.length}]` : ""}
-                                </button>
-                                {selectedSymptoms.length === 0 ? (
-                                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-600 animate-pulse">
-                                        Awaiting Symptom Input
-                                    </p>
-                                ) : (
-                                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/60">
-                                        Ready for Neural Processing
-                                    </p>
-                                )}
-                            </div>
-                        </>
+                    {isAnalyzing ? (
+                        <div className="py-20 flex flex-col items-center justify-center animate-in fade-in duration-700">
+                             <ScanningAnimation />
+                             <p className="mt-8 text-[10px] font-black uppercase tracking-[0.3em] text-primary animate-pulse">
+                                Neural Pattern Recognition in Progress...
+                             </p>
+                        </div>
                     ) : (
-                        <ImageScanner 
-                            onAnalysisComplete={handleVisionComplete}
-                            onScanningStateChange={setIsAnalyzing}
-                        />
+                        mode === "symptoms" ? (
+                            <>
+                                <SymptomPicker
+                                    selectedSymptoms={selectedSymptoms}
+                                    onSymptomsChange={setSelectedSymptoms}
+                                />
+
+                                <div className="flex flex-col items-center gap-4 pt-4">
+                                    <button
+                                        id="predict-button"
+                                        onClick={handlePredict}
+                                        disabled={selectedSymptoms.length === 0}
+                                        className="group relative w-full max-w-sm px-8 py-5 rounded-2xl font-black text-lg uppercase tracking-widest
+                                            bg-gradient-to-br from-primary to-primary/80 text-white
+                                            shadow-[0_4px_20px_rgba(0,177,64,0.3)] hover:shadow-[0_8px_30px_rgba(0,177,64,0.5)]
+                                            dark:shadow-[0_4px_20px_rgba(0,177,64,0.15)] dark:hover:shadow-[0_8px_40px_rgba(0,177,64,0.3)]
+                                            disabled:opacity-20 disabled:cursor-not-allowed disabled:hover:shadow-none
+                                            transition-all duration-300 active:scale-[0.97]
+                                            flex items-center justify-center gap-3 overflow-hidden"
+                                    >
+                                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+                                        <svg className="w-6 h-6 animate-pulse" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                                        </svg>
+                                        Run Analysis {selectedSymptoms.length > 0 ? `[${selectedSymptoms.length}]` : ""}
+                                    </button>
+                                    {selectedSymptoms.length === 0 ? (
+                                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-600 animate-pulse">
+                                            Awaiting Symptom Input
+                                        </p>
+                                    ) : (
+                                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/60">
+                                            Ready for Neural Processing
+                                        </p>
+                                    )}
+                                </div>
+                            </>
+                        ) : (
+                            <ImageScanner 
+                                onAnalysisComplete={handleVisionComplete}
+                                onScanningStateChange={setIsAnalyzing}
+                                onError={setError}
+                            />
+                        )
                     )}
                 </div>
             )}
 
-            {/* ── STEP 2: Analyzing ── */}
-            {isAnalyzing && (
-                <div className="py-12 flex justify-center">
-                    <ScanningAnimation />
-                </div>
-            )}
+            {/* Remove old standalone analyzing block below */}
 
             {/* ── STEP 3: Results ── */}
             {hasResults && (

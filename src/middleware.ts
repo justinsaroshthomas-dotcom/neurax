@@ -1,10 +1,6 @@
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { clerkMiddleware } from "@clerk/nextjs/server";
 
-export function middleware(request: NextRequest) {
-  // Baseline middleware to test if Vercel can invoke ANY middleware
-  return NextResponse.next();
-}
+export default clerkMiddleware();
 
 export const config = {
   matcher: [

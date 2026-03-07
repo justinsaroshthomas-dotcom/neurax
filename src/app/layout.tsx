@@ -10,7 +10,11 @@ export const metadata: Metadata = {
   keywords: ["disease prediction", "AI diagnostics", "symptom analysis", "health dashboard"],
 };
 
+import { Outfit, Inter } from "next/font/google";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
+
+const outfit = Outfit({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800"], variable: "--font-outfit" });
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
 export default function RootLayout({
   children,
@@ -19,8 +23,8 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider publishableKey="pk_test_cHJvbW90ZWQtdXJjaGluLTQ3LmNsZXJrLmFjY291bnRzLmRldiQ">
-      <html lang="en" suppressHydrationWarning>
-        <body className="antialiased" suppressHydrationWarning>
+      <html lang="en" suppressHydrationWarning className={`${outfit.variable} ${inter.variable}`}>
+        <body className="antialiased font-sans" suppressHydrationWarning>
           <ThemeProvider
             attribute="data-theme"
             defaultTheme="emerald"

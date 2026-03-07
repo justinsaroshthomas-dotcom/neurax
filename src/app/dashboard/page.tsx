@@ -5,14 +5,10 @@ import { SymptomPicker } from "@/components/prediction/SymptomPicker";
 import { PredictionCard } from "@/components/prediction/PredictionCard";
 import { ScanningAnimation } from "@/components/prediction/ScanningAnimation";
 import { AIInsight } from "@/components/prediction/AIInsight";
-import { ModuleSelector } from "@/components/imaging/ModuleSelector";
-import { UploadZone } from "@/components/imaging/UploadZone";
-import { AnalysisPanel } from "@/components/imaging/AnalysisPanel";
-import { StatusBar } from "@/components/imaging/StatusBar";
-import { analyzeImage } from "@/lib/imaging";
+import NeuraMedVision from "@/components/imaging/NeuraMedVision";
+import { NeuralBackground } from "@/components/ui/NeuralBackground";
 import { addHistoryEntry } from "@/lib/history-store";
 import type { AIAnalysis } from "@/lib/groq";
-import type { ModuleId, AnalysisResponse } from "@/types/imaging";
 
 export interface PredictionResult {
     disease: string;
@@ -37,9 +33,6 @@ export default function DashboardPage() {
     const [aiAnalysis, setAiAnalysis] = useState<AIAnalysis | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [mode, setMode] = useState<"symptoms" | "imaging">("symptoms");
-    const [visionResult, setVisionResult] = useState<any | null>(null);
-    const [selectedModule, setSelectedModule] = useState<ModuleId>("brain_tumor");
-    const [imagingResult, setImagingResult] = useState<AnalysisResponse | null>(null);
 
     const handlePredict = async () => {
         if (selectedSymptoms.length === 0) return;
@@ -89,93 +82,51 @@ export default function DashboardPage() {
         }
     };
 
-    const handleVisionComplete = (result: any) => {
-        setVisionResult(result);
-        
-        // Support both legacy (Flask) and new (FastAPI) response formats
-        const isV5 = !!result.report;
-        const prediction = isV5 ? result.result?.predicted_class : result.prediction;
-        const confidence = isV5 ? (result.result?.confidence ?? 0) / 100 : result.confidence;
-        const findings = isV5 ? result.report?.clinical_note : result.findings;
-        const solutions = isV5
-            ? [result.report?.action, ...(result.report?.differentials?.map((d: any) => `${d.class}: ${d.probability}%`) ?? [])]
-            : result.solutions;
 
-        const mappedPrediction: PredictionResult = {
-            disease: prediction,
-            confidence: confidence,
-            severity: "high",
-            description: findings ?? "",
-            precautions: solutions ?? [],
-            matchedSymptoms: ["Imaging Analysis"]
-        };
-        
-        setPredictions([mappedPrediction]);
-        
-        setAiAnalysis({
-            summary: findings ?? "Analysis complete.",
-            riskAssessment: isV5 
-                ? `${result.report?.urgency?.label ?? "Analysis"} — ${result.report?.action ?? ""}`
-                : "Based on local CNN analysis of the clinical scan.",
-            recommendedActions: solutions ?? [],
-            disclaimer: isV5 ? result.report?.disclaimer : "Local Vision Engine analysis."
-        });
-
-        addHistoryEntry({
-            symptoms: ["Clinical Scan: " + prediction],
-            predictions: [mappedPrediction],
-            topDisease: prediction,
-            topConfidence: confidence,
-            topSeverity: "high",
-            aiSummary: findings
-        });
-    };
 
     const handleNewAnalysis = () => {
         setSelectedSymptoms([]);
         setPredictions(null);
         setAiAnalysis(null);
-        setVisionResult(null);
-        setImagingResult(null);
         setError(null);
     };
 
     const hasResults = predictions !== null;
 
     return (
-        <div className="max-w-5xl mx-auto space-y-10 animate-in fade-in duration-1000">
+        <div className="max-w-5xl mx-auto space-y-10 animate-in fade-in duration-1000 relative">
+            <NeuralBackground />
             {/* Header — always visible */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-2 border-b border-slate-200/50 dark:border-slate-800/50">
                 <div className="space-y-1">
-                    <h1 className="text-3xl font-black tracking-tighter">
-                        <span className="text-primary drop-shadow-[0_0_8px_var(--neon-dim)]">Multimodal</span>{" "}
-                        <span className="text-slate-900 dark:text-slate-100">Intelligence</span>
+                    <h1 className="text-3xl font-black tracking-tighter flex items-center gap-3">
+                         <span className="text-primary">NeuraMed</span>{" "}
+                         <span className="text-slate-900 dark:text-slate-100 italic">v5.0.0</span>
+                         <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20 uppercase tracking-widest">
+                            PEAK
+                        </span>
                     </h1>
-                    <p className="text-sm text-slate-500 dark:text-slate-500 font-medium">
-                        {hasResults
-                            ? "Neural analysis complete. Review your clinical profile below."
-                            : mode === "symptoms" 
-                                ? "Input your symptoms for a high-precision medical analysis."
-                                : "Upload medical scans for advanced visual diagnostic overrides."
-                        }
+                    <p className="text-xs font-mono text-slate-500 flex items-center gap-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                        SYSTEM: DIAGNOSTIC CORE ACTIVE
                     </p>
                 </div>
 
                 {!hasResults && !isAnalyzing && (
-                    <div className="flex bg-slate-100 dark:bg-slate-900/50 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-800">
+                    <div className="flex bg-slate-100/80 dark:bg-slate-900/80 backdrop-blur-md p-1 rounded-xl border border-slate-200/50 dark:border-slate-800/50 shadow-inner">
                         <button
                             onClick={() => setMode("symptoms")}
-                            className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all
-                                ${mode === "symptoms" ? "bg-primary text-white shadow-lg" : "text-slate-500 hover:text-slate-700"}`}
+                            className={`px-5 py-2.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all duration-300
+                                ${mode === "symptoms" ? "bg-white dark:bg-slate-800 text-primary shadow-sm" : "text-slate-500 hover:text-slate-700"}`}
                         >
-                            Clinical Text
+                            Diagnostic Text
                         </button>
                         <button
                             onClick={() => setMode("imaging")}
-                            className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all
-                                ${mode === "imaging" ? "bg-primary text-white shadow-lg" : "text-slate-500 hover:text-slate-700"}`}
+                            className={`px-5 py-2.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all duration-300
+                                ${mode === "imaging" ? "bg-white dark:bg-slate-800 text-primary shadow-sm" : "text-slate-500 hover:text-slate-700"}`}
                         >
-                            Visual Imaging
+                            Visual Scans
                         </button>
                     </div>
                 )}
@@ -246,27 +197,8 @@ export default function DashboardPage() {
                                 </div>
                             </>
                         ) : (
-                            <div className="space-y-6">
-                                <StatusBar />
-                                <ModuleSelector selected={selectedModule} onSelect={setSelectedModule} />
-                                <UploadZone
-                                    module={selectedModule}
-                                    isAnalyzing={isAnalyzing}
-                                    onFileSelected={async (file) => {
-                                        setIsAnalyzing(true);
-                                        setError(null);
-                                        setImagingResult(null);
-                                        try {
-                                            const result = await analyzeImage(selectedModule, file);
-                                            setImagingResult(result);
-                                            handleVisionComplete(result);
-                                        } catch (err: any) {
-                                            setError(err?.message ?? "Vision Core analysis failed");
-                                        } finally {
-                                            setIsAnalyzing(false);
-                                        }
-                                    }}
-                                />
+                            <div className="w-full">
+                                <NeuraMedVision />
                             </div>
                         )
                     )}
@@ -293,10 +225,7 @@ export default function DashboardPage() {
                     {/* AI Insight */}
                     {aiAnalysis && <AIInsight analysis={aiAnalysis} />}
 
-                    {/* v5.0 AnalysisPanel for FastAPI imaging results */}
-                    {mode === "imaging" && imagingResult && (
-                        <AnalysisPanel data={imagingResult} />
-                    )}
+
 
                     {/* Prediction Cards */}
                     {predictions && predictions.length > 0 && (
@@ -308,104 +237,7 @@ export default function DashboardPage() {
                                 <div className="flex-1 h-px bg-slate-200/50 dark:bg-slate-800/50" />
                             </div>
                             
-                            {/* V5.0 Imaging Results Display */}
-                            {mode === "imaging" && visionResult && (
-                                <div className="space-y-6 pb-6">
-                                    {/* Primary Metrics */}
-                                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                                        {[
-                                            { label: "Accuracy", value: (visionResult.metrics.accuracy * 100).toFixed(1) + "%" },
-                                            { label: "Precision", value: (visionResult.metrics.precision * 100).toFixed(1) + "%" },
-                                            { label: "Recall", value: (visionResult.metrics.recall * 100).toFixed(1) + "%" },
-                                            { label: "F1 Score", value: visionResult.metrics.f1 ? (visionResult.metrics.f1 * 100).toFixed(1) + "%" : "–" },
-                                        ].map((m) => (
-                                            <div key={m.label} className="p-5 rounded-2xl neon-border glass-card flex flex-col items-center justify-center space-y-1">
-                                                <p className="text-[9px] font-black uppercase tracking-widest text-slate-400">{m.label}</p>
-                                                <p className="text-2xl font-black italic text-primary">{m.value}</p>
-                                            </div>
-                                        ))}
-                                    </div>
 
-                                    {/* Model Provenance */}
-                                    <div className="p-5 rounded-2xl bg-slate-100 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 space-y-2">
-                                        <div className="flex items-center gap-2 mb-3">
-                                            <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-                                            <p className="text-[9px] font-black uppercase tracking-widest text-slate-400">Model Provenance</p>
-                                        </div>
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                            <div>
-                                                <p className="text-[9px] font-bold uppercase tracking-widest text-slate-400 mb-1">Architecture</p>
-                                                <p className="text-xs font-black text-primary">{visionResult.model_type || "CNN"}</p>
-                                            </div>
-                                            <div>
-                                                <p className="text-[9px] font-bold uppercase tracking-widest text-slate-400 mb-1">Training Dataset</p>
-                                                <p className="text-xs font-black text-slate-700 dark:text-slate-200">{visionResult.dataset || "Kaggle Medical Imaging"}</p>
-                                            </div>
-                                        </div>
-                                        {visionResult.description && (
-                                            <p className="text-[10px] text-slate-500 font-bold leading-relaxed pt-2 border-t border-slate-200 dark:border-slate-800 mt-2">
-                                                {visionResult.description}
-                                            </p>
-                                        )}
-                                    </div>
-
-                                    {/* Probability Distribution */}
-                                    {visionResult.all_probabilities && (
-                                        <div className="p-5 rounded-2xl bg-slate-100 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800">
-                                            <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-4">Class Probability Distribution</p>
-                                            <div className="space-y-3">
-                                                {Object.entries(visionResult.all_probabilities as Record<string, number>)
-                                                    .sort(([, a], [, b]) => b - a)
-                                                    .map(([cls, prob]) => (
-                                                        <div key={cls} className="space-y-1">
-                                                            <div className="flex justify-between items-center">
-                                                                <span className={`text-[10px] font-black ${cls === visionResult.prediction ? "text-primary" : "text-slate-600 dark:text-slate-400"}`}>
-                                                                    {cls === visionResult.prediction && "→ "}{cls}
-                                                                </span>
-                                                                <span className="text-[10px] font-black text-slate-500">{(prob * 100).toFixed(1)}%</span>
-                                                            </div>
-                                                            <div className="h-1.5 rounded-full bg-slate-200 dark:bg-slate-800 overflow-hidden">
-                                                                <div
-                                                                    className={`h-full rounded-full transition-all duration-700 ${cls === visionResult.prediction ? "bg-primary" : "bg-slate-400 dark:bg-slate-600"}`}
-                                                                    style={{ width: `${prob * 100}%` }}
-                                                                />
-                                                            </div>
-                                                        </div>
-                                                    ))}
-                                            </div>
-                                        </div>
-                                    )}
-
-                                    {/* Image Quality Indicators */}
-                                    {visionResult.image_quality && (
-                                        <div className="grid grid-cols-3 gap-3">
-                                            {Object.entries(visionResult.image_quality as Record<string, number>).map(([k, v]) => (
-                                                <div key={k} className="p-4 rounded-2xl bg-slate-100 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 text-center">
-                                                    <p className="text-[8px] font-black uppercase tracking-widest text-slate-400 mb-1">{k}</p>
-                                                    <p className="text-sm font-black text-slate-700 dark:text-slate-200">{v.toFixed(1)}</p>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    )}
-
-                                    {/* Clinical Solutions */}
-                                    {visionResult.solutions && visionResult.solutions.length > 0 && (
-                                        <div className="p-5 rounded-2xl neon-border glass-card">
-                                            <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-4">Clinical Action Protocol</p>
-                                            <ul className="space-y-3">
-                                                {visionResult.solutions.map((s: string, i: number) => (
-                                                    <li key={i} className="flex items-start gap-3">
-                                                        <span className="w-5 h-5 rounded-full bg-primary/10 text-primary text-[9px] font-black flex items-center justify-center flex-shrink-0 mt-0.5">
-                                                            {i + 1}
-                                                        </span>
-                                                        <span className="text-xs font-bold text-slate-700 dark:text-slate-300 leading-relaxed">{s}</span>
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                        </div>
-                                    )}
-                                </div>
-                            )}
 
                             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                                 {predictions.map((prediction, i) => (

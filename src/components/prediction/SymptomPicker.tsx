@@ -67,7 +67,7 @@ export function SymptomPicker({
                         placeholder="Type to find a symptom..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        className="w-full pl-12 pr-12 py-4 rounded-2xl text-base
+                        className="w-full pl-12 pr-12 py-4 rounded-2xl text-base font-sans
                             bg-white/50 dark:bg-slate-900/50 backdrop-blur-md 
                             border border-slate-200/50 dark:border-slate-800/50 text-slate-900 dark:text-slate-100
                             placeholder:text-slate-400 dark:placeholder:text-slate-600
@@ -125,10 +125,10 @@ export function SymptomPicker({
                 {grouped.map(([category, symptoms]) => (
                     <div key={category} className="space-y-3">
                         <div className="flex items-center gap-3 px-1">
-                            <h3 className="text-[10px] uppercase font-black tracking-[0.2em] text-slate-400 dark:text-slate-600">
+                            <h3 className="text-[10px] uppercase font-black tracking-[0.2em] text-slate-400 dark:text-slate-600 font-heading">
                                 {category}
                             </h3>
-                            <span className="px-1.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-[9px] font-bold text-slate-400 dark:text-slate-500">
+                            <span className="px-1.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-[9px] font-bold text-slate-400 dark:text-slate-500 font-mono">
                                 {symptoms.length}
                             </span>
                             <div className="flex-1 h-px bg-slate-200/50 dark:bg-slate-800/50" />

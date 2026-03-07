@@ -83,10 +83,10 @@ export function AIInsight({ analysis }: AIInsightProps) {
                             </svg>
                         </div>
                         <div>
-                            <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 tracking-tight">
+                            <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 tracking-tight font-heading">
                                 Neural Analysis Insight
                             </h3>
-                            <p className="text-[10px] text-slate-500 dark:text-slate-500 font-extrabold uppercase tracking-[0.2em]">
+                            <p className="text-[10px] text-slate-500 dark:text-slate-500 font-extrabold uppercase tracking-[0.2em] font-mono">
                                 Multi-Layer Perceptron (MLP) Engine
                             </p>
                         </div>
@@ -106,7 +106,7 @@ export function AIInsight({ analysis }: AIInsightProps) {
                         </span>
                         <div className="flex-1 h-px bg-slate-200/50 dark:bg-slate-800/50" />
                     </div>
-                    <p className="text-xl text-slate-900 dark:text-slate-200 leading-relaxed font-bold">
+                    <p className="text-xl text-slate-900 dark:text-slate-200 leading-relaxed font-bold font-sans">
                         {visibleText}
                         {!isTypingDone && (
                             <span className="inline-block w-2 h-6 bg-primary ml-1.5 animate-pulse align-middle" />
@@ -124,7 +124,7 @@ export function AIInsight({ analysis }: AIInsightProps) {
                             <div className="flex-1 h-px bg-slate-200/50 dark:bg-slate-800/50" />
                         </div>
                         <div className="p-5 rounded-2xl bg-white/40 dark:bg-slate-900/40 border border-slate-200/50 dark:border-slate-800/50 shadow-sm">
-                            <p className="text-base text-slate-700 dark:text-slate-300 leading-relaxed font-semibold">
+                            <p className="text-base text-slate-700 dark:text-slate-300 leading-relaxed font-semibold font-sans">
                                 {analysis.riskAssessment}
                             </p>
                         </div>

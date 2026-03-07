@@ -7,6 +7,7 @@ import {
     deleteHistoryEntry,
     type HistoryEntry,
 } from "@/lib/history-store";
+import { getCloudHistory } from "@/lib/actions";
 
 const severityConfig: Record<string, { color: string; label: string }> = {
     low: { color: "var(--severity-low)", label: "LOW" },
@@ -20,8 +21,19 @@ export default function HistoryPage() {
     const [mounted, setMounted] = useState(false);
     const [expandedId, setExpandedId] = useState<string | null>(null);
 
-    const refresh = useCallback(() => {
-        setEntries(getAllHistory());
+    const refresh = useCallback(async () => {
+        const local = getAllHistory();
+        setEntries(local); // Immediate local load
+
+        const cloud = await getCloudHistory();
+        if (cloud && cloud.length > 0) {
+            // Merge cloud into local, unique by ID or timestamp
+            setEntries(prev => {
+                const combined = [...cloud, ...prev];
+                const unique = Array.from(new Map(combined.map(item => [item.id, item])).values());
+                return unique.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+            });
+        }
     }, []);
 
     useEffect(() => {

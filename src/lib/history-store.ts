@@ -3,6 +3,8 @@
 // Works without MongoDB — persists across sessions
 // ─────────────────────────────────────────
 
+import { saveHistoryToCloud } from "./actions";
+
 export interface HistoryEntry {
     id: string;
     symptoms: string[];
@@ -50,11 +52,17 @@ export function addHistoryEntry(entry: Omit<HistoryEntry, "id" | "timestamp">): 
         id,
         timestamp: new Date().toISOString(),
     };
+    
     const history = getHistory();
-    history.unshift(newEntry); // newest first
-    // Keep max 50 entries
+    history.unshift(newEntry);
     if (history.length > 50) history.splice(50);
     saveHistory(history);
+
+    // Dynamic Cloud Sync (fire and forget)
+    if (typeof window !== "undefined") {
+        saveHistoryToCloud(newEntry).catch(() => {});
+    }
+    
     return newEntry;
 }
 

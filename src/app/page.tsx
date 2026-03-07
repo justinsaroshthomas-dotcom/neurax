@@ -47,7 +47,7 @@ export default function Home() {
           <div className="w-8 h-8 rounded-lg bg-[#00B140] flex items-center justify-center text-white font-bold text-xl">
             N
           </div>
-          <span className="text-xl font-bold tracking-tight text-slate-900">NeuraMed</span>
+          <span className="text-xl font-bold tracking-tight text-slate-900">Neurax</span>
         </div>
         <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-slate-600">
           <Link href="#how-it-works" className="hover:text-[#00B140] transition-colors">How it works</Link>
@@ -74,7 +74,7 @@ export default function Home() {
 
         <div className="relative z-10 max-w-4xl w-full">
           <h1 className="text-3xl md:text-5xl font-bold leading-tight mb-8">
-            Enter a brief patient's description and NeuraMed will provide a list of possible disease diagnoses
+            Enter a brief patient's description and Neurax will provide a list of possible disease diagnoses
           </h1>
 
           <form onSubmit={handleSearch} className="max-w-3xl mx-auto align-middle relative">
@@ -112,12 +112,12 @@ export default function Home() {
 
 
 
-      {/* ── What is NeuraMed / How it Works ── */}
+      {/* ── What is Neurax / How it Works ── */}
       <section id="how-it-works" className="py-24 px-6 bg-white max-w-5xl mx-auto w-full">
         <div className="mb-20">
-          <h2 className="text-3xl font-bold mb-6 text-slate-900">What is NeuraMed?</h2>
+          <h2 className="text-3xl font-bold mb-6 text-slate-900">What is Neurax?</h2>
           <p className="text-slate-600 text-lg leading-relaxed mb-4">
-            NeuraMed is an advanced AI-assisted medical diagnosis platform developed by IBM Team 63. We use advanced Deep Neural Networks (MLP/CNN) trained on Kaggle/UCI datasets to provide rapid differential analysis from symptom descriptions and clinical histories.
+            Neurax is an advanced AI-assisted medical diagnosis platform developed by IBM Team 63. We use advanced Deep Neural Networks (MLP/CNN) trained on Kaggle/UCI datasets to provide rapid differential analysis from symptom descriptions and clinical histories.
           </p>
           <p className="text-slate-600 text-lg leading-relaxed">
             The goal is to enhance — not replace — clinical judgment: save time, neutralize cognitive biases, and raise the quality of clinical reasoning from the first moment. Key features: intelligent differential diagnosis with prioritized lists of possible diagnoses; 505 disease classes supported; secure architecture with automatic anonymization of sensitive data.
@@ -125,8 +125,8 @@ export default function Home() {
         </div>
 
         <div>
-          <h2 className="text-3xl font-bold mb-10 text-slate-900">How does NeuraMed work?</h2>
-          <p className="mb-8 text-slate-600 text-lg">NeuraMed works in 4 simple steps:</p>
+          <h2 className="text-3xl font-bold mb-10 text-slate-900">How does Neurax work?</h2>
+          <p className="mb-8 text-slate-600 text-lg">Neurax works in 4 simple steps:</p>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
             {[
@@ -185,7 +185,7 @@ export default function Home() {
               <div className="w-8 h-8 rounded-lg bg-[#00B140] flex items-center justify-center text-white font-bold text-xl">
                 N
               </div>
-              <span className="text-2xl font-bold text-white tracking-tight">NeuraMed</span>
+              <span className="text-2xl font-bold text-white tracking-tight">Neurax</span>
             </div>
             <p className="text-sm leading-relaxed max-w-sm">
               Advanced ML-powered differential diagnosis platform designed for peak performance and accuracy using real-world clinical datasets.
@@ -195,7 +195,7 @@ export default function Home() {
           <div>
             <h4 className="text-white font-bold mb-4">Project</h4>
             <ul className="space-y-3 text-sm">
-              <li><Link href="#" className="hover:text-white transition-colors">About NeuraMed</Link></li>
+              <li><Link href="#" className="hover:text-white transition-colors">About Neurax</Link></li>
               <li><Link href="#" className="hover:text-white transition-colors">Accuracy Metrics</Link></li>
               <li><Link href="#" className="hover:text-white transition-colors">Evaluation Strategy</Link></li>
               <li><Link href="#" className="hover:text-white transition-colors">Machine Learning Models</Link></li>

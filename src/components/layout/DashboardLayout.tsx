@@ -94,7 +94,7 @@ export default function DashboardLayout({
                                 N
                             </div>
                             <div>
-                                <span className="font-bold text-sm text-foreground">NeuraMed</span>
+                                <span className="font-bold text-sm text-foreground">Neurax</span>
                                 <p className="text-[10px] text-muted-foreground tracking-wider uppercase">
                                     Disease Predictor
                                 </p>

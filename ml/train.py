@@ -1,6 +1,6 @@
 """
-NeuraMed — v4 IBM Team 63 Disease Prediction Model (Massive Expansion)
-======================================================================
+Neurax — Clinical Disease Prediction Model
+==========================================
 Generates a massive 250+ Disease analytical matrix by intelligently 
 mapping 132 core medical symptoms to an exhaustive list of clinical 
 conditions derived from UCI and Kaggle databases.

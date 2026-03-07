@@ -4,9 +4,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "NeuraMed — Disease Prediction Dashboard",
-  description:
-    "AI-powered disease prediction with real-time symptom analysis. Built with medical-grade precision and cyberpunk aesthetics.",
+  title: "Neurax — Universal Disease Intelligence",
+  description: "Multi-layered diagnostic matrix for clinical analysis. Built with medical-grade precision and cyberpunk aesthetics.",
   keywords: ["disease prediction", "AI diagnostics", "symptom analysis", "health dashboard"],
 };
 

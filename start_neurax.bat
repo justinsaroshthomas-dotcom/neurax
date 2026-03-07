@@ -1,6 +1,6 @@
 @echo off
 color 0A
-title NeuraMed - IBM Team 63
+title Neurax - IBM Team 63
 
 echo ==================================================================
 echo   NEURAMED SYSTEM - IBM TEAM 63

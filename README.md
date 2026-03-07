@@ -1,4 +1,4 @@
-# NeuraMed v5.0 — Vision Core
+# Neurax — Clinical Intelligence Core
 
 **6-module medical imaging intelligence platform**  
 Zero data retention · Local inference · EfficientNet-B3 backbone
@@ -176,7 +176,7 @@ torch.save(net.state_dict(), "weights/brain_tumor.pth")
 
 ---
 
-> NeuraMed is a clinical decision support tool. All AI findings must be reviewed and verified by a qualified radiologist or clinician before clinical action. Not a substitute for professional medical judgment.
+> Neurax is a clinical decision support tool. All AI findings must be reviewed and verified by a qualified radiologist or clinician before clinical action. Not a substitute for professional medical judgment.
 
 ---
 

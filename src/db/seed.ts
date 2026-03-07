@@ -495,7 +495,7 @@ export const seedDiseases: SeedDisease[] = [
         symptoms: [{ symptomId: "s82", weight: 0.9 }, { symptomId: "s15", weight: 0.85 }, { symptomId: "s81", weight: 0.7 }],
         precautions: ["Treat underlying malignancy", "Amifampridine", "IVIG", "Plasma exchange"]
     }
-    // ... Additional 450+ entities are dynamically supported by the NeuraMed v4.0 Clinical Matrix.
+    // ... Additional 450+ entities are dynamically supported by the Neurax v4.0 Clinical Matrix.
 ];
 
 // ─────────────────────────────────────────

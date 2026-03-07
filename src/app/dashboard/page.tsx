@@ -5,6 +5,7 @@ import { SymptomPicker } from "@/components/prediction/SymptomPicker";
 import { PredictionCard } from "@/components/prediction/PredictionCard";
 import { ScanningAnimation } from "@/components/prediction/ScanningAnimation";
 import { AIInsight } from "@/components/prediction/AIInsight";
+import { ImageScanner } from "@/components/prediction/ImageScanner";
 import { addHistoryEntry } from "@/lib/history-store";
 import type { AIAnalysis } from "@/lib/groq";
 
@@ -30,6 +31,8 @@ export default function DashboardPage() {
     const [predictions, setPredictions] = useState<PredictionResult[] | null>(null);
     const [aiAnalysis, setAiAnalysis] = useState<AIAnalysis | null>(null);
     const [error, setError] = useState<string | null>(null);
+    const [mode, setMode] = useState<"symptoms" | "imaging">("symptoms");
+    const [visionResult, setVisionResult] = useState<any | null>(null);
 
     const handlePredict = async () => {
         if (selectedSymptoms.length === 0) return;
@@ -79,10 +82,44 @@ export default function DashboardPage() {
         }
     };
 
+    const handleVisionComplete = (result: any) => {
+        setVisionResult(result);
+        
+        // Map vision result to general prediction format for UI consistency
+        const mappedPrediction: PredictionResult = {
+            disease: result.prediction,
+            confidence: result.confidence,
+            severity: "high", // Default for detected anomalies
+            description: result.findings,
+            precautions: result.solutions,
+            matchedSymptoms: ["Imaging Analysis"]
+        };
+        
+        setPredictions([mappedPrediction]);
+        
+        setAiAnalysis({
+            summary: result.findings,
+            riskAssessment: "Based on local CNN analysis of the clinical scan.",
+            recommendedActions: result.solutions,
+            disclaimer: "Local Vision Engine analysis. Precision: " + (result.metrics.precision * 100).toFixed(1) + "%"
+        });
+
+        // Save to history
+        addHistoryEntry({
+            symptoms: ["Clinical Scan: " + result.prediction],
+            predictions: [mappedPrediction],
+            topDisease: result.prediction,
+            topConfidence: result.confidence,
+            topSeverity: "high",
+            aiSummary: result.findings
+        });
+    };
+
     const handleNewAnalysis = () => {
         setSelectedSymptoms([]);
         setPredictions(null);
         setAiAnalysis(null);
+        setVisionResult(null);
         setError(null);
     };
 
@@ -94,16 +131,37 @@ export default function DashboardPage() {
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-2 border-b border-slate-200/50 dark:border-slate-800/50">
                 <div className="space-y-1">
                     <h1 className="text-3xl font-black tracking-tighter">
-                        <span className="text-primary drop-shadow-[0_0_8px_var(--neon-dim)]">Symptom</span>{" "}
+                        <span className="text-primary drop-shadow-[0_0_8px_var(--neon-dim)]">Multimodal</span>{" "}
                         <span className="text-slate-900 dark:text-slate-100">Intelligence</span>
                     </h1>
                     <p className="text-sm text-slate-500 dark:text-slate-500 font-medium">
                         {hasResults
                             ? "Neural analysis complete. Review your clinical profile below."
-                            : "Input your symptoms for a high-precision medical analysis."
+                            : mode === "symptoms" 
+                                ? "Input your symptoms for a high-precision medical analysis."
+                                : "Upload medical scans for advanced visual diagnostic overrides."
                         }
                     </p>
                 </div>
+
+                {!hasResults && !isAnalyzing && (
+                    <div className="flex bg-slate-100 dark:bg-slate-900/50 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-800">
+                        <button
+                            onClick={() => setMode("symptoms")}
+                            className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all
+                                ${mode === "symptoms" ? "bg-primary text-white shadow-lg" : "text-slate-500 hover:text-slate-700"}`}
+                        >
+                            Clinical Text
+                        </button>
+                        <button
+                            onClick={() => setMode("imaging")}
+                            className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all
+                                ${mode === "imaging" ? "bg-primary text-white shadow-lg" : "text-slate-500 hover:text-slate-700"}`}
+                        >
+                            Visual Imaging
+                        </button>
+                    </div>
+                )}
 
                 {hasResults && (
                     <button
@@ -122,46 +180,52 @@ export default function DashboardPage() {
                 )}
             </div>
 
-            {/* ── STEP 1: Select Symptoms ── */}
+            {/* ── STEP 1: Input (Symptoms or Imaging) ── */}
             {!hasResults && !isAnalyzing && (
                 <div className="space-y-10">
-                    <SymptomPicker
-                        selectedSymptoms={selectedSymptoms}
-                        onSymptomsChange={setSelectedSymptoms}
-                    />
+                    {mode === "symptoms" ? (
+                        <>
+                            <SymptomPicker
+                                selectedSymptoms={selectedSymptoms}
+                                onSymptomsChange={setSelectedSymptoms}
+                            />
 
-                    {/* Analyze Button — premium, centered */}
-                    <div className="flex flex-col items-center gap-4 pt-4">
-                        <button
-                            id="predict-button"
-                            onClick={handlePredict}
-                            disabled={selectedSymptoms.length === 0}
-                            className="group relative w-full max-w-sm px-8 py-5 rounded-2xl font-black text-lg uppercase tracking-widest
-                                bg-gradient-to-br from-primary to-primary/80 text-white
-                                shadow-[0_4px_20px_rgba(0,177,64,0.3)] hover:shadow-[0_8px_30px_rgba(0,177,64,0.5)]
-                                dark:shadow-[0_4px_20px_rgba(0,177,64,0.15)] dark:hover:shadow-[0_8px_40px_rgba(0,177,64,0.3)]
-                                disabled:opacity-20 disabled:cursor-not-allowed disabled:hover:shadow-none
-                                transition-all duration-300 active:scale-[0.97]
-                                flex items-center justify-center gap-3 overflow-hidden"
-                        >
-                            {/* Inner glow effect */}
-                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
-                            
-                            <svg className="w-6 h-6 animate-pulse" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
-                            </svg>
-                            Run Analysis {selectedSymptoms.length > 0 ? `[${selectedSymptoms.length}]` : ""}
-                        </button>
-                        {selectedSymptoms.length === 0 ? (
-                            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-600 animate-pulse">
-                                Awaiting Symptom Input
-                            </p>
-                        ) : (
-                            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/60">
-                                Ready for Neural Processing
-                            </p>
-                        )}
-                    </div>
+                            <div className="flex flex-col items-center gap-4 pt-4">
+                                <button
+                                    id="predict-button"
+                                    onClick={handlePredict}
+                                    disabled={selectedSymptoms.length === 0}
+                                    className="group relative w-full max-w-sm px-8 py-5 rounded-2xl font-black text-lg uppercase tracking-widest
+                                        bg-gradient-to-br from-primary to-primary/80 text-white
+                                        shadow-[0_4px_20px_rgba(0,177,64,0.3)] hover:shadow-[0_8px_30px_rgba(0,177,64,0.5)]
+                                        dark:shadow-[0_4px_20px_rgba(0,177,64,0.15)] dark:hover:shadow-[0_8px_40px_rgba(0,177,64,0.3)]
+                                        disabled:opacity-20 disabled:cursor-not-allowed disabled:hover:shadow-none
+                                        transition-all duration-300 active:scale-[0.97]
+                                        flex items-center justify-center gap-3 overflow-hidden"
+                                >
+                                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+                                    <svg className="w-6 h-6 animate-pulse" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                                    </svg>
+                                    Run Analysis {selectedSymptoms.length > 0 ? `[${selectedSymptoms.length}]` : ""}
+                                </button>
+                                {selectedSymptoms.length === 0 ? (
+                                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-600 animate-pulse">
+                                        Awaiting Symptom Input
+                                    </p>
+                                ) : (
+                                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/60">
+                                        Ready for Neural Processing
+                                    </p>
+                                )}
+                            </div>
+                        </>
+                    ) : (
+                        <ImageScanner 
+                            onAnalysisComplete={handleVisionComplete}
+                            onScanningStateChange={setIsAnalyzing}
+                        />
+                    )}
                 </div>
             )}
 
@@ -195,10 +259,26 @@ export default function DashboardPage() {
                         <div className="space-y-6">
                             <div className="flex items-center gap-3">
                                 <h2 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-600">
-                                    Clinical Correlations
+                                    {mode === "imaging" ? "Imaging Analytics" : "Clinical Correlations"}
                                 </h2>
                                 <div className="flex-1 h-px bg-slate-200/50 dark:bg-slate-800/50" />
                             </div>
+                            
+                            {mode === "imaging" && visionResult && (
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pb-6">
+                                    {[
+                                        { label: "Precision", value: (visionResult.metrics.precision * 100).toFixed(1) + "%" },
+                                        { label: "Accuracy", value: (visionResult.metrics.accuracy * 100).toFixed(1) + "%" },
+                                        { label: "Recall", value: (visionResult.metrics.recall * 100).toFixed(1) + "%" }
+                                    ].map((m) => (
+                                        <div key={m.label} className="p-6 rounded-3xl neon-border glass-card flex flex-col items-center justify-center space-y-2">
+                                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">{m.label}</p>
+                                            <p className="text-3xl font-black italic text-primary">{m.value}</p>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+
                             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                                 {predictions.map((prediction, i) => (
                                     <PredictionCard

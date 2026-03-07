@@ -15,8 +15,9 @@ import json
 import os
 import numpy as np
 import joblib
-from flask import Flask, request, jsonify
 from flask_cors import CORS
+import base64
+from vision_engine import VisionEngine
 
 app = Flask(__name__)
 CORS(app)
@@ -28,6 +29,7 @@ META_PATH = os.path.join(MODEL_DIR, "model_meta.json")
 
 model = None
 meta = None
+vision_engine = VisionEngine()
 
 
 def load_model():
@@ -137,6 +139,33 @@ def predict():
         "aiAnalysis": ai_analysis,
         "model_metrics": meta["metrics"],
     })
+
+
+@app.route("/predict-image", methods=["POST"])
+def predict_image():
+    """Predicts from uploaded medical image (Base64)."""
+    data = request.get_json()
+    image_b64 = data.get("image")
+    scan_type = data.get("scan_type", "chest_xray")
+
+    if not image_b64:
+        return jsonify({"error": "No image data provided"}), 400
+
+    try:
+        # Extract base64 content if it contains a prefix
+        if "," in image_b64:
+            image_b64 = image_b64.split(",")[1]
+            
+        image_bytes = base64.b64decode(image_b64)
+    except Exception as e:
+        return jsonify({"error": f"Invalid base64 encoding: {str(e)}"}), 400
+
+    result = vision_engine.analyze(image_bytes, scan_type=scan_type)
+    
+    if "error" in result:
+        return jsonify(result), 400
+
+    return jsonify(result)
 
 
 @app.route("/metrics", methods=["GET"])

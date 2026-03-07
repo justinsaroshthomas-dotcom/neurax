@@ -15,7 +15,7 @@ Built for the exact needs of modern healthcare interoperability and speed, Neura
 
 ---
 
-## 🚀 Multimodal Architecture
+## Multimodal Architecture
 
 NeuraMed operates on a dual-engine architecture, allowing for a comprehensive diagnostic profile that combines clinical text with visual evidence.
 
@@ -33,7 +33,7 @@ NeuraMed operates on a dual-engine architecture, allowing for a comprehensive di
 
 ---
 
-## ⚕️ Clinical Performance Metrics
+## Clinical Performance Metrics
 
 For absolute peak performance, our models are optimized for 100% reliability on verified datasets.
 
@@ -43,7 +43,7 @@ For absolute peak performance, our models are optimized for 100% reliability on 
 
 ---
 
-## 🛠️ Tech Stack & Dependencies
+## Tech Stack & Dependencies
 
 - **Front-End**: Next.js 16 (Turbopack), React 19, Tailwind CSS v4, Shadcn UI.
 - **AI Core**: Python 3.11+, TensorFlow (CPU), OpenCV, Scikit-learn, Numpy.
@@ -71,7 +71,7 @@ The browser will automatically be available at `http://localhost:3000`.
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```text
 disease/
@@ -94,6 +94,10 @@ disease/
 │   └── lib/                 # Utility connections (Auth, Supabase)
 │
 ├── start_neuramed.bat       # 1-Click Automation Script
+├── requirements.txt         # Multimodal AI Dependencies
+└── package.json             # Node.js UI Dependencies
+```
+ed.bat       # 1-Click Automation Script
 ├── requirements.txt         # Multimodal AI Dependencies
 └── package.json             # Node.js UI Dependencies
 ```

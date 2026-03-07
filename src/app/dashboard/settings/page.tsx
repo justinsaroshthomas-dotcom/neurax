@@ -22,7 +22,7 @@ export default function SettingsPage() {
     }, []);
 
     const handleClearHistory = () => {
-        localStorage.removeItem("neuramed_history");
+        localStorage.removeItem("neurax_history");
         setHistoryCount(0);
     };
 

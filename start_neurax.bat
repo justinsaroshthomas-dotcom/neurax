@@ -3,7 +3,7 @@ color 0A
 title Neurax - IBM Team 63
 
 echo ==================================================================
-echo   NEURAMED SYSTEM - IBM TEAM 63
+echo   NEURAX SYSTEM - IBM TEAM 63
 echo   Lead: Justin Thomas
 echo   Team: Devika NS, Krishnajith Vijay, Sivaranjps
 echo ==================================================================

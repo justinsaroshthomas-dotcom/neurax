@@ -8,7 +8,7 @@ Zero data retention · Local inference · EfficientNet-B3 backbone
 ## Architecture
 
 ```
-neuramed/
+neurax/
 ├── backend/                     ← Python FastAPI ML server
 │   ├── main.py                  ← FastAPI app, /analyze/{module} endpoints
 │   ├── models/
@@ -45,7 +45,7 @@ neuramed/
 │   ├── model.joblib
 │   └── model_meta.json
 │
-└── start_neuramed.bat           ← One-click launcher
+└── start_neurax.bat             ← One-click launcher
 ```
 
 ---

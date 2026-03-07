@@ -300,7 +300,7 @@ def determine_severity(disease_name):
 
 def train_model():
     print("==========================================================")
-    print("  NeuraMed ML (v4) — Deep Neural Network Array (IBM Team 63)")
+    print("  Neurax ML — Deep Neural Network Array (IBM Team 63)")
     print("==========================================================")
     print()
 
@@ -353,7 +353,7 @@ def train_model():
     
     print()
     print("-" * 60)
-    print("  IBM TEAM 63 PERFORMANCE METRICS (v4.0):")
+    print("  IBM TEAM 63 PERFORMANCE METRICS:")
     print("-" * 60)
     print(f"  Target Classes: {len(diseases)} Distinct Diseases")
     print(f"  Accuracy:       {accuracy:.4f}  ({accuracy * 100:.2f}%)")

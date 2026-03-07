@@ -1,4 +1,4 @@
-// NeuraMed v5.0 — Imaging TypeScript Types
+// Neurax — Imaging TypeScript Types
 
 export type ModuleId =
   | "brain_tumor"

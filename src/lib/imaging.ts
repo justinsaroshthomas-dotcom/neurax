@@ -1,4 +1,4 @@
-// NeuraMed v5.0 — Module Config + API Client
+// Neurax — Module Config + API Client
 
 import type { ModuleId, ModuleMeta, AnalysisResponse, HealthResponse } from "@/types/imaging";
 

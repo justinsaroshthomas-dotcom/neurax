@@ -21,7 +21,23 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider publishableKey="pk_test_cHJvbW90ZWQtdXJjaGluLTQ3LmNsZXJrLmFjY291bnRzLmRldiQ">
+    <ClerkProvider 
+      publishableKey="pk_test_cHJvbW90ZWQtdXJjaGluLTQ3LmNsZXJrLmFjY291bnRzLmRldiQ"
+      localization={{
+        signIn: {
+          start: {
+            title: "Sign in to Neurax",
+            subtitle: "to continue to the clinical portal"
+          }
+        },
+        signUp: {
+          start: {
+            title: "Create Neurax Account",
+            subtitle: "to access the intelligence matrix"
+          }
+        }
+      }}
+    >
       <html lang="en" suppressHydrationWarning className={`${outfit.variable} ${inter.variable}`}>
         <body className="antialiased font-sans" suppressHydrationWarning>
           <ThemeProvider

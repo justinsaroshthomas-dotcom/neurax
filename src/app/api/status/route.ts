@@ -35,7 +35,7 @@ export async function GET() {
             status: "Online",
             connected: true,
             mode: "active",
-            description: "Weighted disease-symptom matching (18 diseases · 50 symptoms)",
+            description: "Deep Neural Network matching (41 diseases · 131 symptoms)",
         },
         {
             name: "Local Storage",

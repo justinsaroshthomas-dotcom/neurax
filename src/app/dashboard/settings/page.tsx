@@ -32,6 +32,9 @@ export default function SettingsPage() {
         { id: "emerald", name: "Emerald", color: "#00B140", desc: "Clinical Precision" },
         { id: "midnight", name: "Midnight", color: "#8b5cf6", desc: "Neural Deep Dark" },
         { id: "cyber", name: "Cyber", color: "#f59e0b", desc: "Cybernetic Gold" },
+        { id: "corporate", name: "Corporate", color: "#2563eb", desc: "IBM Tactical Blue" },
+        { id: "ultraviolet", name: "Ultraviolet", color: "#7c3aed", desc: "Digital Violet" },
+        { id: "crimson", name: "Crimson", color: "#dc2626", desc: "Emergency Red" },
     ];
 
     return (
@@ -151,12 +154,12 @@ export default function SettingsPage() {
                         <div className="pt-8 space-y-6 border-t border-slate-200/50 dark:border-slate-800/50">
                             <div className="flex items-center justify-between">
                                 <div className="text-center flex-1">
-                                    <p className="text-2xl font-black tracking-tighter text-primary italic">505+</p>
+                                    <p className="text-2xl font-black tracking-tighter text-primary italic">41</p>
                                     <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mt-1">Diseases</p>
                                 </div>
                                 <div className="w-px h-10 bg-slate-200/50 dark:bg-slate-800/50" />
                                 <div className="text-center flex-1">
-                                    <p className="text-2xl font-black tracking-tighter text-primary italic">132</p>
+                                    <p className="text-2xl font-black tracking-tighter text-primary italic">131</p>
                                     <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mt-1">Symptoms</p>
                                 </div>
                             </div>

@@ -24,7 +24,7 @@ export default function RootLayout({
           <ThemeProvider
             attribute="data-theme"
             defaultTheme="emerald"
-            themes={["light", "dark", "emerald", "midnight", "cyber"]}
+            themes={["light", "dark", "emerald", "midnight", "cyber", "ultraviolet", "crimson", "corporate"]}
             enableSystem={false}
             disableTransitionOnChange
           >

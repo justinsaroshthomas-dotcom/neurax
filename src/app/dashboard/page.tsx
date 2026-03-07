@@ -5,9 +5,14 @@ import { SymptomPicker } from "@/components/prediction/SymptomPicker";
 import { PredictionCard } from "@/components/prediction/PredictionCard";
 import { ScanningAnimation } from "@/components/prediction/ScanningAnimation";
 import { AIInsight } from "@/components/prediction/AIInsight";
-import { ImageScanner } from "@/components/prediction/ImageScanner";
+import { ModuleSelector } from "@/components/imaging/ModuleSelector";
+import { UploadZone } from "@/components/imaging/UploadZone";
+import { AnalysisPanel } from "@/components/imaging/AnalysisPanel";
+import { StatusBar } from "@/components/imaging/StatusBar";
+import { analyzeImage } from "@/lib/imaging";
 import { addHistoryEntry } from "@/lib/history-store";
 import type { AIAnalysis } from "@/lib/groq";
+import type { ModuleId, AnalysisResponse } from "@/types/imaging";
 
 export interface PredictionResult {
     disease: string;
@@ -33,6 +38,8 @@ export default function DashboardPage() {
     const [error, setError] = useState<string | null>(null);
     const [mode, setMode] = useState<"symptoms" | "imaging">("symptoms");
     const [visionResult, setVisionResult] = useState<any | null>(null);
+    const [selectedModule, setSelectedModule] = useState<ModuleId>("brain_tumor");
+    const [imagingResult, setImagingResult] = useState<AnalysisResponse | null>(null);
 
     const handlePredict = async () => {
         if (selectedSymptoms.length === 0) return;
@@ -85,33 +92,42 @@ export default function DashboardPage() {
     const handleVisionComplete = (result: any) => {
         setVisionResult(result);
         
-        // Map vision result to general prediction format for UI consistency
+        // Support both legacy (Flask) and new (FastAPI) response formats
+        const isV5 = !!result.report;
+        const prediction = isV5 ? result.result?.predicted_class : result.prediction;
+        const confidence = isV5 ? (result.result?.confidence ?? 0) / 100 : result.confidence;
+        const findings = isV5 ? result.report?.clinical_note : result.findings;
+        const solutions = isV5
+            ? [result.report?.action, ...(result.report?.differentials?.map((d: any) => `${d.class}: ${d.probability}%`) ?? [])]
+            : result.solutions;
+
         const mappedPrediction: PredictionResult = {
-            disease: result.prediction,
-            confidence: result.confidence,
-            severity: "high", // Default for detected anomalies
-            description: result.findings,
-            precautions: result.solutions,
+            disease: prediction,
+            confidence: confidence,
+            severity: "high",
+            description: findings ?? "",
+            precautions: solutions ?? [],
             matchedSymptoms: ["Imaging Analysis"]
         };
         
         setPredictions([mappedPrediction]);
         
         setAiAnalysis({
-            summary: result.findings,
-            riskAssessment: "Based on local CNN analysis of the clinical scan.",
-            recommendedActions: result.solutions,
-            disclaimer: "Local Vision Engine analysis. Precision: " + (result.metrics.precision * 100).toFixed(1) + "%"
+            summary: findings ?? "Analysis complete.",
+            riskAssessment: isV5 
+                ? `${result.report?.urgency?.label ?? "Analysis"} — ${result.report?.action ?? ""}`
+                : "Based on local CNN analysis of the clinical scan.",
+            recommendedActions: solutions ?? [],
+            disclaimer: isV5 ? result.report?.disclaimer : "Local Vision Engine analysis."
         });
 
-        // Save to history
         addHistoryEntry({
-            symptoms: ["Clinical Scan: " + result.prediction],
+            symptoms: ["Clinical Scan: " + prediction],
             predictions: [mappedPrediction],
-            topDisease: result.prediction,
-            topConfidence: result.confidence,
+            topDisease: prediction,
+            topConfidence: confidence,
             topSeverity: "high",
-            aiSummary: result.findings
+            aiSummary: findings
         });
     };
 
@@ -120,6 +136,7 @@ export default function DashboardPage() {
         setPredictions(null);
         setAiAnalysis(null);
         setVisionResult(null);
+        setImagingResult(null);
         setError(null);
     };
 
@@ -229,11 +246,28 @@ export default function DashboardPage() {
                                 </div>
                             </>
                         ) : (
-                            <ImageScanner 
-                                onAnalysisComplete={handleVisionComplete}
-                                onScanningStateChange={setIsAnalyzing}
-                                onError={setError}
-                            />
+                            <div className="space-y-6">
+                                <StatusBar />
+                                <ModuleSelector selected={selectedModule} onSelect={setSelectedModule} />
+                                <UploadZone
+                                    module={selectedModule}
+                                    isAnalyzing={isAnalyzing}
+                                    onFileSelected={async (file) => {
+                                        setIsAnalyzing(true);
+                                        setError(null);
+                                        setImagingResult(null);
+                                        try {
+                                            const result = await analyzeImage(selectedModule, file);
+                                            setImagingResult(result);
+                                            handleVisionComplete(result);
+                                        } catch (err: any) {
+                                            setError(err?.message ?? "Vision Core analysis failed");
+                                        } finally {
+                                            setIsAnalyzing(false);
+                                        }
+                                    }}
+                                />
+                            </div>
                         )
                     )}
                 </div>
@@ -258,6 +292,11 @@ export default function DashboardPage() {
 
                     {/* AI Insight */}
                     {aiAnalysis && <AIInsight analysis={aiAnalysis} />}
+
+                    {/* v5.0 AnalysisPanel for FastAPI imaging results */}
+                    {mode === "imaging" && imagingResult && (
+                        <AnalysisPanel data={imagingResult} />
+                    )}
 
                     {/* Prediction Cards */}
                     {predictions && predictions.length > 0 && (

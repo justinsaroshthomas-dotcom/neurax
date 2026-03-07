@@ -1,158 +1,182 @@
-# NeuraMed v5.0
+# NeuraMed v5.0 — Vision Core
 
-## Advanced Multimodal Medical Intelligence Platform
-
-NeuraMed is a locally-running medical diagnostic intelligence system supporting both clinical text analysis (505+ diseases, 131 symptoms) and a state-of-the-art multimodal vision engine for radiology imaging. All processing is local-first with zero data retention.
-
----
-
-## Multimodal Architecture
-
-**Symptom Intelligence Engine**
-
-- 505+ disease classifications across 131 symptoms
-- MLP-based deep learning model (99.9% accuracy, 99.9% precision)
-- Trained on expanded Kaggle/UCI symptom-disease datasets
-
-**Visual Imaging Core (v5.0)**
-
-Six imaging modules derived from peer-reviewed Kaggle research:
-
-| Module | Architecture | Dataset | Accuracy |
-|---|---|---|---|
-| Chest X-Ray (COVID/Pneumonia) | ResNet50 Transfer Learning | COVID-19 Radiography DB (21,165 images) | 98.4% |
-| Lung Disease Panel | XGBoost + RandomForest + AdaBoost Ensemble | Lung Cancer Prediction Dataset (24 features) | 99.9% |
-| Brain Tumor MRI | CNN (Conv2D + MaxPool + Dropout) | Brain Tumor MRI Dataset (7,023 images) | 99.0% |
-| Alzheimer's MRI | DenseNet + Transfer Learning | Alzheimer's MRI Dataset (6,400 images) | 97.8% |
-| Lumbar Spine (RSNA) | EfficientNetB0 + Grad-CAM | RSNA 2024 Lumbar Spine Competition | 94.5% |
-| Neuroimaging Panel | CNN + EDA Feature Selection | fMRI/sMRI Neuroimaging Dataset | 96.2% |
-
-**Kaggle Research Sources**
-- syedali110/lungs-disease-prediction-xgboost-adaboost-and-rf
-- yousefmohamed20/brain-tumor-mri-accuracy-99
-- aashidutt3/alzheimer-classification-with-mri-images
-- satyaprakashshukl/rsna-lumbar-spine-analysis
-- saife245/neuroimaging-in-depth-understanding-eda-model
+**6-module medical imaging intelligence platform**  
+Zero data retention · Local inference · EfficientNet-B3 backbone
 
 ---
 
-## Clinical Performance Metrics
-
-| Engine | Accuracy | Precision | Recall | F1 |
-|---|---|---|---|---|
-| Symptom MLP | 99.9% | 99.9% | 99.9% | 99.9% |
-| Brain Tumor CNN | 99.0% | 98.7% | 99.1% | 98.9% |
-| Lung Ensemble | 99.9% | 99.9% | 99.8% | 99.9% |
-| Alzheimer's MRI | 97.8% | 97.5% | 97.7% | 97.6% |
-| Chest X-Ray | 98.4% | 98.1% | 98.5% | 98.3% |
-| Neuroimaging | 96.2% | 95.8% | 96.0% | 95.9% |
-| Lumbar Spine | 94.5% | 94.1% | 94.3% | 94.2% |
-
----
-
-## Tech Stack & Dependencies
-
-**Frontend**
-- Next.js 16 (Turbopack), React 19, TypeScript
-- Tailwind CSS v4, Shadcn UI, next-themes
-- Clerk Authentication
-
-**Database**
-- Supabase (PostgreSQL)
-
-**ML / Vision Core**
-- Python 3.11+, Flask, Flask-CORS
-- scikit-learn, joblib, numpy
-- OpenCV (CLAHE preprocessing), Pillow
-- XGBoost (lung ensemble)
-
----
-
-## Project Structure
+## Architecture
 
 ```
 neuramed/
-├── src/
-│   ├── app/
-│   │   ├── dashboard/page.tsx      # Multimodal intelligence dashboard
-│   │   ├── settings/               # Control center
-│   │   └── api/                    # Next.js API routes
-│   ├── components/
-│   │   ├── prediction/
-│   │   │   ├── ImageScanner.tsx    # v5.0 scan selector + upload UI
-│   │   │   ├── PredictionCard.tsx  # Disease result cards
-│   │   │   ├── ScanningAnimation.tsx
-│   │   │   └── SymptomPicker.tsx
-│   │   └── ui/
-│   └── lib/
-├── ml/
-│   ├── vision_engine.py            # v5.0 multimodal vision core (6 modules)
-│   ├── server.py                   # Flask prediction server
-│   ├── train.py                    # MLP training pipeline
-│   ├── model.joblib                # Trained symptom model
-│   ├── model_meta.json             # Metadata and metrics
+├── backend/                     ← Python FastAPI ML server
+│   ├── main.py                  ← FastAPI app, /analyze/{module} endpoints
+│   ├── models/
+│   │   ├── base_model.py        ← EfficientNet-B3 base class
+│   │   ├── brain_tumor.py       ← Module 01: MRI → 4-class tumor
+│   │   ├── alzheimers.py        ← Module 02: MRI → CDR staging
+│   │   ├── lung_disease.py      ← Module 03: CXR → 4-class lung
+│   │   ├── lumbar_spine.py      ← Module 04: X-Ray/MRI → spine
+│   │   ├── neuroimaging.py      ← Module 05: CT/MRI → neuro emergency
+│   │   ├── covid_xray.py        ← Module 06: CXR → COVID-19
+│   │   └── registry.py          ← Module metadata
+│   ├── utils/
+│   │   ├── preprocessing.py     ← Image → normalised tensor
+│   │   └── report.py            ← Structured radiology report builder
+│   ├── weights/                 ← Place .pth fine-tuned weights here
 │   └── requirements.txt
-├── public/
-├── start_neuramed.bat              # One-click launcher
-└── README.md
+│
+├── src/                         ← Next.js 16 UI
+│   ├── app/
+│   │   ├── dashboard/page.tsx   ← Multimodal intelligence dashboard
+│   │   └── settings/            ← Control center
+│   ├── components/imaging/
+│   │   ├── ModuleSelector.tsx   ← 6-module grid switcher
+│   │   ├── UploadZone.tsx       ← Drag-and-drop scan upload
+│   │   ├── AnalysisPanel.tsx    ← Full results + probability chart
+│   │   └── StatusBar.tsx        ← API health indicator
+│   ├── lib/imaging.ts           ← API client + module config
+│   └── types/imaging.ts         ← TypeScript types
+│
+├── ml/                          ← Symptom ML engine (505 diseases)
+│   ├── server.py                ← Flask prediction server
+│   ├── train.py                 ← MLP training pipeline
+│   ├── vision_engine.py         ← Legacy vision engine (kept for compat)
+│   ├── model.joblib
+│   └── model_meta.json
+│
+└── start_neuramed.bat           ← One-click launcher
 ```
 
 ---
 
-## Setup & Local Deployment
+## Imaging Modules
 
-**Prerequisites:** Node.js 18+, Python 3.11+
+| # | Module | Modality | Classes | Dataset |
+|---|--------|----------|---------|---------|
+| 01 | Brain Tumor | MRI | No Tumor / Glioma / Meningioma / Pituitary | Kaggle Brain Tumor MRI · 7,023 |
+| 02 | Alzheimer's | MRI | Non Demented / Very Mild / Mild / Moderate | ADNI + Kaggle · 6,400 |
+| 03 | Lung Disease | Chest X-Ray | Normal / Pneumonia / Lung Cancer / TB | NIH ChestX-ray14 · 112,120 |
+| 04 | Lumbar Spine | X-Ray / MRI | Normal / Disc Herniation / Spondylosis / Stenosis | SpineWeb · 4,200 |
+| 05 | Neuroimaging | CT / MRI | Normal / Stroke / MS / Hemorrhage | ISLES 2022 · 3,800 |
+| 06 | COVID-19 X-Ray | Chest X-Ray | Normal / COVID-19 / Viral / Bacterial | COVID-19 DB · 21,165 |
 
-**1. Install Frontend Dependencies**
+---
+
+## Setup
+
+### 1. Backend (Vision Core)
+
 ```bash
-npm install
+cd backend
+python -m venv venv && venv\Scripts\activate
+pip install -r requirements.txt
+uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
-**2. Install ML Dependencies**
+**GPU support** (recommended):
+```bash
+pip install torch==2.5.1+cu121 torchvision==0.20.1+cu121 --index-url https://download.pytorch.org/whl/cu121
+```
+
+**Add fine-tuned weights:**  
+Place `.pth` files in `backend/weights/` named after the module:
+```
+weights/
+  brain_tumor.pth
+  alzheimers.pth
+  lung_disease.pth
+  lumbar_spine.pth
+  neuroimaging.pth
+  covid_xray.pth
+```
+If no weights are found, ImageNet-pretrained EfficientNet-B3 is used.
+
+### 2. Symptom Engine (Legacy)
+
 ```bash
 pip install -r ml/requirements.txt
-```
-
-**3. Train the Symptom Model**
-```bash
 python ml/train.py
-```
-
-**4. Start the Vision Engine Server**
-```bash
 python ml/server.py
 ```
 
-**5. Start the Dashboard**
+### 3. Frontend
+
 ```bash
+npm install
 npm run dev
 ```
 
-Dashboard: `http://localhost:3000`
-ML API: `http://localhost:5000`
-
-**Or use the one-click launcher:**
-```bash
-start_neuramed.bat
-```
+Open [http://localhost:3000](http://localhost:3000)
 
 ---
 
 ## API Reference
 
-| Method | Endpoint | Description |
-|---|---|---|
-| GET | `/health` | Server and model health check |
-| GET | `/scan-types` | All supported imaging modules |
-| GET | `/metrics` | Symptom model performance metrics |
-| POST | `/predict` | Symptom-based disease prediction |
-| POST | `/predict-image` | Imaging-based visual diagnosis |
+```
+GET  /health                       Health check + active modules
+GET  /modules                      Module metadata
+POST /analyze/{module}             Single-module inference
+POST /analyze/batch                Multi-module batch inference
+```
+
+**Example:**
+```bash
+curl -X POST http://localhost:8000/analyze/brain_tumor -F "file=@brain_mri.jpg"
+```
+
+**Response:**
+```json
+{
+  "module": "brain_tumor",
+  "result": {
+    "predicted_class": "Glioma",
+    "confidence": 94.7,
+    "probabilities": [...],
+    "urgency": "critical",
+    "clinical_note": "...",
+    "inference_ms": 42.1
+  },
+  "report": {
+    "finding": "Glioma",
+    "confidence_pct": 94.7,
+    "urgency": { "label": "CRITICAL", "color": "#ff4d6a" },
+    "action": "Immediate clinical review required.",
+    "clinical_note": "...",
+    "disclaimer": "FOR CLINICAL DECISION SUPPORT ONLY..."
+  },
+  "retained": false
+}
+```
 
 ---
 
-## Important Notes
+## Zero Data Retention
 
-NeuraMed processes all medical data locally. No imaging data, symptom data, or clinical records are transmitted to external services. This system is for educational and research purposes only and does not replace qualified clinical practitioners.
+- All images are processed in-memory only
+- No scan data is written to disk, database, or logs
+- Image bytes are explicitly deleted after inference
+- CORS restricted to localhost:3000 by default
+
+---
+
+## Fine-tuning Your Own Weights
+
+Each model uses EfficientNet-B3 with a custom head. To fine-tune:
+
+```python
+from models.brain_tumor import BrainTumorModel
+import torch
+
+model = BrainTumorModel(device="cuda")
+net = model._model
+# Train with your dataset...
+torch.save(net.state_dict(), "weights/brain_tumor.pth")
+```
+
+---
+
+> NeuraMed is a clinical decision support tool. All AI findings must be reviewed and verified by a qualified radiologist or clinician before clinical action. Not a substitute for professional medical judgment.
 
 ---
 

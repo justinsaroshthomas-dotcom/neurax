@@ -97,10 +97,6 @@ disease/
 ├── requirements.txt         # Multimodal AI Dependencies
 └── package.json             # Node.js UI Dependencies
 ```
-ed.bat       # 1-Click Automation Script
-├── requirements.txt         # Multimodal AI Dependencies
-└── package.json             # Node.js UI Dependencies
-```
 
 ---
 

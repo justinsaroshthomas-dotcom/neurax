@@ -103,7 +103,7 @@ export default function Home() {
               </span>
               <span className="flex items-center gap-1">
                 <svg className="w-4 h-4 text-[#00B140]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" /></svg>
-                505+ Diseases Supported
+                505 Diseases Supported
               </span>
             </div>
           </form>
@@ -120,7 +120,7 @@ export default function Home() {
             NeuraMed is an advanced AI-assisted medical diagnosis platform developed by IBM Team 63. We use advanced Deep Neural Networks (MLP/CNN) trained on Kaggle/UCI datasets to provide rapid differential analysis from symptom descriptions and clinical histories.
           </p>
           <p className="text-slate-600 text-lg leading-relaxed">
-            The goal is to enhance — not replace — clinical judgment: save time, neutralize cognitive biases, and raise the quality of clinical reasoning from the first moment. Key features: intelligent differential diagnosis with prioritized lists of possible diagnoses; 505+ disease classes supported; secure architecture with automatic anonymization of sensitive data.
+            The goal is to enhance — not replace — clinical judgment: save time, neutralize cognitive biases, and raise the quality of clinical reasoning from the first moment. Key features: intelligent differential diagnosis with prioritized lists of possible diagnoses; 505 disease classes supported; secure architecture with automatic anonymization of sensitive data.
           </p>
         </div>
 

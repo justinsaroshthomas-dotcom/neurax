@@ -147,8 +147,8 @@ export default function DashboardLayout({
                                         </span>
                                     </div>
                                     <div className="flex items-center justify-between text-[10px] text-gray-500">
-                                        <span>Diseases: 505+</span>
-                                        <span>Symptoms: 132</span>
+                                        <span>Diseases: 505</span>
+                                        <span>Symptoms: 131</span>
                                     </div>
                                 </div>
                             </SidebarGroupContent>

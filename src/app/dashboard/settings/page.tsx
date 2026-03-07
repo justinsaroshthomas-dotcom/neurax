@@ -154,7 +154,7 @@ export default function SettingsPage() {
                         <div className="pt-8 space-y-6 border-t border-slate-200/50 dark:border-slate-800/50">
                             <div className="flex items-center justify-between">
                                 <div className="text-center flex-1">
-                                    <p className="text-2xl font-black tracking-tighter text-primary italic">41</p>
+                                    <p className="text-2xl font-black tracking-tighter text-primary italic">505</p>
                                     <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mt-1">Diseases</p>
                                 </div>
                                 <div className="w-px h-10 bg-slate-200/50 dark:bg-slate-800/50" />

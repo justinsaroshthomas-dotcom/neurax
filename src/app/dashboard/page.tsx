@@ -101,33 +101,39 @@ export default function DashboardPage() {
                 <div className="space-y-1">
                     <h1 className="text-4xl font-black tracking-tighter flex items-center gap-3">
                          <span className="text-primary">Neurax</span>{" "}
-                         <span className="text-slate-950 dark:text-slate-100 italic font-medium">Core</span>
+                         <span className="text-slate-950 dark:text-slate-100 italic font-medium">Intelligence</span>
                     </h1>
                     <p className="text-[10px] font-black text-slate-500 flex items-center gap-2 uppercase tracking-[0.2em]">
-                        <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                        <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse shadow-[0_0_8px_var(--neon)]" />
                         SYSTEM: CLINICAL ENGINE ACTIVE
                     </p>
                 </div>
 
                 {!hasResults && !isAnalyzing && (
-                    <div className="flex bg-slate-100 dark:bg-slate-900/50 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-inner">
+                    <div className="flex bg-slate-100/50 dark:bg-slate-900/40 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-800/50 backdrop-blur-md shadow-inner">
                         <button
                             onClick={() => setTab("diagnostics")}
-                            className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-[0.15em] transition-all duration-300
+                            className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-[0.15em] transition-all duration-300 relative overflow-hidden group
                                 ${tab === "diagnostics" 
-                                    ? "bg-primary text-white shadow-[0_0_15px_rgba(0,177,64,0.3)]" 
-                                    : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"}`}
+                                    ? "bg-primary text-white shadow-[0_0_20px_rgba(0,177,64,0.4)] scale-[1.02]" 
+                                    : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-slate-200/50 dark:hover:bg-slate-800/50"}`}
                         >
-                            Diagnostics
+                            <span className="relative z-10">Clinical Scan</span>
+                            {tab === "diagnostics" && (
+                                <div className="absolute inset-0 bg-gradient-to-tr from-white/20 to-transparent opacity-50" />
+                            )}
                         </button>
                         <button
                             onClick={() => setTab("encyclopedia")}
-                            className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-[0.15em] transition-all duration-300
+                            className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-[0.15em] transition-all duration-300 relative overflow-hidden group
                                 ${tab === "encyclopedia" 
-                                    ? "bg-primary text-white shadow-[0_0_15px_rgba(0,177,64,0.3)]" 
-                                    : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"}`}
+                                    ? "bg-primary text-white shadow-[0_0_20px_rgba(0,177,64,0.4)] scale-[1.02]" 
+                                    : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-slate-200/50 dark:hover:bg-slate-800/50"}`}
                         >
-                            Encyclopedia
+                            <span className="relative z-10">Medical Vault</span>
+                            {tab === "encyclopedia" && (
+                                <div className="absolute inset-0 bg-gradient-to-tr from-white/20 to-transparent opacity-50" />
+                            )}
                         </button>
                     </div>
                 )}

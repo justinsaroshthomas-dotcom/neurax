@@ -26,10 +26,10 @@ export const NeuraxEncyclopedia: React.FC = () => {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h2 className="text-2xl font-black tracking-tight text-slate-900 dark:text-slate-100">
-                        Neurax <span className="text-primary italic">Encyclopedia</span>
+                        Medical <span className="text-primary italic">Archive</span>
                     </h2>
                     <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mt-1">
-                        Local Clinical Reference Matrix
+                        Neural Clinical Reference Matrix
                     </p>
                 </div>
 
@@ -39,26 +39,38 @@ export const NeuraxEncyclopedia: React.FC = () => {
                         placeholder="Search matrix..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        className="w-full bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-primary/50 transition-all font-medium"
+                        className="w-full bg-slate-100/50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800/50 rounded-xl px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/50 transition-all font-medium backdrop-blur-sm"
                     />
-                    <svg className="absolute right-3 top-2.5 w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg className="absolute right-3 top-3 w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
                 </div>
             </div>
 
-            <div className="flex bg-slate-100 dark:bg-slate-900/50 p-1 rounded-xl w-fit border border-slate-200 dark:border-slate-800">
+            <div className="flex bg-slate-100/50 dark:bg-slate-900/40 p-1 rounded-xl w-fit border border-slate-200 dark:border-slate-800/50 backdrop-blur-md">
                 <button 
                     onClick={() => setActiveTab("symptoms")}
-                    className={`px-5 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'symptoms' ? 'bg-primary text-white shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                    className={`px-5 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all duration-300 relative overflow-hidden group
+                        ${activeTab === 'symptoms' 
+                            ? 'bg-primary text-white shadow-[0_0_15px_rgba(0,177,64,0.3)]' 
+                            : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-white/50 dark:hover:bg-slate-800/50'}`}
                 >
-                    Symptoms [{seedSymptoms.length}]
+                    <span className="relative z-10">Symptoms [{seedSymptoms.length}]</span>
+                    {activeTab === 'symptoms' && (
+                        <div className="absolute inset-0 bg-gradient-to-tr from-white/20 to-transparent opacity-50" />
+                    )}
                 </button>
                 <button 
                     onClick={() => setActiveTab("diseases")}
-                    className={`px-5 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'diseases' ? 'bg-primary text-white shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                    className={`px-5 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all duration-300 relative overflow-hidden group
+                        ${activeTab === 'diseases' 
+                            ? 'bg-primary text-white shadow-[0_0_15px_rgba(0,177,64,0.3)]' 
+                            : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-white/50 dark:hover:bg-slate-800/50'}`}
                 >
-                    Diseases [505]
+                    <span className="relative z-10">Diseases [505]</span>
+                    {activeTab === 'diseases' && (
+                        <div className="absolute inset-0 bg-gradient-to-tr from-white/20 to-transparent opacity-50" />
+                    )}
                 </button>
             </div>
 

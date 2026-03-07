@@ -89,50 +89,76 @@ export default function DashboardPage() {
     const hasResults = predictions !== null;
 
     return (
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-5xl mx-auto space-y-10 animate-in fade-in duration-1000">
             {/* Header — always visible */}
-            <div className="mb-8">
-                <h1 className="text-2xl font-bold tracking-tight">
-                    <span className="neon-text">Symptom</span>{" "}
-                    <span className="text-foreground">Checker</span>
-                </h1>
-                <p className="text-sm text-[var(--muted-foreground)] mt-1">
-                    {hasResults
-                        ? "Here are your results based on the symptoms you selected."
-                        : "Select your symptoms, then tap Analyze."
-                    }
-                </p>
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-2 border-b border-slate-200/50 dark:border-slate-800/50">
+                <div className="space-y-1">
+                    <h1 className="text-3xl font-black tracking-tighter">
+                        <span className="text-primary drop-shadow-[0_0_8px_var(--neon-dim)]">Symptom</span>{" "}
+                        <span className="text-slate-900 dark:text-slate-100">Intelligence</span>
+                    </h1>
+                    <p className="text-sm text-slate-500 dark:text-slate-500 font-medium">
+                        {hasResults
+                            ? "Neural analysis complete. Review your clinical profile below."
+                            : "Input your symptoms for a high-precision medical analysis."
+                        }
+                    </p>
+                </div>
+
+                {hasResults && (
+                    <button
+                        onClick={handleNewAnalysis}
+                        className="px-6 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest
+                            bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400
+                            border border-slate-200 dark:border-slate-800
+                            hover:bg-primary/10 hover:text-primary hover:border-primary/20
+                            transition-all duration-300 flex items-center gap-2 shadow-sm"
+                    >
+                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" strokeWidth="3" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                        </svg>
+                        New Analysis
+                    </button>
+                )}
             </div>
 
             {/* ── STEP 1: Select Symptoms ── */}
             {!hasResults && !isAnalyzing && (
-                <div className="space-y-6">
+                <div className="space-y-10">
                     <SymptomPicker
                         selectedSymptoms={selectedSymptoms}
                         onSymptomsChange={setSelectedSymptoms}
                     />
 
-                    {/* Analyze Button — prominent, centered */}
-                    <div className="flex flex-col items-center gap-3 pt-2">
+                    {/* Analyze Button — premium, centered */}
+                    <div className="flex flex-col items-center gap-4 pt-4">
                         <button
                             id="predict-button"
                             onClick={handlePredict}
                             disabled={selectedSymptoms.length === 0}
-                            className="w-full max-w-xs px-8 py-4 rounded-2xl font-semibold text-base
-                                bg-[var(--neon)] text-[var(--cyber-bg)]
-                                hover:shadow-[0_0_30px_rgba(0,240,255,0.4)]
-                                disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:shadow-none
-                                transition-all duration-300 active:scale-[0.98]
-                                flex items-center justify-center gap-2"
+                            className="group relative w-full max-w-sm px-8 py-5 rounded-2xl font-black text-lg uppercase tracking-widest
+                                bg-gradient-to-br from-primary to-primary/80 text-white
+                                shadow-[0_4px_20px_rgba(0,177,64,0.3)] hover:shadow-[0_8px_30px_rgba(0,177,64,0.5)]
+                                dark:shadow-[0_4px_20px_rgba(0,177,64,0.15)] dark:hover:shadow-[0_8px_40px_rgba(0,177,64,0.3)]
+                                disabled:opacity-20 disabled:cursor-not-allowed disabled:hover:shadow-none
+                                transition-all duration-300 active:scale-[0.97]
+                                flex items-center justify-center gap-3 overflow-hidden"
                         >
-                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
+                            {/* Inner glow effect */}
+                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+                            
+                            <svg className="w-6 h-6 animate-pulse" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
                             </svg>
-                            Analyze {selectedSymptoms.length > 0 ? `(${selectedSymptoms.length})` : ""}
+                            Run Analysis {selectedSymptoms.length > 0 ? `[${selectedSymptoms.length}]` : ""}
                         </button>
-                        {selectedSymptoms.length === 0 && (
-                            <p className="text-xs text-[var(--muted-foreground)]">
-                                Select at least one symptom above
+                        {selectedSymptoms.length === 0 ? (
+                            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-600 animate-pulse">
+                                Awaiting Symptom Input
+                            </p>
+                        ) : (
+                            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/60">
+                                Ready for Neural Processing
                             </p>
                         )}
                     </div>
@@ -140,15 +166,24 @@ export default function DashboardPage() {
             )}
 
             {/* ── STEP 2: Analyzing ── */}
-            {isAnalyzing && <ScanningAnimation />}
+            {isAnalyzing && (
+                <div className="py-12 flex justify-center">
+                    <ScanningAnimation />
+                </div>
+            )}
 
             {/* ── STEP 3: Results ── */}
             {hasResults && (
-                <div className="space-y-6">
+                <div className="space-y-12 animate-in fade-in slide-in-from-bottom-6 duration-1000">
                     {/* Error */}
                     {error && (
-                        <div className="p-4 rounded-xl bg-[rgba(255,62,108,0.05)] border border-[rgba(255,62,108,0.3)]">
-                            <p className="text-sm text-[var(--destructive)]">{error}</p>
+                        <div className="p-5 rounded-2xl bg-red-500/5 border border-red-500/20 glass-card">
+                            <p className="text-sm font-bold text-red-500 flex items-center gap-2">
+                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth="3" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
+                                </svg>
+                                {error}
+                            </p>
                         </div>
                     )}
 
@@ -157,11 +192,14 @@ export default function DashboardPage() {
 
                     {/* Prediction Cards */}
                     {predictions && predictions.length > 0 && (
-                        <div className="space-y-3">
-                            <h2 className="text-sm font-semibold uppercase tracking-wider text-[var(--muted-foreground)]">
-                                Possible Conditions
-                            </h2>
-                            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                        <div className="space-y-6">
+                            <div className="flex items-center gap-3">
+                                <h2 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-600">
+                                    Clinical Correlations
+                                </h2>
+                                <div className="flex-1 h-px bg-slate-200/50 dark:bg-slate-800/50" />
+                            </div>
+                            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                                 {predictions.map((prediction, i) => (
                                     <PredictionCard
                                         key={prediction.disease}
@@ -175,27 +213,36 @@ export default function DashboardPage() {
                     )}
 
                     {predictions && predictions.length === 0 && (
-                        <div className="text-center py-12 rounded-2xl neon-border bg-[var(--cyber-surface)]">
-                            <p className="text-[var(--muted-foreground)]">
-                                No matching conditions found.
+                        <div className="text-center py-20 rounded-3xl neon-border glass-card border-dashed">
+                            <div className="w-16 h-16 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center mx-auto mb-4 border border-slate-200 dark:border-slate-700">
+                                <svg className="w-8 h-8 text-slate-400" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
+                                </svg>
+                            </div>
+                            <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 mb-2">No Matching Conditions</h3>
+                            <p className="text-sm text-slate-500 dark:text-slate-400 max-w-sm mx-auto">
+                                Our engine couldn't correlate your current symptom profile with known disease patterns.
                             </p>
                         </div>
                     )}
 
-                    {/* New Analysis Button */}
-                    <div className="flex justify-center pt-4">
+                    {/* Bottom Action */}
+                    <div className="flex flex-col items-center gap-4 pt-6">
                         <button
                             onClick={handleNewAnalysis}
-                            className="px-8 py-3 rounded-2xl text-sm font-medium
-                                neon-border text-[var(--neon)]
-                                hover:bg-[rgba(0,240,255,0.05)]
-                                transition-all duration-300 flex items-center gap-2"
+                            className="group px-10 py-4 rounded-2xl text-sm font-black uppercase tracking-widest
+                                neon-border glass-card text-primary
+                                hover:bg-primary/5 hover:border-primary/40
+                                transition-all duration-300 flex items-center gap-3 shadow-md"
                         >
-                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
+                            <svg className="w-5 h-5 transition-transform group-hover:rotate-180 duration-500" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182" />
                             </svg>
-                            Start New Analysis
+                            Reset System Data
                         </button>
+                        <p className="text-[9px] font-bold text-slate-400 dark:text-slate-600 uppercase tracking-widest">
+                            Session ID: {Math.random().toString(36).substring(7).toUpperCase()}
+                        </p>
                     </div>
                 </div>
             )}

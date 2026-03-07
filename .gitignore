@@ -45,3 +45,6 @@ ml/model.joblib
 ml/model_meta.json
 __pycache__/
 *.pyc
+
+# clerk configuration (can include secrets)
+/.clerk/

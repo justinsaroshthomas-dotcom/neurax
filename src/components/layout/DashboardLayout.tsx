@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
-import { getSession, logout, type User } from "@/lib/auth";
+import { useUser, UserButton } from "@clerk/nextjs";
+import { ThemeToggle } from "./ThemeToggle";
 import {
     Sidebar,
     SidebarContent,
@@ -66,58 +67,36 @@ export default function DashboardLayout({
 }) {
     const pathname = usePathname();
     const router = useRouter();
-    const [user, setUser] = useState<User | null>(null);
-    const [checked, setChecked] = useState(false);
+    const { user, isLoaded } = useUser();
 
     useEffect(() => {
-        const session = getSession();
-        if (!session) {
+        if (isLoaded && !user) {
             router.replace("/sign-in");
-        } else {
-            setUser(session);
-            setChecked(true);
         }
-    }, [router]);
-
-    const handleLogout = () => {
-        logout();
-        router.replace("/sign-in");
-    };
+    }, [isLoaded, user, router]);
 
     // Don't render until auth check is done
-    if (!checked) {
+    if (!isLoaded || !user) {
         return (
-            <div className="min-h-screen bg-[var(--cyber-bg)] flex items-center justify-center">
-                <div className="w-8 h-8 border-2 border-[var(--neon)] border-t-transparent rounded-full animate-spin" />
+            <div className="min-h-screen bg-gray-50 dark:bg-slate-950 flex items-center justify-center">
+                <div className="w-8 h-8 border-2 border-[#00B140] border-t-transparent rounded-full animate-spin" />
             </div>
         );
     }
 
-    const initials = user?.name
-        ? user.name
-            .split(" ")
-            .map((w) => w[0])
-            .join("")
-            .toUpperCase()
-            .slice(0, 2)
-        : "U";
-
     return (
         <SidebarProvider>
-            <div className="flex min-h-screen w-full bg-[var(--cyber-bg)]">
-                <Sidebar className="border-r border-[rgba(0,240,255,0.1)]">
-                    <SidebarHeader className="p-4 border-b border-[rgba(0,240,255,0.1)]">
+            <div className="flex min-h-screen w-full bg-gray-50 dark:bg-slate-950">
+                <Sidebar className="border-r border-gray-200 dark:border-slate-800">
+                    <SidebarHeader className="p-4 border-b border-gray-200 dark:border-slate-800">
                         <Link href="/dashboard" className="flex items-center gap-3">
-                            <div className="w-9 h-9 rounded-lg neon-border flex items-center justify-center bg-[var(--cyber-surface)]">
-                                <svg viewBox="0 0 24 24" className="w-5 h-5 text-[var(--neon)]" fill="none" stroke="currentColor" strokeWidth="1.5">
-                                    <path d="M12 2v20M2 12h20" strokeLinecap="round" />
-                                    <circle cx="12" cy="12" r="4" />
-                                </svg>
+                            <div className="w-9 h-9 rounded-lg bg-[#00B140] flex items-center justify-center text-white font-bold text-lg shadow-sm">
+                                N
                             </div>
                             <div>
-                                <span className="font-bold text-sm neon-text-subtle">NeuraMed</span>
-                                <p className="text-[10px] text-[var(--muted-foreground)] tracking-wider uppercase">
-                                    Diagnostics v2.0
+                                <span className="font-bold text-sm text-gray-900 dark:text-slate-100">NeuraMed</span>
+                                <p className="text-[10px] text-gray-500 dark:text-slate-500 tracking-wider uppercase">
+                                    Disease Predictor
                                 </p>
                             </div>
                         </Link>
@@ -125,7 +104,7 @@ export default function DashboardLayout({
 
                     <SidebarContent>
                         <SidebarGroup>
-                            <SidebarGroupLabel className="text-[10px] uppercase tracking-[0.15em] text-[var(--muted-foreground)] px-4">
+                            <SidebarGroupLabel className="text-[10px] uppercase tracking-[0.15em] text-gray-400 px-4">
                                 Navigation
                             </SidebarGroupLabel>
                             <SidebarGroupContent>
@@ -139,8 +118,8 @@ export default function DashboardLayout({
                                                     isActive={isActive}
                                                     className={
                                                         isActive
-                                                            ? "bg-[rgba(0,240,255,0.08)] text-[var(--neon)] border border-[rgba(0,240,255,0.2)]"
-                                                            : "text-[var(--muted-foreground)] hover:text-foreground hover:bg-[rgba(0,240,255,0.03)]"
+                                                            ? "bg-[#00B140]/10 text-[#00B140] border border-[#00B140]/20 dark:bg-[#00B140]/20 dark:border-[#00B140]/30"
+                                                            : "text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-slate-100 hover:bg-gray-50 dark:hover:bg-slate-900"
                                                     }
                                                 >
                                                     <Link href={item.url} className="flex items-center gap-3">
@@ -156,64 +135,55 @@ export default function DashboardLayout({
                         </SidebarGroup>
 
                         <SidebarGroup className="mt-auto">
-                            <SidebarGroupLabel className="text-[10px] uppercase tracking-[0.15em] text-[var(--muted-foreground)] px-4">
+                            <SidebarGroupLabel className="text-[10px] uppercase tracking-[0.15em] text-gray-400 px-4">
                                 System
                             </SidebarGroupLabel>
-                            <SidebarGroupContent>
-                                <div className="px-4 py-3 mx-2 rounded-lg bg-[var(--cyber-surface)] neon-border">
+                             <SidebarGroupContent>
+                                <div className="px-4 py-3 mx-2 rounded-lg bg-gray-50 dark:bg-slate-900/50 border border-gray-200 dark:border-slate-800">
                                     <div className="flex items-center gap-2 mb-2">
-                                        <div className="w-2 h-2 rounded-full bg-[#10b981] animate-pulse" />
-                                        <span className="text-[11px] text-[var(--muted-foreground)]">
-                                            Engine Online
+                                        <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                                        <span className="text-[11px] text-gray-600">
+                                            ML Engine Active
                                         </span>
                                     </div>
-                                    <div className="flex items-center justify-between text-[10px] text-[var(--muted-foreground)]">
-                                        <span>Diseases: 18</span>
-                                        <span>Symptoms: 50</span>
+                                    <div className="flex items-center justify-between text-[10px] text-gray-500">
+                                        <span>Diseases: 505+</span>
+                                        <span>Symptoms: 132</span>
                                     </div>
                                 </div>
                             </SidebarGroupContent>
                         </SidebarGroup>
                     </SidebarContent>
 
-                    <SidebarFooter className="p-4 border-t border-[rgba(0,240,255,0.1)]">
+                    <SidebarFooter className="p-4 border-t border-gray-200">
                         <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-full bg-[rgba(0,240,255,0.1)] ring-1 ring-[rgba(0,240,255,0.3)] flex items-center justify-center">
-                                <span className="text-[10px] font-bold text-[var(--neon)]">{initials}</span>
-                            </div>
-                            <div className="flex-1 min-w-0">
-                                <p className="text-sm font-medium text-foreground truncate">
-                                    {user?.name || "User"}
+                            <UserButton afterSignOutUrl="/" appearance={{ elements: { userButtonAvatarBox: "w-8 h-8 rounded-full ring-1 ring-[#00B140]/20" } }} />
+                             <div className="flex-1 min-w-0">
+                                <p className="text-sm font-medium text-gray-900 dark:text-slate-100 truncate">
+                                    {user.fullName || user.username || "User"}
                                 </p>
-                                <p className="text-[10px] text-[var(--muted-foreground)] truncate">
-                                    {user?.email || ""}
+                                <p className="text-[10px] text-gray-500 dark:text-slate-500 truncate">
+                                    {user.primaryEmailAddress?.emailAddress || ""}
                                 </p>
                             </div>
-                            <button
-                                onClick={handleLogout}
-                                title="Sign out"
-                                className="p-1.5 rounded-lg text-[var(--muted-foreground)] hover:text-[var(--destructive)] hover:bg-[rgba(255,62,108,0.05)] transition-all"
-                            >
-                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" />
-                                </svg>
-                            </button>
                         </div>
                     </SidebarFooter>
                 </Sidebar>
 
-                <main className="flex-1 flex flex-col min-h-screen">
-                    <header className="h-14 border-b border-[rgba(0,240,255,0.1)] bg-[var(--cyber-bg)]/80 backdrop-blur-xl flex items-center px-4 gap-4 sticky top-0 z-30">
-                        <SidebarTrigger className="text-[var(--muted-foreground)] hover:text-[var(--neon)]" />
-                        <div className="h-5 w-px bg-[rgba(0,240,255,0.1)]" />
+                 <main className="flex-1 flex flex-col min-h-screen">
+                    <header className="h-14 border-b border-gray-200 dark:border-slate-800 bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl flex items-center px-4 gap-4 sticky top-0 z-30">
+                        <SidebarTrigger className="text-gray-400 dark:text-slate-500 hover:text-gray-700 dark:hover:text-slate-300" />
+                        <div className="h-5 w-px bg-gray-200 dark:bg-slate-800" />
                         <div className="flex-1" />
-                        <div className="flex items-center gap-2 text-[11px] text-[var(--muted-foreground)]">
-                            <div className="w-1.5 h-1.5 rounded-full bg-[var(--neon)] animate-pulse" />
-                            <span className="font-mono">SYSTEM ACTIVE</span>
+                        <ThemeToggle />
+                        <div className="h-5 w-px bg-gray-200 dark:bg-slate-800 mx-1" />
+                        <div className="flex items-center gap-2 text-[11px] text-gray-500 dark:text-slate-500">
+                            <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                            <span>Local Mode</span>
                         </div>
                     </header>
 
-                    <div className="flex-1 p-6 cyber-grid overflow-auto">
+                    <div className="flex-1 p-6 overflow-auto bg-gray-50 dark:bg-slate-950">
                         {children}
                     </div>
                 </main>

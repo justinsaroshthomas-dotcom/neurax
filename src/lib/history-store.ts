@@ -41,9 +41,13 @@ function saveHistory(entries: HistoryEntry[]): void {
 }
 
 export function addHistoryEntry(entry: Omit<HistoryEntry, "id" | "timestamp">): HistoryEntry {
+    const id = typeof crypto !== 'undefined' && crypto.randomUUID 
+        ? crypto.randomUUID() 
+        : Date.now().toString(36) + Math.random().toString(36).substring(2);
+
     const newEntry: HistoryEntry = {
         ...entry,
-        id: crypto.randomUUID(),
+        id,
         timestamp: new Date().toISOString(),
     };
     const history = getHistory();

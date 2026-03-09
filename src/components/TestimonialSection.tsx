@@ -27,7 +27,7 @@ export default function TestimonialSection() {
                 <div className="text-center mb-16">
                     <h2 className="text-3xl font-bold mb-4 text-slate-900">Trusted by Professionals</h2>
                     <p className="text-slate-600 text-lg max-w-2xl mx-auto">
-                        See how Neurax's Deep Learning models are assisting accurate medical correlations in real-world scenarios.
+                        See how Neurax's Deep Learning & Machine Learning models are assisting accurate medical correlations in real-world scenarios.
                     </p>
                 </div>
 

@@ -84,10 +84,10 @@ export function AIInsight({ analysis }: AIInsightProps) {
                         </div>
                         <div>
                             <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 tracking-tight font-heading">
-                                Neural Analysis Insight
+                                ML Analysis Insight
                             </h3>
                             <p className="text-[10px] text-slate-500 dark:text-slate-500 font-extrabold uppercase tracking-[0.2em] font-mono">
-                                Multi-Layer Perceptron (MLP) Engine
+                                XGBoost Ensemble Engine
                             </p>
                         </div>
                     </div>

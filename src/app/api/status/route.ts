@@ -35,7 +35,7 @@ export async function GET() {
             status: "Online",
             connected: true,
             mode: "active",
-            description: "Deep Neural Network matching (505 diseases · 131 symptoms)",
+            description: "Deep Neural Network & XGBoost matching (505 diseases · 131 symptoms)",
         },
         {
             name: "Local Storage",

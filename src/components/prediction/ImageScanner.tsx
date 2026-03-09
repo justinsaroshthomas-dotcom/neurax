@@ -26,12 +26,12 @@ const SCAN_ICONS: Record<string, string> = {
 };
 
 const DEFAULT_SCAN_TYPES: ScanTypeOption[] = [
-    { id: "chest_xray", name: "Chest X-Ray (COVID/Pneumonia)", classes: ["Normal", "Pneumonia", "COVID-19"], model_type: "ResNet50", accuracy: 0.984 },
+    { id: "chest_xray", name: "Chest X-Ray (COVID/Pneumonia)", classes: ["Normal", "Pneumonia", "COVID-19"], model_type: "XGBoost + Texture Analysis", accuracy: 0.984 },
     { id: "lung_disease", name: "Lung Disease Ensemble", classes: ["Low Risk", "Medium Risk", "High Risk"], model_type: "XGBoost + RF + AdaBoost", accuracy: 0.999 },
-    { id: "mri_brain_tumor", name: "Brain Tumor MRI", classes: ["Glioma", "Meningioma", "Pituitary", "No Tumor"], model_type: "CNN (ResNet-inspired)", accuracy: 0.990 },
-    { id: "mri_alzheimer", name: "Alzheimer's MRI", classes: ["Non Demented", "Very Mildly Demented", "Mildly Demented", "Moderately Demented"], model_type: "DenseNet + Transfer Learning", accuracy: 0.978 },
-    { id: "mri_spine", name: "Lumbar Spine (RSNA)", classes: ["Normal", "Stenosis", "Spondylolisthesis"], model_type: "EfficientNetB0 + Grad-CAM", accuracy: 0.945 },
-    { id: "mri_neuro", name: "Neuroimaging Panel", classes: ["Healthy", "Bipolar", "Schizophrenia", "ADHD", "Autism"], model_type: "CNN + EDA Features", accuracy: 0.962 },
+    { id: "mri_brain_tumor", name: "Brain Tumor MRI", classes: ["Glioma", "Meningioma", "Pituitary", "No Tumor"], model_type: "Random Forest + Feature Extraction", accuracy: 0.990 },
+    { id: "mri_alzheimer", name: "Alzheimer's MRI", classes: ["Non Demented", "Very Mildly Demented", "Mildly Demented", "Moderately Demented"], model_type: "Gradient Boosting + Radiomics", accuracy: 0.978 },
+    { id: "mri_spine", name: "Lumbar Spine (RSNA)", classes: ["Normal", "Stenosis", "Spondylolisthesis"], model_type: "SVM + Structured Features", accuracy: 0.945 },
+    { id: "mri_neuro", name: "Neuroimaging Panel", classes: ["Healthy", "Bipolar", "Schizophrenia", "ADHD", "Autism"], model_type: "XGBoost + Wavelet Features", accuracy: 0.962 },
 ];
 
 export function ImageScanner({ onAnalysisComplete, onScanningStateChange, onError }: ImageScannerProps) {
@@ -97,7 +97,7 @@ export function ImageScanner({ onAnalysisComplete, onScanningStateChange, onErro
                 onAnalysisComplete(result);
             } catch (err: any) {
                 if (err.name === "TimeoutError") {
-                    onError("Neural engine timeout. Ensure the local Python server is running.");
+                    onError("ML engine timeout. Ensure the local Python server is running.");
                 } else {
                     onError(err?.message ?? "Connection to local ML engine failed. Is server.py running?");
                 }
@@ -130,7 +130,7 @@ export function ImageScanner({ onAnalysisComplete, onScanningStateChange, onErro
                 <div className="flex items-center gap-3 px-5 py-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-500">
                     <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse flex-shrink-0" />
                     <p className="text-xs font-black uppercase tracking-widest">
-                        Neural Engine Online — 6 Imaging Modules Active — 30+ Disease Classes
+                        ML Engine Online — 6 Imaging Modules Active — 30+ Disease Classes
                     </p>
                 </div>
             )}

@@ -99,7 +99,7 @@ export default function Home() {
             <div className="mt-4 flex justify-center gap-4 text-sm text-slate-400">
               <span className="flex items-center gap-1">
                 <svg className="w-4 h-4 text-[#00B140]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" /></svg>
-                Powered by Deep Learning & Advanced ML (CNN/XGBoost)
+                Powered by Deep Learning & Advanced ML (XGBoost)
               </span>
               <span className="flex items-center gap-1">
                 <svg className="w-4 h-4 text-[#00B140]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" /></svg>
@@ -117,7 +117,7 @@ export default function Home() {
         <div className="mb-20">
           <h2 className="text-3xl font-bold mb-6 text-slate-900">What is Neurax?</h2>
           <p className="text-slate-600 text-lg leading-relaxed mb-4">
-            Neurax is an advanced AI-assisted medical diagnosis platform developed by IBM Team 63. We use advanced Deep Neural Networks and Ensemble Machine Learning Models (CNN/XGBoost) trained on Kaggle/UCI datasets to provide rapid differential analysis from symptom descriptions and clinical histories.
+            Neurax is an advanced AI-assisted medical diagnosis platform developed by IBM Team 63. We use advanced Deep Neural Networks and Ensemble Machine Learning Models (XGBoost) trained on Kaggle/UCI datasets to provide rapid differential analysis from symptom descriptions and clinical histories.
           </p>
           <p className="text-slate-600 text-lg leading-relaxed">
             The goal is to enhance — not replace — clinical judgment: save time, neutralize cognitive biases, and raise the quality of clinical reasoning from the first moment. Key features: intelligent differential diagnosis with prioritized lists of possible diagnoses; 505 disease classes supported; secure architecture with automatic anonymization of sensitive data.
@@ -131,7 +131,7 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
             {[
               { num: 1, title: "Describe your symptoms", desc: "Enter a medical description in free text or select from our organized lists." },
-              { num: 2, title: "Intelligent processing", desc: "Our Deep Learning and Advanced Machine Learning algorithms analyze the information using CNNs, XGBoost, and Random Forest ensembles, detecting clinical patterns and medical correlations." },
+              { num: 2, title: "Intelligent processing", desc: "Our Deep Learning and Advanced Machine Learning algorithms analyze the information using XGBoost and Random Forest ensembles, detecting clinical patterns and medical correlations." },
               { num: 3, title: "Differential diagnosis", desc: "You receive a prioritized list of possible diagnoses, each with confidence scores, severity ratings, and matching symptom details." },
               { num: 4, title: "Interactive refinement", desc: "You can answer AI-generated follow-up questions to refine the diagnosis, obtain detailed information about specific diseases, or request recommendations." }
             ].map((step) => (

@@ -46,10 +46,10 @@ export function SymptomPicker({
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
             {/* Search */}
             <div className="relative max-w-xl group">
-                <div className="absolute inset-0 bg-primary/5 rounded-2xl blur-xl group-focus-within:bg-primary/10 transition-colors" />
+                <div className="absolute inset-0 bg-[#7B61FF]/5 rounded-2xl blur-xl group-focus-within:bg-[#7B61FF]/10 transition-colors" />
                 <div className="relative flex items-center">
                     <svg
-                        className="absolute left-4 w-5 h-5 text-slate-400 dark:text-slate-500 group-focus-within:text-primary transition-colors"
+                        className="absolute left-4 w-5 h-5 text-slate-400 group-focus-within:text-[#7B61FF] transition-colors"
                         fill="none"
                         viewBox="0 0 24 24"
                         strokeWidth="2"
@@ -68,16 +68,16 @@ export function SymptomPicker({
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                         className="w-full pl-12 pr-12 py-4 rounded-2xl text-base font-sans
-                            bg-white/50 dark:bg-slate-900/50 backdrop-blur-md 
-                            border border-slate-200/50 dark:border-slate-800/50 text-slate-900 dark:text-slate-100
-                            placeholder:text-slate-400 dark:placeholder:text-slate-600
-                            focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/50
+                            bg-white backdrop-blur-md 
+                            border border-slate-200 text-[#1A1A1A]
+                            placeholder:text-slate-400
+                            focus:outline-none focus:ring-2 focus:ring-[#7B61FF]/20 focus:border-[#7B61FF]/50
                             transition-all duration-300 shadow-sm"
                     />
                     {search && (
                         <button
                             onClick={() => setSearch("")}
-                            className="absolute right-4 text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors bg-slate-100 dark:bg-slate-800 rounded-full p-1"
+                            className="absolute right-4 text-slate-400 hover:text-[#1A1A1A] transition-colors bg-slate-100 rounded-full p-1"
                         >
                             <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" strokeWidth="3" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
@@ -90,10 +90,10 @@ export function SymptomPicker({
             {/* Selected Symptoms Summary */}
                 <div className="flex flex-wrap items-center gap-2 px-1">
                     <div className="flex items-center gap-2 mr-2">
-                        <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
                             Selected Profile
                         </span>
-                        <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center text-[10px] font-bold text-primary">
+                        <div className="w-5 h-5 rounded-full bg-[#7B61FF]/10 flex items-center justify-center text-[10px] font-bold text-[#7B61FF]">
                             {selectedSymptoms.length}
                         </div>
                     </div>
@@ -102,7 +102,7 @@ export function SymptomPicker({
                             key={s}
                             onClick={() => toggleSymptom(s)}
                             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold
-                                bg-primary/10 text-primary border border-primary/20
+                                bg-[#7B61FF]/10 text-[#7B61FF] border border-[#7B61FF]/20
                                 hover:bg-red-500/10 hover:text-red-500 hover:border-red-500/20
                                 transition-all duration-200 cursor-pointer shadow-sm animate-in zoom-in-95"
                         >
@@ -125,13 +125,13 @@ export function SymptomPicker({
                 {grouped.map(([category, symptoms]) => (
                     <div key={category} className="space-y-3">
                         <div className="flex items-center gap-3 px-1">
-                            <h3 className="text-[10px] uppercase font-black tracking-[0.2em] text-slate-400 dark:text-slate-600 font-heading">
+                            <h3 className="text-[10px] uppercase font-bold tracking-[0.2em] text-[#1A1A1A] font-heading">
                                 {category}
                             </h3>
-                            <span className="px-1.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-[9px] font-bold text-slate-400 dark:text-slate-500 font-mono">
+                            <span className="px-1.5 py-0.5 rounded-md bg-slate-100 text-[9px] font-bold text-slate-500 font-mono">
                                 {symptoms.length}
                             </span>
-                            <div className="flex-1 h-px bg-slate-200/50 dark:bg-slate-800/50" />
+                            <div className="flex-1 h-px bg-slate-100" />
                         </div>
                         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5">
                             {symptoms.map((symptom) => {
@@ -145,8 +145,8 @@ export function SymptomPicker({
                                             relative px-4 py-3.5 rounded-2xl text-left text-sm font-semibold
                                             transition-all duration-300 transform active:scale-95
                                             ${isActive
-                                                ? "bg-primary text-white border-primary shadow-lg shadow-primary/20 dark:shadow-primary/10"
-                                                : "bg-white/50 dark:bg-slate-900/40 border border-slate-200/50 dark:border-slate-800/50 text-slate-600 dark:text-slate-400 hover:border-primary/40 hover:bg-white dark:hover:bg-slate-900 shadow-sm"
+                                                ? "bg-[#7B61FF] text-white border-[#7B61FF] shadow-lg shadow-[#7B61FF]/20"
+                                                : "bg-white border border-slate-200 text-slate-600 hover:border-[#7B61FF]/40 shadow-sm hover:shadow-md"
                                             }
                                         `}
                                     >
@@ -169,8 +169,8 @@ export function SymptomPicker({
             </div>
 
             {filteredSymptoms.length === 0 && (
-                <div className="text-center py-12 rounded-3xl border border-dashed border-slate-200 dark:border-slate-800">
-                    <p className="text-slate-400 dark:text-slate-600 text-sm font-medium italic">
+                <div className="text-center py-12 rounded-3xl border border-dashed border-slate-200">
+                    <p className="text-slate-400 text-sm font-medium italic">
                         No clinical identifiers match &ldquo;{search}&rdquo;
                     </p>
                 </div>

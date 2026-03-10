@@ -2,29 +2,32 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Activity, LayoutDashboard, History, BarChart2, Settings, UploadCloud } from "lucide-react";
+import { Activity, LayoutDashboard, History, BarChart2, Settings, ShieldCheck } from "lucide-react";
 
 const navItems = [
-    { title: "Predict", url: "/dashboard", icon: LayoutDashboard },
-    { title: "History", url: "/dashboard/history", icon: History },
+    { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
+    { title: "Intelligence", url: "/dashboard/history", icon: History },
     { title: "Analytics", url: "/dashboard/analytics", icon: BarChart2 },
-    { title: "Settings", url: "/dashboard/settings", icon: Settings },
+    { title: "Configuration", url: "/dashboard/settings", icon: Settings },
 ];
 
 export function Sidebar() {
     const pathname = usePathname();
 
     return (
-        <aside className="w-20 bg-white border-r border-slate-200 flex flex-col items-center py-8 z-10 shrink-0 shadow-[2px_0_8px_rgba(0,0,0,0.02)]">
-            {/* Logo Mark */}
-            <div className="mb-12">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#7B61FF] to-[#6042ef] flex items-center justify-center shadow-lg shadow-[#7B61FF]/30">
-                    <Activity className="text-white w-6 h-6" />
+        <aside className="w-20 bg-white dark:bg-slate-950 border-r border-slate-200 dark:border-slate-800/50 flex flex-col items-center py-8 z-40 shrink-0 sticky top-0 h-screen transition-colors">
+            {/* Elite Brand Mark */}
+            <div className="mb-12 relative group">
+                <div className="w-11 h-11 rounded-2xl bg-slate-900 dark:bg-white flex items-center justify-center shadow-2xl relative z-10 overflow-hidden transition-transform group-hover:scale-110">
+                    <Activity className="text-primary w-6 h-6 stroke-[2.5]" />
+                    <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity" />
                 </div>
+                {/* Glow ring */}
+                <div className="absolute inset-0 bg-primary/20 rounded-2xl blur-xl scale-90 group-hover:scale-125 transition-transform opacity-0 group-hover:opacity-100" />
             </div>
 
-            {/* Navigation Icons */}
-            <nav className="flex flex-col gap-6 flex-1 w-full items-center">
+            {/* High-Contrast Navigation */}
+            <nav className="flex flex-col gap-8 flex-1 w-full items-center">
                 {navItems.map((item) => {
                     const isActive = pathname === item.url;
                     const Icon = item.icon;
@@ -33,22 +36,31 @@ export function Sidebar() {
                             key={item.title}
                             href={item.url}
                             title={item.title}
-                            className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 ${
+                            className={`group relative w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-500 hover:ring-1 hover:ring-slate-200 dark:hover:ring-slate-700 ${
                                 isActive
-                                    ? "bg-[#7B61FF]/10 text-[#7B61FF]"
-                                    : "text-slate-400 hover:bg-slate-50 hover:text-slate-600"
+                                    ? "text-primary bg-primary/5"
+                                    : "text-slate-400 hover:text-slate-900 dark:hover:text-white"
                             }`}
                         >
-                            <Icon strokeWidth={isActive ? 2.5 : 2} className="w-5 h-5" />
+                            <Icon strokeWidth={isActive ? 2.5 : 2} className="w-5 h-5 z-10 transition-transform group-hover:scale-110" />
+                            
+                            {isActive && (
+                                <div className="absolute -left-0 w-1 h-6 bg-primary rounded-r-full shadow-[0_0_15px_rgba(99,102,241,0.5)]" />
+                            )}
+                            
+                            {/* Hover tooltip hint */}
+                            <div className="absolute left-16 px-2 py-1 rounded-md bg-slate-900 text-white text-[10px] font-black uppercase tracking-widest opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity whitespace-nowrap z-50">
+                                {item.title}
+                            </div>
                         </Link>
                     );
                 })}
             </nav>
 
-            {/* Bottom Action */}
-            <div className="mt-auto flex flex-col items-center gap-6">
-                 <button className="w-12 h-12 rounded-full flex items-center justify-center text-slate-400 hover:bg-slate-50 hover:text-slate-600 transition-all">
-                    <UploadCloud className="w-5 h-5" />
+            {/* Support/Shield Icon */}
+            <div className="mt-auto">
+                <button className="w-12 h-12 rounded-xl flex items-center justify-center text-slate-300 hover:text-primary transition-all group">
+                    <ShieldCheck className="w-5 h-5 group-hover:scale-110" />
                 </button>
             </div>
         </aside>

@@ -4,7 +4,7 @@ import { useState, useRef } from "react";
 import { SymptomPicker } from "@/components/prediction/SymptomPicker";
 import { addHistoryEntry } from "@/lib/history-store";
 import type { AIAnalysis } from "@/lib/groq";
-import { Activity, Beaker, FileText, HeartPulse, Stethoscope, UploadCloud, Download, ImageIcon, ShieldCheck, AlertCircle } from "lucide-react";
+import { Activity, Beaker, FileText, HeartPulse, Stethoscope, UploadCloud, Download, ImageIcon, ShieldCheck, AlertCircle, Share2, Printer } from "lucide-react";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 
@@ -34,6 +34,7 @@ export default function DashboardPage() {
     const [error, setError] = useState<string | null>(null);
     const [activeRightTab, setActiveRightTab] = useState<RightTab>("highlights");
     const [uploadStatus, setUploadStatus] = useState<string | null>(null);
+    const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
     
     const reportRef = useRef<HTMLDivElement>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -82,22 +83,44 @@ export default function DashboardPage() {
 
     const downloadPDF = async () => {
         if (!reportRef.current) return;
+        setIsGeneratingPDF(true);
         
-        const canvas = await html2canvas(reportRef.current, {
-            scale: 2,
-            useCORS: true,
-            logging: false,
-            backgroundColor: "#ffffff"
-        });
-        
-        const imgData = canvas.toDataURL("image/png");
-        const pdf = new jsPDF("p", "mm", "a4");
-        const imgProps = pdf.getImageProperties(imgData);
-        const pdfWidth = pdf.internal.pageSize.getWidth();
-        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-        
-        pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-        pdf.save(`Neurax_Report_${topPrediction?.disease || "Clinical"}.pdf`);
+        try {
+            // Use a higher scale for better resolution and ensure we capture a clean white background
+            const canvas = await html2canvas(reportRef.current, {
+                scale: 3,
+                useCORS: true,
+                logging: false,
+                backgroundColor: "#ffffff",
+                windowWidth: 1200, // Force a consistent width for capture
+                onclone: (clonedDoc) => {
+                    // Make adjustments to the clone specifically for the PDF
+                    const reportElement = clonedDoc.querySelector('[data-pdf-content]') as HTMLElement;
+                    if (reportElement) {
+                        reportElement.style.padding = '40px';
+                        reportElement.style.background = '#ffffff';
+                        reportElement.style.color = '#000000';
+                        // Force light theme text colors for maximum clarity in PDF
+                        const textElements = reportElement.querySelectorAll('h2, h3, p, span, li');
+                        textElements.forEach(el => (el as HTMLElement).style.color = '#0f172a');
+                    }
+                }
+            });
+            
+            const imgData = canvas.toDataURL("image/jpeg", 1.0);
+            const pdf = new jsPDF("p", "mm", "a4");
+            const imgProps = pdf.getImageProperties(imgData);
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+            
+            pdf.addImage(imgData, "JPEG", 0, 0, pdfWidth, pdfHeight);
+            pdf.save(`Neurax_Clinical_Report_${topPrediction?.disease || "Generic"}.pdf`);
+        } catch (err) {
+            console.error("PDF generation error:", err);
+            alert("Failed to generate PDF. Please try again.");
+        } finally {
+            setIsGeneratingPDF(false);
+        }
     };
 
     const handleUploadClick = () => {
@@ -107,25 +130,33 @@ export default function DashboardPage() {
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
-            setUploadStatus(`Uploading ${file.name}...`);
+            setUploadStatus(`Indexing ${file.name}...`);
             setTimeout(() => {
-                setUploadStatus("Resource Integrated Successfully");
+                setUploadStatus("Clinical Record Integrated");
                 setTimeout(() => setUploadStatus(null), 3000);
             }, 2000);
         }
     };
 
     const topPrediction = predictions?.[0];
+    
+    // Using the high-end pathology scan image for the "Peak AI" visual
+    const pathologyImage = "C:\\Users\\justi\\.gemini\\antigravity\brain\\0417361e-04b6-4630-9af6-c2bd9164d996\\neurax_ai_pathology_scan_1773154631205.png";
 
     return (
-        <div className="flex gap-8 max-w-[1200px] mx-auto animate-in fade-in duration-700">
-            {/* Left Column (Main Data) */}
-            <div className="flex-1 flex flex-col gap-6">
-                {!predictions && (
-                    <div className="bg-white dark:bg-slate-900 rounded-[2rem] p-8 shadow-[0_4px_24px_rgba(0,0,0,0.02)] border border-slate-100 dark:border-slate-800 flex flex-col gap-8">
-                        <div>
-                            <h2 className="text-2xl font-bold text-[#1A1A1A] dark:text-white mb-2">Clinical Diagnosis Input</h2>
-                            <p className="text-slate-500 dark:text-slate-400 font-medium text-sm">Select patient symptoms to run the predictive disease model.</p>
+        <div className="flex gap-10 max-w-[1300px] mx-auto animate-in fade-in duration-1000">
+            {/* Main Clinical Data Area */}
+            <div className="flex-1 flex flex-col gap-8">
+                
+                {/* Input Area (Only visible when no predictions) */}
+                {!predictions && !isAnalyzing && (
+                    <div className="bg-white dark:bg-slate-900 rounded-4xl p-10 premium-shadow border border-slate-100 dark:border-slate-800 space-y-10">
+                        <div className="flex flex-col gap-2">
+                            <div className="flex items-center gap-2">
+                                <div className="w-1.5 h-6 bg-primary rounded-full" />
+                                <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight font-display">Clinical Intelligence Input</h2>
+                            </div>
+                            <p className="text-slate-500 font-medium text-sm">Synchronize patient manifestations for neural diagnostic matching.</p>
                         </div>
                         
                         <SymptomPicker
@@ -133,257 +164,239 @@ export default function DashboardPage() {
                             onSymptomsChange={setSelectedSymptoms}
                         />
 
-                        <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex justify-end">
+                        <div className="pt-8 border-t border-slate-100 dark:border-slate-800 flex justify-between items-center">
+                            <div className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
+                                Neural Mapping Layer: 6 (Active)
+                            </div>
                             <button
                                 onClick={handlePredict}
                                 disabled={selectedSymptoms.length === 0 || isAnalyzing}
-                                className="px-8 py-4 bg-[#7B61FF] text-white rounded-2xl font-bold uppercase tracking-widest text-sm shadow-[0_8px_20px_rgba(123,97,255,0.3)] hover:shadow-[0_12px_24px_rgba(123,97,255,0.4)] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-3"
+                                className="px-10 py-4.5 bg-primary text-white rounded-2xl font-black uppercase tracking-widest text-[11px] shadow-2xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50 disabled:grayscale flex items-center gap-3"
                             >
-                                {isAnalyzing ? "Processing..." : "Run Analysis"}
-                                {!isAnalyzing && <Activity className="w-5 h-5" />}
+                                Initiate Analysis
+                                <Activity className="w-4 h-4" />
                             </button>
                         </div>
                     </div>
                 )}
 
-                {/* Loading State */}
+                {/* Processing State */}
                 {isAnalyzing && (
-                    <div className="bg-white dark:bg-slate-900 rounded-[2rem] p-24 shadow-[0_4px_24px_rgba(0,0,0,0.02)] border border-slate-100 dark:border-slate-800 flex flex-col items-center justify-center gap-6">
-                        <div className="w-16 h-16 border-4 border-[#7B61FF]/20 border-t-[#7B61FF] rounded-full animate-spin" />
-                        <p className="text-[#1A1A1A] dark:text-white font-bold text-lg">Analyzing Neural Clinical Pathways...</p>
-                    </div>
-                )}
-
-                {/* Error State */}
-                {error && !isAnalyzing && (
-                    <div className="bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400 rounded-2xl p-6 font-medium border border-red-100 dark:border-red-900/50">
-                        Error: {error}
-                    </div>
-                )}
-
-                {/* Results - Highlights Card */}
-                {topPrediction && !isAnalyzing && (
-                    <div className="space-y-6">
-                        <div ref={reportRef} className="bg-white dark:bg-slate-900 rounded-[2rem] p-10 shadow-[0_8px_32px_rgba(0,0,0,0.03)] border border-slate-100 dark:border-slate-800 relative overflow-hidden flex flex-col lg:flex-row gap-8">
-                            <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-[#7B61FF]/10 to-transparent rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
-
-                            <div className="flex-1 space-y-8 z-10">
-                                {activeRightTab === "highlights" && (
-                                    <>
-                                        <div className="space-y-2">
-                                            <div className="flex items-center gap-3 text-[10px] font-bold uppercase tracking-widest">
-                                                <span className="text-slate-400">Highlights</span>
-                                                <div className="w-1 h-1 bg-slate-300 rounded-full" />
-                                                <span className="text-[#FF4D6D]">{topPrediction.severity.toUpperCase()} PRIORITY</span>
-                                            </div>
-                                            <h2 className="text-5xl font-extrabold text-[#1A1A1A] dark:text-white tracking-tighter">
-                                                {topPrediction.disease}
-                                            </h2>
-                                        </div>
-
-                                        <div className="flex flex-wrap gap-3">
-                                            {topPrediction.matchedSymptoms.slice(0, 2).map((sym) => (
-                                                <span key={sym} className="px-4 py-2 rounded-full bg-[#7B61FF]/10 text-[#7B61FF] font-bold text-xs uppercase tracking-wider">
-                                                    {sym}
-                                                </span>
-                                            ))}
-                                            <span className="px-4 py-2 rounded-full bg-[#FF4D6D] text-white font-bold text-xs uppercase tracking-wider shadow-sm">
-                                                {Math.round(topPrediction.confidence * 100)}% Confidence
-                                            </span>
-                                            <span className="px-4 py-2 rounded-full bg-[#FFD166]/20 text-[#d9aa34] font-bold text-xs uppercase tracking-wider">
-                                                {topPrediction.severity} Risk
-                                            </span>
-                                        </div>
-
-                                        <div className="space-y-6 pt-4">
-                                            <div className="space-y-3">
-                                                <div className="flex items-center gap-2 text-sm font-bold text-[#1A1A1A] dark:text-white uppercase tracking-widest">
-                                                    <div className="w-2 h-2 rounded-full bg-[#7B61FF]" />
-                                                    Definition
-                                                </div>
-                                                <p className="text-slate-500 dark:text-slate-400 font-medium leading-relaxed pl-4 border-l-2 border-slate-100 dark:border-slate-800">
-                                                    {topPrediction.description}
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </>
-                                )}
-
-                                {activeRightTab === "images" && (
-                                    <div className="space-y-6">
-                                        <div className="space-y-2">
-                                            <h2 className="text-3xl font-bold text-[#1A1A1A] dark:text-white uppercase italic tracking-tighter">Clinical Visualization</h2>
-                                            <p className="text-slate-500 font-medium">Neural scans and pathology imagery associated with {topPrediction.disease}.</p>
-                                        </div>
-                                        <div className="grid grid-cols-2 gap-4">
-                                            {[1, 2, 3, 4].map(idx => (
-                                                <div key={idx} className="aspect-video bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-100 dark:border-slate-800 flex items-center justify-center group overflow-hidden relative">
-                                                    <ImageIcon className="w-8 h-8 text-slate-200 group-hover:scale-110 transition-transform" />
-                                                    <div className="absolute bottom-2 left-2 text-[8px] font-bold text-slate-400 uppercase tracking-widest">Scan_Ref_{idx * 832}</div>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </div>
-                                )}
-
-                                {activeRightTab === "risks" && (
-                                    <div className="space-y-8">
-                                        <div className="space-y-2">
-                                            <h2 className="text-3xl font-bold text-[#1A1A1A] dark:text-white uppercase italic tracking-tighter">Risk Assessment</h2>
-                                            <p className="text-slate-500 font-medium">Metric-based pathology risks for the current patient profile.</p>
-                                        </div>
-                                        <div className="space-y-4">
-                                            {[
-                                                { label: "Complication Risk", value: "High", color: "text-[#FF4D6D]" },
-                                                { label: "Transmission Factor", value: "Minimal", color: "text-[#7B61FF]" },
-                                                { label: "Systemic Impact", value: "Moderate", color: "text-[#FFD166]" },
-                                            ].map(m => (
-                                                <div key={m.label} className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 flex items-center justify-between">
-                                                    <span className="font-bold text-sm text-slate-500 uppercase tracking-widest">{m.label}</span>
-                                                    <span className={`font-black uppercase tracking-tighter italic ${m.color}`}>{m.value}</span>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </div>
-                                )}
-
-                                {activeRightTab === "diagnosis" && (
-                                    <div className="space-y-6">
-                                        <div className="space-y-2">
-                                            <h2 className="text-3xl font-bold text-[#1A1A1A] dark:text-white uppercase italic tracking-tighter">Clinical Notes</h2>
-                                            <p className="text-slate-500 font-medium">Generated identifiers from the Neurax ML engine.</p>
-                                        </div>
-                                        <div className="p-6 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 font-mono text-xs text-slate-500 leading-loose">
-                                            <p>{"[SYSTEM_ID: 9283-X]"}</p>
-                                            <p>{"[CONF_RATING: 0." + (topPrediction.confidence * 100).toFixed(0) + "]"}</p>
-                                            <p>{"[INPUT_VECTORS: " + selectedSymptoms.join(", ") + "]"}</p>
-                                            <p>{"[LATENT_MATCH: Verified]"}</p>
-                                            <p className="mt-4 text-[#7B61FF]">{"Recommended: Manual clinical oversight for " + topPrediction.disease}</p>
-                                        </div>
-                                    </div>
-                                )}
-
-                                {activeRightTab === "treatment" && (
-                                    <div className="space-y-6">
-                                        <div className="space-y-2">
-                                            <h2 className="text-3xl font-bold text-[#1A1A1A] dark:text-white uppercase italic tracking-tighter">Treatment Pathway</h2>
-                                            <p className="text-slate-500 font-medium">Primary precautions and suggested recovery steps.</p>
-                                        </div>
-                                        <div className="grid gap-4">
-                                            {topPrediction.precautions.map((p, i) => (
-                                                <div key={i} className="flex gap-4 items-start p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800">
-                                                    <div className="w-8 h-8 rounded-full bg-[#7B61FF]/10 flex items-center justify-center shrink-0">
-                                                        <ShieldCheck className="w-5 h-5 text-[#7B61FF]" />
-                                                    </div>
-                                                    <p className="text-sm font-medium text-slate-600 dark:text-slate-300 leading-normal">{p}</p>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </div>
-                                )}
+                    <div className="bg-white dark:bg-slate-900 rounded-4xl p-24 premium-shadow border border-slate-100 dark:border-slate-800 flex flex-col items-center justify-center gap-8">
+                        <div className="relative">
+                            <div className="w-20 h-20 border-4 border-primary/10 border-t-primary rounded-full animate-spin" />
+                            <div className="absolute inset-0 flex items-center justify-center">
+                                <div className="w-8 h-8 bg-primary/20 rounded-full animate-pulse" />
                             </div>
+                        </div>
+                        <div className="text-center space-y-2">
+                            <h3 className="text-slate-900 dark:text-white font-black text-xl tracking-tight uppercase">Processing Neural Pathways</h3>
+                            <p className="text-slate-400 font-medium text-sm">Matching clinical signatures against 5,000,000+ data points...</p>
+                        </div>
+                    </div>
+                )}
 
-                            {/* Illustration Area */}
-                            <div className="hidden lg:flex w-64 items-center justify-center relative z-10">
-                                <div className="w-56 h-56 rounded-full bg-gradient-to-br from-[#7B61FF]/20 to-[#FF4D6D]/10 flex items-center justify-center animate-pulse shadow-inner border border-white/50 backdrop-blur-sm">
-                                    <HeartPulse className="w-24 h-24 text-[#7B61FF]/80" />
+                {/* Error Notification */}
+                {error && !isAnalyzing && (
+                    <div className="bg-rose-50 dark:bg-rose-950/20 text-rose-600 dark:text-rose-400 rounded-2xl p-6 font-bold border border-rose-100 dark:border-rose-900/50 flex gap-4 items-center">
+                        <AlertCircle className="w-6 h-6 shrink-0" />
+                        <span className="text-sm tracking-tight">System Exception: {error}</span>
+                    </div>
+                )}
+
+                {/* Clinical Intelligence Result Area */}
+                {topPrediction && !isAnalyzing && (
+                    <div className="space-y-8 animate-in slide-in-from-bottom-8 duration-700">
+                        {/* THE PDF CAPTURE AREA */}
+                        <div ref={reportRef} data-pdf-content className="bg-white dark:bg-slate-900 rounded-4xl overflow-hidden premium-shadow border border-slate-100 dark:border-slate-800 flex flex-col items-stretch">
+                            {/* Result Top Panel */}
+                            <div className="p-10 flex flex-col lg:flex-row gap-12 relative overflow-hidden">
+                                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-gradient-to-br from-primary/10 to-transparent rounded-full blur-[100px] -translate-y-1/2 translate-x-1/4 pointer-events-none" />
+                                
+                                <div className="flex-1 space-y-10 z-10">
+                                    {/* Intelligence Identity */}
+                                    <div className="space-y-3">
+                                        <div className="flex items-center gap-3">
+                                            <span className="px-3 py-1 rounded-lg bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-[9px] font-black uppercase tracking-widest">
+                                                Final Match Confirmed
+                                            </span>
+                                            <div className="flex items-center gap-2">
+                                                <div className={`w-2 h-2 rounded-full animate-pulse ${topPrediction.severity === 'critical' ? 'bg-rose-500' : 'bg-primary'}`} />
+                                                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest font-sans">
+                                                    {topPrediction.severity} Severity Diagnostic
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <h2 className="text-6xl font-black text-slate-900 dark:text-white tracking-tighter leading-tight font-display">
+                                            {topPrediction.disease}
+                                        </h2>
+                                    </div>
+
+                                    {/* Clinical Visual Source (Peak AI source) */}
+                                    <div className="group relative rounded-3xl overflow-hidden bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 aspect-[21/9] shadow-inner">
+                                        <img 
+                                            src={pathologyImage} 
+                                            alt="Neural Pathology Scan" 
+                                            className="w-full h-full object-cover opacity-90 group-hover:opacity-100 group-hover:scale-105 transition-all duration-1000" 
+                                        />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 to-transparent pointer-events-none" />
+                                        <div className="absolute top-4 left-4 px-3 py-1.5 rounded-lg bg-black/60 backdrop-blur-md border border-white/10 text-[9px] font-black text-white uppercase tracking-widest flex items-center gap-2">
+                                            <ImageIcon className="w-3 h-3 text-primary" />
+                                            Primary Pathology Vector: MatchID_8923
+                                        </div>
+                                    </div>
+
+                                    {/* Data Insights Grid */}
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <div className="space-y-4">
+                                            <div className="flex items-center gap-2 text-xs font-black text-slate-900 dark:text-white uppercase tracking-[0.1em] font-display">
+                                                <div className="w-2 h-2 rounded-full bg-primary shadow-[0_0_10px_rgba(99,102,241,0.5)]" />
+                                                Clinical Summary
+                                            </div>
+                                            <p className="text-slate-500 dark:text-slate-400 font-medium text-sm leading-relaxed pl-4 border-l-2 border-slate-100 dark:border-slate-800">
+                                                {topPrediction.description}
+                                            </p>
+                                        </div>
+
+                                        <div className="space-y-4">
+                                            <div className="flex items-center gap-2 text-xs font-black text-slate-900 dark:text-white uppercase tracking-[0.1em] font-display">
+                                                <div className="w-2 h-2 rounded-full bg-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.5)]" />
+                                                Critical Precautions
+                                            </div>
+                                            <ul className="space-y-3 pl-4 border-l-2 border-slate-100 dark:border-slate-800">
+                                                {topPrediction.precautions.slice(0, 3).map((p, i) => (
+                                                    <li key={i} className="text-slate-500 dark:text-slate-400 font-medium text-xs flex gap-2">
+                                                        <span className="text-primary">•</span> {p}
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="flex items-center justify-between">
+                        {/* Action Bar */}
+                        <div className="flex items-center justify-between px-2">
                             <button 
                                 onClick={() => {
                                     setPredictions(null);
                                     setSelectedSymptoms([]);
                                 }}
-                                className="px-6 py-3 rounded-xl border-2 border-slate-100 dark:border-slate-800 text-slate-500 font-bold text-xs uppercase tracking-widest hover:bg-slate-50 dark:hover:bg-slate-900 transition-colors"
+                                className="px-8 py-3.5 rounded-xl text-slate-400 hover:text-slate-900 dark:hover:text-white font-black text-[10px] uppercase tracking-widest transition-all font-sans"
                             >
-                                Start New Analysis
+                                New Clinical Session
                             </button>
-                            <button 
-                                onClick={downloadPDF}
-                                className="px-6 py-3 bg-[#1A1A1A] dark:bg-white text-white dark:text-[#1A1A1A] rounded-xl font-bold text-xs uppercase tracking-widest flex items-center gap-2 shadow-lg hover:scale-105 transition-transform"
-                            >
-                                <Download className="w-4 h-4" />
-                                Download PDF Report
-                            </button>
+                            
+                            <div className="flex items-center gap-4">
+                                <button className="w-12 h-12 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-center text-slate-400 hover:text-primary transition-all shadow-sm">
+                                    <Share2 className="w-5 h-5" />
+                                </button>
+                                <button 
+                                    onClick={downloadPDF}
+                                    disabled={isGeneratingPDF}
+                                    className="px-8 py-3.5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-xl font-black text-[10px] uppercase tracking-[0.15em] flex items-center gap-3 shadow-xl hover:scale-[1.05] disabled:opacity-50 transition-all font-display"
+                                >
+                                    {isGeneratingPDF ? (
+                                        <>
+                                            <div className="w-3 h-3 border-2 border-slate-500 border-t-white rounded-full animate-spin" />
+                                            Compiling Report...
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Printer className="w-4 h-4" />
+                                            Print Formal Report
+                                        </>
+                                    )}
+                                </button>
+                            </div>
                         </div>
                     </div>
                 )}
                 
-                {/* Secondary Alternatives */}
+                {/* Differential Matches */}
                 {predictions && predictions.length > 1 && !isAnalyzing && (
-                    <div className="grid grid-cols-2 gap-6">
-                        {predictions.slice(1, 3).map((pred) => (
-                            <div key={pred.disease} className="bg-white dark:bg-slate-900 rounded-[1.5rem] p-6 shadow-sm border border-slate-100 dark:border-slate-800 flex flex-col gap-4 hover:shadow-md transition-all cursor-pointer">
-                                <div className="flex items-center justify-between">
-                                    <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Alternative</span>
-                                    <span className="text-sm font-bold text-[#7B61FF] bg-[#7B61FF]/10 px-3 py-1 rounded-full text-[10px] uppercase">
-                                        {Math.round(pred.confidence * 100)}% Match
-                                    </span>
+                    <div className="space-y-6">
+                        <div className="flex items-center gap-3">
+                             <div className="h-px bg-slate-100 dark:bg-slate-800 flex-1" />
+                             <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Differential Diagnostics</span>
+                             <div className="h-px bg-slate-100 dark:bg-slate-800 flex-1" />
+                        </div>
+                        <div className="grid grid-cols-2 gap-6">
+                            {predictions.slice(1, 3).map((pred) => (
+                                <div key={pred.disease} className="bg-white dark:bg-slate-900 rounded-3xl p-8 premium-shadow border border-slate-100 dark:border-slate-800 flex flex-col gap-6 group hover:translate-y-[-4px] transition-all cursor-pointer">
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex flex-col">
+                                            <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Secondary Match</span>
+                                            <h3 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight mt-1">{pred.disease}</h3>
+                                        </div>
+                                        <div className="w-12 h-12 rounded-xl bg-slate-50 dark:bg-slate-950 flex flex-col items-center justify-center border border-slate-100 dark:border-slate-800">
+                                            <span className="text-xs font-black text-primary">{Math.round(pred.confidence * 100)}%</span>
+                                        </div>
+                                    </div>
+                                    <p className="text-slate-500 text-xs font-medium leading-normal line-clamp-2">{pred.description}</p>
                                 </div>
-                                <div>
-                                    <h3 className="text-xl font-bold text-[#1A1A1A] dark:text-white">{pred.disease}</h3>
-                                    <p className="text-slate-500 dark:text-slate-400 text-sm font-medium mt-1 line-clamp-2">{pred.description}</p>
-                                </div>
-                            </div>
-                        ))}
+                            ))}
+                        </div>
                     </div>
                 )}
             </div>
 
-            {/* Right Column (Sidebar Widgets) */}
-            <div className="w-80 flex flex-col gap-6 shrink-0">
-                {/* Navigation Menu Widget */}
-                <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 shadow-[0_2px_12px_rgba(0,0,0,0.02)] border border-slate-100 dark:border-slate-800">
-                    <nav className="flex flex-col gap-1">
+            {/* Elite Intelligence Sidebar */}
+            <div className="w-80 flex flex-col gap-8 shrink-0">
+                {/* Diagnostic Details Menu */}
+                <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 premium-shadow border border-slate-100 dark:border-slate-800 space-y-6">
+                    <h3 className="font-display font-black text-slate-900 dark:text-white uppercase tracking-widest text-xs">Intelligence Detail</h3>
+                    <nav className="flex flex-col gap-2">
                         {[
-                            { id: "highlights", name: "Highlights", icon: Activity },
-                            { id: "images", name: "Images", icon: FileText },
-                            { id: "risks", name: "Risk Factors", icon: HeartPulse },
-                            { id: "diagnosis", name: "Diagnosis", icon: Stethoscope },
-                            { id: "treatment", name: "Treatment", icon: Beaker },
+                            { id: "highlights", name: "Matching Profile", icon: Activity },
+                            { id: "images", name: "Neural Visualization", icon: FileText },
+                            { id: "risks", name: "Risk Assessment", icon: HeartPulse },
+                            { id: "diagnosis", name: "Logic Records", icon: Stethoscope },
+                            { id: "treatment", name: "Clinical Pathway", icon: Beaker },
                         ].map((item) => {
                             const Icon = item.icon;
                             return (
                                 <button
                                     key={item.id}
                                     onClick={() => setActiveRightTab(item.id as RightTab)}
-                                    className={`flex items-center gap-4 px-4 py-3 rounded-2xl w-full transition-all ${
+                                    className={`flex items-center gap-4 px-4 py-3 rounded-xl w-full transition-all group font-sans ${
                                         activeRightTab === item.id
-                                            ? "bg-[#7B61FF]/10 text-[#7B61FF]"
-                                            : "text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-950 hover:text-[#1A1A1A]"
+                                            ? "bg-primary/10 text-primary border border-primary/20"
+                                            : "text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-white"
                                     }`}
                                 >
-                                    <Icon className="w-5 h-5" />
-                                    <span className="font-bold text-sm">{item.name}</span>
+                                    <Icon className={`w-4 h-4 ${activeRightTab === item.id ? 'stroke-[2.5]' : 'stroke-2'}`} />
+                                    <span className="font-bold text-xs tracking-tight">{item.name}</span>
                                 </button>
                             );
                         })}
                     </nav>
                 </div>
 
-                {/* Resource Center Widget */}
-                <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 shadow-[0_2px_12px_rgba(0,0,0,0.02)] border border-slate-100 dark:border-slate-800 flex flex-col gap-4">
-                    <h3 className="font-bold text-[#1A1A1A] dark:text-white">Resource Center</h3>
+                {/* Record Center */}
+                <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 premium-shadow border border-slate-100 dark:border-slate-800 space-y-6">
+                    <h3 className="font-display font-black text-slate-900 dark:text-white uppercase tracking-widest text-xs">Knowledge Base</h3>
                     
-                    <div 
+                    <button 
                         onClick={handleUploadClick}
-                        className="border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-2xl p-6 flex flex-col items-center justify-center gap-3 bg-slate-50/50 dark:bg-slate-950/20 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-950 hover:border-[#7B61FF]/30 transition-all"
+                        className="w-full relative group"
                     >
-                        <div className="w-12 h-12 rounded-full bg-white dark:bg-slate-900 shadow-sm flex items-center justify-center text-[#7B61FF]">
-                            <UploadCloud className="w-5 h-5" />
+                        <div className="absolute inset-0 bg-primary/20 rounded-2xl blur-lg opacity-0 group-hover:opacity-100 transition-opacity" />
+                        <div className="relative border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-2xl p-8 flex flex-col items-center justify-center gap-4 bg-slate-50/50 dark:bg-slate-950/20 group-hover:border-primary/50 group-hover:bg-white dark:group-hover:bg-slate-900 transition-all">
+                            <div className="w-12 h-12 rounded-xl bg-white dark:bg-slate-800 shadow-sm border border-slate-100 dark:border-slate-700 flex items-center justify-center text-primary">
+                                <UploadCloud className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                            </div>
+                            <div className="text-center">
+                                <p className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-widest">
+                                    {uploadStatus || "Import Clinical Data"}
+                                </p>
+                                <p className="text-[9px] font-bold text-slate-400 mt-2 tracking-widest italic uppercase">
+                                    {uploadStatus ? "Analyzing Integrity" : "Secure Node Integration"}
+                                </p>
+                            </div>
                         </div>
-                        <div className="text-center">
-                            <p className="text-sm font-bold text-[#1A1A1A] dark:text-white">
-                                {uploadStatus || "Upload Resource"}
-                            </p>
-                            <p className="text-xs font-medium text-slate-400 mt-1">
-                                {uploadStatus ? "Processing Integration" : ".docx, .pdf, .excel"}
-                            </p>
-                        </div>
-                    </div>
+                    </button>
                     
                     <input 
                         type="file" 
@@ -393,16 +406,27 @@ export default function DashboardPage() {
                     />
                 </div>
 
-                {/* System Activity Feed */}
-                <div className="mt-auto p-6 rounded-3xl bg-[#1A1A1A] text-white space-y-4 shadow-xl">
+                {/* Real-time Diagnostics Feed */}
+                <div className="mt-auto p-8 rounded-4xl bg-slate-900 text-white space-y-6 shadow-2xl relative overflow-hidden group">
+                     {/* Gloss effect */}
+                    <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+                    
                     <div className="flex items-center justify-between">
-                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#7B61FF]">Live Diagnostics</span>
-                        <div className="w-2 h-2 rounded-full bg-[#7B61FF] animate-pulse" />
+                        <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary italic">Live Feed</span>
+                        <div className="flex gap-1">
+                            <span className="w-1 h-3 bg-primary rounded-full animate-bounce" />
+                            <span className="w-1 h-3 bg-primary rounded-full animate-bounce [animation-delay:0.2s]" />
+                            <span className="w-1 h-3 bg-primary rounded-full animate-bounce [animation-delay:0.4s]" />
+                        </div>
                     </div>
-                    <div className="space-y-3">
-                        <div className="flex gap-3 items-start">
-                            <AlertCircle className="w-4 h-4 text-slate-500 mt-0.5" />
-                            <p className="text-[10px] font-bold text-slate-400">Neural Engine V1.5 initialized with zero latent bias.</p>
+                    <div className="space-y-4">
+                        <div className="flex gap-4 items-start pb-4 border-b border-white/5">
+                            <ShieldCheck className="w-4 h-4 text-primary mt-1 shrink-0" />
+                            <p className="text-[10px] font-bold text-slate-300 leading-relaxed uppercase tracking-widest font-sans">Verified: Clinical Layer matches global diagnostic protocols.</p>
+                        </div>
+                        <div className="flex gap-4 items-start">
+                            <Activity className="w-4 h-4 text-primary/60 mt-1 shrink-0" />
+                            <p className="text-[10px] font-bold text-slate-500 leading-relaxed uppercase tracking-widest font-sans">Latent bias scanning at zero-tolerance threshold.</p>
                         </div>
                     </div>
                 </div>

@@ -3,16 +3,19 @@
 import { useState, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
 import { useTheme } from "next-themes";
-import { Shield, Smartphone, Palette, Database, Trash2, Cpu, CheckCircle2 } from "lucide-react";
+import { Shield, Smartphone, Palette, Database, Trash2, Cpu, CheckCircle2, UserCog } from "lucide-react";
+import { getUserProfile, saveUserProfile, type UserProfile } from "@/lib/profile-store";
 
 export default function SettingsPage() {
     const { user, isLoaded } = useUser();
     const { theme, setTheme } = useTheme();
     const [historyCount, setHistoryCount] = useState(0);
     const [mounted, setMounted] = useState(false);
+    const [profile, setProfile] = useState<UserProfile>({ clinicalLevel: "", department: "" });
 
     useEffect(() => {
         setMounted(true);
+        setProfile(getUserProfile());
         try {
             const raw = localStorage.getItem("neurax_history");
             const history = raw ? JSON.parse(raw) : [];
@@ -21,6 +24,14 @@ export default function SettingsPage() {
             setHistoryCount(0);
         }
     }, []);
+
+    const handleProfileUpdate = (key: keyof UserProfile, value: string) => {
+        const newProfile = { ...profile, [key]: value };
+        setProfile(newProfile);
+        saveUserProfile(newProfile);
+        // Dispatch custom event for TopBar sync
+        window.dispatchEvent(new CustomEvent("neurax_profile_updated"));
+    };
 
     const handleClearHistory = () => {
         localStorage.removeItem("neurax_history");
@@ -34,6 +45,8 @@ export default function SettingsPage() {
         { id: "midnight", name: "Deep Indigo", color: "#6366f1", desc: "Neural Deep Dark" },
         { id: "cyber", name: "System Amber", color: "#f59e0b", desc: "High Contrast" },
         { id: "corporate", name: "Clinical Blue", color: "#2563eb", desc: "Professional Grade" },
+        { id: "ultraviolet", name: "Ultra Violet", color: "#8b5cf6", desc: "Neural Spectrum" },
+        { id: "crimson", name: "Clinical Red", color: "#ef4444", desc: "Urgent Priority" },
     ];
 
     return (
@@ -52,21 +65,39 @@ export default function SettingsPage() {
                 {/* Main Settings Area */}
                 <div className="md:col-span-8 space-y-10">
                     {/* User Profile Info (Read-only aesthetic) */}
-                    <div className="p-8 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 relative overflow-hidden">
-                         <div className="absolute top-0 right-0 p-8 opacity-5">
-                            <Shield className="w-24 h-24 grayscale" />
+                    <div className="p-8 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 relative overflow-hidden group">
+                         <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
+                            <UserCog className="w-24 h-24 grayscale" />
                         </div>
                         <div className="flex items-center gap-6 relative z-10">
                             <div className="w-20 h-20 rounded-full ring-4 ring-primary/10 overflow-hidden">
                                 <img src={user?.imageUrl} alt="Profile" className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700" />
                             </div>
-                            <div className="space-y-1">
-                                <h3 className="text-2xl font-bold tracking-tight">{user?.fullName || user?.username}</h3>
-                                <p className="text-sm font-medium text-slate-400">{user?.primaryEmailAddress?.emailAddress}</p>
-                                <div className="pt-2">
-                                    <span className="px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">
-                                        Clinical Level: Senior Physician
-                                    </span>
+                            <div className="space-y-3 flex-1">
+                                <div>
+                                    <h3 className="text-2xl font-bold tracking-tight">{user?.fullName || user?.username}</h3>
+                                    <p className="text-sm font-medium text-slate-400">{user?.primaryEmailAddress?.emailAddress}</p>
+                                </div>
+                                
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="space-y-1">
+                                        <label className="text-[9px] font-black uppercase tracking-widest text-slate-400">Clinical Identity</label>
+                                        <input 
+                                            value={profile.clinicalLevel}
+                                            onChange={(e) => handleProfileUpdate("clinicalLevel", e.target.value)}
+                                            placeholder="e.g. Senior Physician"
+                                            className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-lg px-3 py-2 text-xs font-bold focus:ring-2 focus:ring-primary/20 transition-all"
+                                        />
+                                    </div>
+                                    <div className="space-y-1">
+                                        <label className="text-[9px] font-black uppercase tracking-widest text-slate-400">Department</label>
+                                        <input 
+                                            value={profile.department}
+                                            onChange={(e) => handleProfileUpdate("department", e.target.value)}
+                                            placeholder="e.g. Neurology"
+                                            className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-lg px-3 py-2 text-xs font-bold focus:ring-2 focus:ring-primary/20 transition-all"
+                                        />
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -141,6 +172,13 @@ export default function SettingsPage() {
                             <Trash2 className="w-3.5 h-3.5 group-hover:animate-bounce" />
                             Purge Records
                         </button>
+                    </div>
+
+                    {/* IBM Credit */}
+                    <div className="pt-4 text-center">
+                        <p className="text-[8px] font-black text-slate-400 uppercase tracking-[0.3em]">
+                            Clinical Protocol <span className="text-primary italic">IBM TEAM 63</span>
+                        </p>
                     </div>
                 </div>
             </div>

@@ -39,13 +39,39 @@
     --foreground: 222 47% 11% !important;
     --card: 0 0% 100% !important;
     --border: 214.3 31.8% 91.4% !important;
+    --primary: 239 84% 67%;
   }
 
-  [data-theme='dark'] {
+  [data-theme='dark'], [data-theme='midnight'] {
     --background: 222 47% 4%;
     --foreground: 210 40% 98%;
     --card: 222 47% 6%;
     --border: 217.2 32.6% 17.5%;
+    --primary: 239 84% 67%;
+  }
+
+  [data-theme='emerald'] {
+    --background: 142 76% 3%;
+    --foreground: 142 76% 95%;
+    --card: 142 76% 5%;
+    --border: 142 76% 15%;
+    --primary: 142 76% 45%;
+  }
+
+  [data-theme='cyber'] {
+    --background: 20 100% 3%;
+    --foreground: 20 100% 95%;
+    --card: 20 100% 5%;
+    --border: 20 100% 15%;
+    --primary: 38 92% 50%;
+  }
+
+  [data-theme='corporate'] {
+    --background: 221 83% 4%;
+    --foreground: 210 40% 98%;
+    --card: 221 83% 7%;
+    --border: 221 83% 15%;
+    --primary: 221 83% 53%;
   }
 }
 

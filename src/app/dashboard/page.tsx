@@ -182,7 +182,7 @@ export default function DashboardPage() {
     };
 
     const topPrediction = predictions?.[0];
-    const diseaseImagePath = topPrediction ? getPathologyImage(topPrediction.disease) : getPathologyImage("default");
+    const diseaseImagePath = topPrediction ? getClinicalImage(topPrediction.disease) : getClinicalImage("clinical");
 
     return (
         <div className="flex gap-10 max-w-[1400px] mx-auto animate-in fade-in duration-1000">

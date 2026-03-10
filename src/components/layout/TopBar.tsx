@@ -1,12 +1,36 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useUser, UserButton } from "@clerk/nextjs";
 import { Search, Bell, Settings, Command } from "lucide-react";
+import { getUserProfile, type UserProfile } from "@/lib/profile-store";
 
 export function TopBar() {
     const { user, isLoaded } = useUser();
     const [showNotifications, setShowNotifications] = useState(false);
+    const [profile, setProfile] = useState<UserProfile>({ clinicalLevel: "Senior Physician", department: "Neurology" });
+
+    useEffect(() => {
+        // Initial load
+        setProfile(getUserProfile());
+
+        // Listen for local storage changes (since settings updates it)
+        const handleStorageChange = () => {
+            setProfile(getUserProfile());
+        };
+        window.addEventListener("storage", handleStorageChange);
+        
+        // Custom event for same-tab updates
+        const handleProfileUpdate = () => {
+             setProfile(getUserProfile());
+        };
+        window.addEventListener("neurax_profile_updated", handleProfileUpdate);
+
+        return () => {
+            window.removeEventListener("storage", handleStorageChange);
+            window.removeEventListener("neurax_profile_updated", handleProfileUpdate);
+        };
+    }, []);
 
     return (
         <header className="h-20 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md px-8 flex items-center justify-between shrink-0 border-b border-slate-100 dark:border-slate-800/50 sticky top-0 z-30 transition-all">
@@ -83,7 +107,7 @@ export function TopBar() {
                             {isLoaded ? user?.firstName || "Lead Clinician" : "Lead Clinician"}
                         </span>
                         <span className="text-[10px] text-primary font-bold uppercase tracking-wider italic">
-                            Medical Director
+                            {profile.clinicalLevel}
                         </span>
                     </div>
                     {isLoaded && user ? (

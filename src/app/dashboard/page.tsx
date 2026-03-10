@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { SymptomPicker } from "@/components/prediction/SymptomPicker";
 import { addHistoryEntry } from "@/lib/history-store";
 import { getClinicalMetrics } from "@/lib/metrics-store";
-import { getPathologyImage } from "@/lib/image-db";
+import { getClinicalImage } from "@/lib/image-engine";
 import type { AIAnalysis } from "@/lib/groq";
 import { Activity, Beaker, FileText, HeartPulse, Stethoscope, UploadCloud, Download, ImageIcon, ShieldCheck, AlertCircle, Share2, Printer, ChevronRight, Zap, Target } from "lucide-react";
 import jsPDF from "jspdf";

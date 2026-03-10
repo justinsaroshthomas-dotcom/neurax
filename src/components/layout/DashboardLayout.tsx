@@ -31,8 +31,8 @@ export default function DashboardLayout({
     }
 
     return (
-        <ThemeProvider attribute="class" defaultTheme="light" forcedTheme="light" enableSystem={false}>
-            <div className="flex min-h-screen w-full bg-[#F8F9FA] text-[#1A1A1A] font-sans overflow-hidden">
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
+            <div className="flex min-h-screen w-full bg-[#F8F9FA] dark:bg-slate-950 text-[#1A1A1A] dark:text-slate-100 font-sans overflow-hidden">
                 <Sidebar />
                 <div className="flex-1 flex flex-col h-screen overflow-hidden">
                     <TopBar />

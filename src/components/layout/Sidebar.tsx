@@ -15,7 +15,7 @@ export function Sidebar() {
     const pathname = usePathname();
 
     return (
-        <aside className="w-20 bg-card border-r border-border/50 flex flex-col items-center py-8 z-40 shrink-0 sticky top-0 h-screen transition-all duration-300">
+        <aside className="w-20 bg-background border-r border-border flex flex-col items-center py-8 z-40 shrink-0 sticky top-0 h-screen transition-all duration-300">
             {/* Elite Brand Mark */}
             <div className="mb-12 relative group">
                 <div className="w-11 h-11 rounded-2xl bg-slate-900 dark:bg-white flex items-center justify-center shadow-2xl relative z-10 overflow-hidden transition-transform group-hover:scale-110">
@@ -38,8 +38,8 @@ export function Sidebar() {
                             title={item.title}
                             className={`group relative w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-500 hover:ring-1 hover:ring-slate-200 dark:hover:ring-slate-700 ${
                                 isActive
-                                    ? "text-primary bg-primary/5"
-                                    : "text-slate-400 hover:text-slate-900 dark:hover:text-white"
+                                    ? "text-primary bg-primary/10 shadow-sm"
+                                    : "text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"
                             }`}
                         >
                             <Icon strokeWidth={isActive ? 2.5 : 2} className="w-5 h-5 z-10 transition-transform group-hover:scale-110" />

@@ -19,7 +19,7 @@
 
 @layer base {
   :root {
-    --background: 210 40% 98%;
+    --background: 210 40% 98.5%;
     --foreground: 222 47% 11%;
     --primary: 239 84% 67%;
     --secondary: 210 40% 96.1%;
@@ -31,63 +31,63 @@
     --ring: 239 84% 67%;
     --radius: 1rem;
     --neon: #6366f1;
-    --neon-glow: rgba(99, 102, 241, 0.15);
+    --neon-glow: rgba(99, 102, 241, 0.1);
   }
 
   [data-theme='light'] {
-    --background: 210 40% 98% !important;
+    --background: 210 40% 99% !important;
     --foreground: 222 47% 11% !important;
     --card: 0 0% 100% !important;
     --border: 214.3 31.8% 91.4% !important;
-    --primary: 239 84% 67%;
+    --primary: 221 83% 53%; /* Corporate Blue */
   }
 
   [data-theme='dark'], [data-theme='midnight'] {
-    --background: 222 47% 4%;
+    --background: 222 47% 2%;
     --foreground: 210 40% 98%;
-    --card: 222 47% 6%;
-    --border: 217.2 32.6% 17.5%;
+    --card: 222 47% 4%;
+    --border: 217.2 32.6% 12%;
     --primary: 239 84% 67%;
   }
 
   [data-theme='emerald'] {
-    --background: 142 76% 3%;
-    --foreground: 142 76% 95%;
-    --card: 142 76% 5%;
-    --border: 142 76% 15%;
-    --primary: 142 76% 45%;
+    --background: 162 76% 2%;
+    --foreground: 162 76% 95%;
+    --card: 162 76% 4%;
+    --border: 162 76% 12%;
+    --primary: 162 76% 45%;
   }
 
   [data-theme='cyber'] {
-    --background: 20 100% 3%;
-    --foreground: 20 100% 95%;
-    --card: 20 100% 5%;
-    --border: 20 100% 15%;
-    --primary: 38 92% 50%;
+    --background: 35 100% 2%;
+    --foreground: 45 100% 95%;
+    --card: 35 100% 4%;
+    --border: 35 100% 12%;
+    --primary: 45 92% 50%; /* Amber Gold */
   }
 
   [data-theme='corporate'] {
-    --background: 221 83% 4%;
+    --background: 221 83% 2%;
     --foreground: 210 40% 98%;
-    --card: 221 83% 7%;
-    --border: 221 83% 15%;
+    --card: 221 83% 4%;
+    --border: 221 83% 12%;
     --primary: 221 83% 53%;
   }
 
   [data-theme='ultraviolet'] {
-    --background: 262 83% 4%;
+    --background: 262 83% 2%;
     --foreground: 262 83% 95%;
-    --card: 262 83% 6%;
-    --border: 262 83% 15%;
+    --card: 262 83% 4%;
+    --border: 262 83% 12%;
     --primary: 262 83% 58%;
   }
 
   [data-theme='crimson'] {
-    --background: 0 84% 4%;
+    --background: 0 84% 2%;
     --foreground: 0 84% 95%;
-    --card: 0 84% 6%;
-    --border: 0 84% 15%;
-    --primary: 0 84% 60%;
+    --card: 0 84% 4%;
+    --border: 0 84% 12%;
+    --primary: 0 84% 50%;
   }
 }
 

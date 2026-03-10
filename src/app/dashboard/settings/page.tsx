@@ -41,12 +41,13 @@ export default function SettingsPage() {
     if (!mounted || !isLoaded) return null;
 
     const themes = [
-        { id: "emerald", name: "Modern Emerald", color: "#00B140", desc: "Clinical Precision" },
-        { id: "midnight", name: "Deep Indigo", color: "#6366f1", desc: "Neural Deep Dark" },
-        { id: "cyber", name: "System Amber", color: "#f59e0b", desc: "High Contrast" },
+        { id: "light", name: "Clinical Light", color: "#2563eb", desc: "Elite Medical Clarity" },
+        { id: "emerald", name: "Modern Emerald", color: "#1dbb91", desc: "Clinical Precision" },
+        { id: "midnight", name: "Deep Indigo", color: "#7c83fd", desc: "Neural Deep Dark" },
+        { id: "cyber", name: "System Amber", color: "#f59e0b", desc: "High Contrast Gold" },
         { id: "corporate", name: "Clinical Blue", color: "#2563eb", desc: "Professional Grade" },
         { id: "ultraviolet", name: "Ultra Violet", color: "#8b5cf6", desc: "Neural Spectrum" },
-        { id: "crimson", name: "Clinical Red", color: "#ef4444", desc: "Urgent Priority" },
+        { id: "crimson", name: "Clinical Red", color: "#eb2626", desc: "Urgent Priority" },
     ];
 
     return (

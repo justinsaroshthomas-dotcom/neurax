@@ -450,48 +450,48 @@ export default function DashboardPage() {
                      <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-[60px]" />
                      
                      <div className="flex flex-col gap-1 relative z-10">
-                        <span className="text-[10px] font-black uppercase text-primary tracking-[0.3em] font-display">Deep Engine Core</span>
-                        <h3 className="text-xl font-black tracking-tighter italic">Clinical Accuracy</h3>
+                        <span className="text-[10px] font-black uppercase text-primary tracking-[0.4em] font-display opacity-80">Intelligence Engine Core</span>
+                        <h3 className="text-2xl font-black tracking-tighter italic font-display">System Accuracy</h3>
                      </div>
 
-                     <div className="space-y-6 relative z-10">
-                        <div className="space-y-2">
-                            <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-slate-500">
-                                <span>F1-Score</span>
-                                <span className="text-white italic">{metrics.f1Score}%</span>
+                     <div className="space-y-7 relative z-10">
+                        <div className="space-y-3">
+                            <div className="flex justify-between text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">
+                                <span>F1-Protocol Match</span>
+                                <span className="text-white font-mono">{metrics.f1Score}%</span>
                             </div>
-                            <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
-                                <div className="h-full bg-primary" style={{ width: `${metrics.f1Score}%` }} />
-                            </div>
-                        </div>
-                        <div className="space-y-2">
-                            <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-slate-500">
-                                <span>Precision</span>
-                                <span className="text-white italic">{metrics.precision}%</span>
-                            </div>
-                            <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
-                                <div className="h-full bg-rose-500" style={{ width: `${metrics.precision}%` }} />
+                            <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden border border-white/5 p-[1px]">
+                                <div className="h-full bg-primary rounded-full shadow-[0_0_10px_rgba(99,102,241,0.5)] transition-all duration-1000" style={{ width: `${metrics.f1Score}%` }} />
                             </div>
                         </div>
-                         <div className="space-y-2">
-                            <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-slate-500">
-                                <span>Latent Bias</span>
-                                <span className="text-emerald-400 italic">{"< " + metrics.latentBias}%</span>
+                        <div className="space-y-3">
+                            <div className="flex justify-between text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">
+                                <span>Clinical Precision</span>
+                                <span className="text-white font-mono">{metrics.precision}%</span>
                             </div>
-                            <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
-                                <div className="h-full bg-emerald-500/50" style={{ width: '4%' }} />
+                            <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden border border-white/5 p-[1px]">
+                                <div className="h-full bg-rose-500 rounded-full shadow-[0_0_10px_rgba(244,63,94,0.5)] transition-all duration-1000" style={{ width: `${metrics.precision}%` }} />
+                            </div>
+                        </div>
+                         <div className="space-y-3">
+                            <div className="flex justify-between text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">
+                                <span>Latent Neural Bias</span>
+                                <span className="text-emerald-400 font-mono italic">NOMINAL</span>
+                            </div>
+                            <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden border border-white/5 p-[1px]">
+                                <div className="h-full bg-emerald-500/40 rounded-full transition-all duration-1000" style={{ width: '4%' }} />
                             </div>
                         </div>
                      </div>
 
-                     <div className="pt-4 flex items-center justify-between relative z-10">
+                     <div className="pt-6 flex items-center justify-between relative z-10 border-t border-white/5">
                         <div className="flex flex-col">
-                            <span className="text-[24px] font-black leading-none">{metrics.totalIdentified}</span>
-                            <span className="text-[8px] font-black uppercase tracking-widest text-slate-500">Markers Indexed</span>
+                            <span className="text-[32px] font-black leading-none font-display tracking-tight">{metrics.totalIdentified}</span>
+                            <span className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-500">Pathology Markers</span>
                         </div>
-                        <button className="w-10 h-10 rounded-xl bg-white/5 hover:bg-primary transition-all flex items-center justify-center">
-                            <Activity className="w-4 h-4" />
-                        </button>
+                        <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center group-hover:bg-primary group-hover:border-primary transition-all duration-500 shadow-2xl">
+                            <Activity className="w-5 h-5 text-primary group-hover:text-white transition-colors animate-pulse" />
+                        </div>
                      </div>
                 </div>
 

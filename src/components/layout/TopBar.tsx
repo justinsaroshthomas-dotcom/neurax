@@ -33,17 +33,17 @@ export function TopBar() {
     }, []);
 
     return (
-        <header className="h-20 bg-background/80 backdrop-blur-md px-8 flex items-center justify-between shrink-0 border-b border-border/50 sticky top-0 z-30 transition-all">
+        <header className="h-20 bg-background/60 backdrop-blur-xl px-8 flex items-center justify-between shrink-0 border-b border-border sticky top-0 z-30 transition-all">
             {/* Logo area & Title */}
             <div className="flex items-center gap-4">
                 <div className="flex flex-col">
                     <div className="flex items-center gap-2">
-                         <span className="text-[10px] font-bold text-primary uppercase tracking-[0.2em] font-display">
+                         <span className="text-[10px] font-black text-primary uppercase tracking-[0.3em] font-display opacity-80">
                             Neurax Intelligence
                         </span>
-                        <span className="px-1.5 py-0.5 rounded bg-primary/10 text-[8px] font-black text-primary border border-primary/20">V2.0</span>
+                        <span className="px-2 py-0.5 rounded-full bg-primary/10 text-[8px] font-black text-primary border border-primary/20 shadow-sm">v3.7.4</span>
                     </div>
-                    <h1 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight flex items-center gap-2">
+                     <h1 className="text-xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-2 font-display">
                         Clinical Diagnostic Matrix
                     </h1>
                 </div>
@@ -106,8 +106,8 @@ export function TopBar() {
                         <span className="text-xs font-bold text-slate-900 dark:text-white tracking-tight">
                             {isLoaded ? user?.firstName || "Lead Clinician" : "Lead Clinician"}
                         </span>
-                        <span className="text-[10px] text-primary font-bold uppercase tracking-wider italic">
-                            {profile.clinicalLevel}
+                         <span className="text-[10px] text-primary font-black uppercase tracking-[0.2em] italic opacity-80">
+                            {profile.clinicalLevel || "Lead Clinician"}
                         </span>
                     </div>
                     {isLoaded && user ? (

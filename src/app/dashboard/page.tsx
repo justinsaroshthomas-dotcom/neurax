@@ -466,20 +466,20 @@ export default function DashboardPage() {
                         </div>
                         <div className="space-y-3">
                             <div className="flex justify-between text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">
-                                <span>Clinical Precision</span>
+                                <span>Clinical Recall</span>
+                                <span className="text-white font-mono">{metrics.recall}%</span>
+                            </div>
+                            <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden border border-white/5 p-[1px]">
+                                <div className="h-full bg-emerald-500 rounded-full shadow-[0_0_10px_rgba(16,185,129,0.5)] transition-all duration-1000" style={{ width: `${metrics.recall}%` }} />
+                            </div>
+                        </div>
+                        <div className="space-y-3">
+                            <div className="flex justify-between text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">
+                                <span>Precision Matrix</span>
                                 <span className="text-white font-mono">{metrics.precision}%</span>
                             </div>
                             <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden border border-white/5 p-[1px]">
                                 <div className="h-full bg-rose-500 rounded-full shadow-[0_0_10px_rgba(244,63,94,0.5)] transition-all duration-1000" style={{ width: `${metrics.precision}%` }} />
-                            </div>
-                        </div>
-                         <div className="space-y-3">
-                            <div className="flex justify-between text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">
-                                <span>Latent Neural Bias</span>
-                                <span className="text-emerald-400 font-mono italic">NOMINAL</span>
-                            </div>
-                            <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden border border-white/5 p-[1px]">
-                                <div className="h-full bg-emerald-500/40 rounded-full transition-all duration-1000" style={{ width: '4%' }} />
                             </div>
                         </div>
                      </div>

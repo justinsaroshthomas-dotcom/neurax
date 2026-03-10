@@ -200,10 +200,10 @@ export default function DashboardPage() {
                 
                 {/* Input Area */}
                 {!predictions && !isAnalyzing && (
-                    <div className="bg-white dark:bg-slate-900 rounded-4xl p-10 shadow-2xl shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:border-slate-800 space-y-10">
-                        <div className="flex flex-col gap-2">
-                            <h2 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight font-display">Neural Clinical Input</h2>
-                            <p className="text-slate-500 font-medium text-sm">Select patient symptoms to generate a predictive diagnostic matrix.</p>
+                    <div className="bg-white/80 dark:bg-slate-900/80 rounded-[2.5rem] p-12 shadow-clinical-shadow backdrop-blur-3xl border border-white/20 dark:border-white/5 space-y-12 animate-in fade-in zoom-in-95 duration-1000">
+                        <div className="flex flex-col gap-3">
+                            <h2 className="text-4xl font-black text-slate-900 dark:text-white tracking-tighter font-display">Neural Clinical Input</h2>
+                            <p className="text-slate-500 font-bold uppercase tracking-[0.2em] text-[10px] opacity-80 italic">Select pathology markers to initiate diagnostic session</p>
                         </div>
                         
                         <SymptomPicker
@@ -211,14 +211,14 @@ export default function DashboardPage() {
                             onSymptomsChange={setSelectedSymptoms}
                         />
 
-                        <div className="pt-8 border-t border-slate-100 dark:border-slate-800 flex justify-end">
+                        <div className="pt-10 border-t border-slate-100 dark:border-slate-800 flex justify-end">
                             <button
                                 onClick={handlePredict}
                                 disabled={selectedSymptoms.length === 0 || isAnalyzing}
-                                className="px-10 py-5 bg-primary text-white rounded-2xl font-black uppercase tracking-widest text-xs shadow-2xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50 flex items-center gap-3"
+                                className="px-12 py-6 bg-primary text-white rounded-[1.5rem] font-black uppercase tracking-[0.3em] text-[10px] shadow-2xl shadow-primary/40 hover:scale-[1.02] active:scale-95 transition-all duration-500 disabled:opacity-30 flex items-center gap-4 group"
                             >
-                                Initiate Prediction
-                                <Activity className="w-4 h-4" />
+                                Initiate Neural Prediction
+                                <Activity className="w-4 h-4 group-hover:animate-pulse" />
                             </button>
                         </div>
                     </div>
@@ -226,17 +226,22 @@ export default function DashboardPage() {
 
                 {/* Processing State */}
                 {isAnalyzing && (
-                    <div className="bg-white dark:bg-slate-900 rounded-4xl p-24 border border-slate-100 dark:border-slate-800 flex flex-col items-center justify-center gap-8">
-                        <div className="w-20 h-20 border-4 border-primary/10 border-t-primary rounded-full animate-spin" />
-                        <h3 className="text-slate-900 dark:text-white font-black text-xl tracking-tight uppercase">Analyzing Clinical Pathways...</h3>
+                    <div className="bg-white/80 dark:bg-slate-900/80 rounded-[2.5rem] p-32 border border-white/20 dark:border-white/5 backdrop-blur-3xl flex flex-col items-center justify-center gap-10 animate-in fade-in zoom-in-95 duration-700 shadow-clinical-shadow">
+                        <div className="relative">
+                            <div className="w-24 h-24 border-4 border-primary/5 border-t-primary rounded-full animate-spin duration-[1.5s]" />
+                            <div className="absolute inset-0 flex items-center justify-center">
+                                <Activity className="w-8 h-8 text-primary/40 animate-pulse" />
+                            </div>
+                        </div>
+                        <h3 className="text-slate-900 dark:text-white font-black text-xl tracking-widest uppercase italic font-display">Analyzing clinical pathways...</h3>
                     </div>
                 )}
 
                 {/* Clinical Intelligence Result Area */}
                 {topPrediction && !isAnalyzing && (
-                    <div className="space-y-8 animate-in slide-in-from-bottom-8 duration-700">
-                        <div className="bg-white dark:bg-slate-900 rounded-4xl overflow-hidden glass-panel border border-slate-100 dark:border-slate-800 flex flex-col items-stretch">
-                            <div className="p-10 flex flex-col lg:flex-row gap-12">
+                    <div className="space-y-10 animate-in slide-in-from-bottom-12 duration-1000">
+                        <div className="bg-white/60 dark:bg-slate-900/60 rounded-[2.5rem] overflow-hidden backdrop-blur-3xl border border-white/20 dark:border-white/5 shadow-clinical-shadow flex flex-col items-stretch">
+                            <div className="p-12 flex flex-col lg:flex-row gap-16">
                                 <div className="flex-1 space-y-10">
                                     {/* Primary Tab Content */}
                                     {activeRightTab === "highlights" && (

@@ -29,7 +29,7 @@
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
     --ring: 239 84% 67%;
-    --radius: 1rem;
+    --radius: 1.25rem;
     --neon: #6366f1;
     --neon-glow: rgba(99, 102, 241, 0.1);
   }
@@ -91,17 +91,37 @@
   }
 }
 
-@layer utilities {
+@layer components {
   .glass-panel {
-    @apply bg-white/70 dark:bg-slate-900/40 backdrop-blur-xl border border-white/20 dark:border-slate-800/50 shadow-[0_8px_32px_rgba(0,0,0,0.04)];
-  }
-  
-  .premium-shadow {
-    @apply shadow-[0_20px_50px_rgba(0,0,0,0.05)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.2)];
+    @apply bg-white/40 dark:bg-slate-900/40 backdrop-blur-2xl border border-white/20 dark:border-white/5;
+    box-shadow: 
+      0 4px 6px -1px rgba(0, 0, 0, 0.05),
+      0 2px 4px -1px rgba(0, 0, 0, 0.03),
+      inset 0 0 20px rgba(255, 255, 255, 0.05);
   }
 
-  .text-glow-primary {
-    text-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+  .premium-shadow {
+    box-shadow: 
+      0 10px 15px -3px rgba(0, 0, 0, 0.04),
+      0 4px 6px -2px rgba(0, 0, 0, 0.02),
+      0 20px 25px -5px rgba(0, 0, 0, 0.03);
+  }
+
+  .clinical-shadow {
+    box-shadow: 
+      0 20px 25px -5px rgba(0, 0, 0, 0.05),
+      0 10px 10px -5px rgba(0, 0, 0, 0.02),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+  }
+
+  .font-display {
+    @apply font-sans tracking-tight;
+    font-feature-settings: "cv02", "cv05", "cv11";
+  }
+
+  .medical-grid {
+    background-image: radial-gradient(circle at 1px 1px, currentColor 1px, transparent 0);
+    background-size: 24px 24px;
   }
 }
 

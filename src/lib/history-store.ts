@@ -12,6 +12,7 @@ export interface HistoryEntry {
         disease: string;
         confidence: number;
         severity: "low" | "medium" | "high" | "critical";
+        treatments: string[];
         matchedSymptoms: string[];
     }[];
     topDisease: string;

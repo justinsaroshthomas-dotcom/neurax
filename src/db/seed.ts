@@ -533,7 +533,8 @@ export const seedDiseases: SeedDisease[] = [
         description: "Autoimmune disorder that interrupts the communication between nerves and muscles.",
         severity: "high",
         symptoms: [{ symptomId: "s82", weight: 0.9 }, { symptomId: "s15", weight: 0.85 }, { symptomId: "s81", weight: 0.7 }],
-        precautions: ["Treat underlying malignancy", "Amifampridine", "IVIG", "Plasma exchange"]
+        precautions: ["Treat underlying malignancy", "Amifampridine", "IVIG", "Plasma exchange"],
+        treatments: ["Amifampridine", "Guanidine", "Pyridostigmine", "Intravenous immunoglobulin (IVIG)", "Plasma exchange"]
     }
     // ... Additional 450+ entities are dynamically supported by the Neurax Clinical Matrix.
 ];

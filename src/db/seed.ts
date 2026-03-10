@@ -16,6 +16,7 @@ export interface SeedDisease {
     severity: "low" | "medium" | "high" | "critical";
     symptoms: { symptomId: string; weight: number }[];
     precautions: string[];
+    treatments: string[];
 }
 
 // ── Symptoms (132+ Indicators) ──────────────────────────────
@@ -165,7 +166,8 @@ export const seedDiseases: SeedDisease[] = [
         description: "Impedance of blood flow through the coronary arteries, usually by atherosclerosis.",
         severity: "high",
         symptoms: [{ symptomId: "s57", weight: 0.9 }, { symptomId: "s28", weight: 0.8 }, { symptomId: "s120", weight: 0.7 }],
-        precautions: ["Heart-healthy diet", "Regular exercise", "Stress management", "Statins if prescribed"]
+        precautions: ["Heart-healthy diet", "Regular exercise", "Stress management", "Statins if prescribed"],
+        treatments: ["Aspirin", "Statins", "Beta-blockers", "Nitroglycerin", "Angioplasty", "Coronary artery bypass grafting"]
     },
     {
         id: "d2",
@@ -173,7 +175,8 @@ export const seedDiseases: SeedDisease[] = [
         description: "Permanent damage to the heart muscle due to lack of blood supply.",
         severity: "critical",
         symptoms: [{ symptomId: "s57", weight: 0.98 }, { symptomId: "s59", weight: 0.9 }, { symptomId: "s29", weight: 0.8 }],
-        precautions: ["Emergency medical care", "Cardiac rehabilitation", "Aspirin therapy", "Lifestyle modification"]
+        precautions: ["Emergency medical care", "Cardiac rehabilitation", "Aspirin therapy", "Lifestyle modification"],
+        treatments: ["Thrombolytic therapy", "Oxygen therapy", "Morphine", "ACE inhibitors", "Percutaneous coronary intervention"]
     },
     {
         id: "d3",
@@ -181,7 +184,8 @@ export const seedDiseases: SeedDisease[] = [
         description: "Irregular, often rapid heart rate that can cause poor blood flow.",
         severity: "high",
         symptoms: [{ symptomId: "s120", weight: 0.95 }, { symptomId: "s65", weight: 0.8 }, { symptomId: "s15", weight: 0.6 }],
-        precautions: ["Anticoagulation", "Rate control medication", "Avoid caffeine", "Monitor pulse"]
+        precautions: ["Anticoagulation", "Rate control medication", "Avoid caffeine", "Monitor pulse"],
+        treatments: ["Blood thinners (Warfarin, NOACs)", "Beta-blockers", "Calcium channel blockers", "Cardioversion", "Catheter ablation"]
     },
     {
         id: "d4",
@@ -189,7 +193,8 @@ export const seedDiseases: SeedDisease[] = [
         description: "Chronic condition where the heart doesn't pump blood as well as it should.",
         severity: "critical",
         symptoms: [{ symptomId: "s28", weight: 0.9 }, { symptomId: "s69", weight: 0.85 }, { symptomId: "s15", weight: 0.7 }],
-        precautions: ["Salt restriction", "Daily weight monitoring", "Diuretics", "Fluid management"]
+        precautions: ["Salt restriction", "Daily weight monitoring", "Diuretics", "Fluid management"],
+        treatments: ["ACE inhibitors", "Beta-blockers", "Diuretics", "Digoxin", "Heart transplant evaluation"]
     },
     {
         id: "d5",
@@ -197,7 +202,8 @@ export const seedDiseases: SeedDisease[] = [
         description: "Narrowing of the aortic valve, obstructing blood flow from the left ventricle.",
         severity: "high",
         symptoms: [{ symptomId: "s28", weight: 0.85 }, { symptomId: "s65", weight: 0.8 }, { symptomId: "s57", weight: 0.7 }],
-        precautions: ["Valve monitoring", "Avoid strenuous activity", "Endocarditis prophylaxis", "Surgical consultation"]
+        precautions: ["Valve monitoring", "Avoid strenuous activity", "Endocarditis prophylaxis", "Surgical consultation"],
+        treatments: ["Aortic valve replacement (AVR)", "Transcatheter aortic valve replacement (TAVR)", "Balloon valvuloplasty"]
     },
 
     // ── Oncology ──────────────────────────────
@@ -207,7 +213,8 @@ export const seedDiseases: SeedDisease[] = [
         description: "Aggressive type of cancer that can occur in the brain or spinal cord.",
         severity: "critical",
         symptoms: [{ symptomId: "s32", weight: 0.95 }, { symptomId: "s65", weight: 0.85 }, { symptomId: "s110", weight: 0.7 }],
-        precautions: ["Radiation therapy", "Chemotherapy", "Seizure management", "Supportive care"]
+        precautions: ["Radiation therapy", "Chemotherapy", "Seizure management", "Supportive care"],
+        treatments: ["Surgical resection", "Temozolomide chemotherapy", "Tumor-treating fields (TTF)", "Stereotactic radiosurgery"]
     },
     {
         id: "d102",
@@ -215,7 +222,8 @@ export const seedDiseases: SeedDisease[] = [
         description: "The most common type of lung cancer, typically growing more slowly than small cell.",
         severity: "critical",
         symptoms: [{ symptomId: "s25", weight: 0.9 }, { symptomId: "s28", weight: 0.85 }, { symptomId: "s118", weight: 0.95 }],
-        precautions: ["Smoking cessation", "Lung function monitoring", "Targeted therapy", "Pain management"]
+        precautions: ["Smoking cessation", "Lung function monitoring", "Targeted therapy", "Pain management"],
+        treatments: ["Chemotherapy", "Radiation therapy", "Targeted drug therapy", "Immunotherapy", "Lobectomy"]
     },
     {
         id: "d103",
@@ -223,7 +231,8 @@ export const seedDiseases: SeedDisease[] = [
         description: "Aggressive cancer arising from the exocrine part of the pancreas.",
         severity: "critical",
         symptoms: [{ symptomId: "s40", weight: 0.9 }, { symptomId: "s33", weight: 0.85 }, { symptomId: "s20", weight: 0.8 }],
-        precautions: ["Enzyme replacement", "Nutritional support", "Pain control", "Clinical trials"]
+        precautions: ["Enzyme replacement", "Nutritional support", "Pain control", "Clinical trials"],
+        treatments: ["Whipple procedure", "Gemcitabine chemotherapy", "Erlotinib", "Palliative bypass surgery"]
     },
     {
         id: "d104",
@@ -231,7 +240,8 @@ export const seedDiseases: SeedDisease[] = [
         description: "Highly aggressive subtype of breast cancer lacking common hormone receptors.",
         severity: "critical",
         symptoms: [{ symptomId: "s15", weight: 0.6 }, { symptomId: "s48", weight: 0.8 }, { symptomId: "s20", weight: 0.5 }],
-        precautions: ["Genetic counseling", "Regular screening", "Chemotherapy adherence", "Support groups"]
+        precautions: ["Genetic counseling", "Regular screening", "Chemotherapy adherence", "Support groups"],
+        treatments: ["Anthracyclines", "Taxanes", "Platinum agents", "PARP inhibitors", "Mastectomy"]
     },
     {
         id: "d105",
@@ -239,7 +249,8 @@ export const seedDiseases: SeedDisease[] = [
         description: "Acute myeloid leukemia, a cancer of the myeloid line of blood cells.",
         severity: "critical",
         symptoms: [{ symptomId: "s15", weight: 0.9 }, { symptomId: "s26", weight: 0.85 }, { symptomId: "s67", weight: 0.8 }],
-        precautions: ["Infection control", "Blood transfusions", "Stem cell transplant", "Hydration"]
+        precautions: ["Infection control", "Blood transfusions", "Stem cell transplant", "Hydration"],
+        treatments: ["Induction chemotherapy", "Consolidation therapy", "Allogeneic stem cell transplant", "Midostaurin"]
     },
 
     // ── Neurology ──────────────────────────────
@@ -249,7 +260,8 @@ export const seedDiseases: SeedDisease[] = [
         description: "Progressive neurodegenerative condition leading to cognitive decline.",
         severity: "high",
         symptoms: [{ symptomId: "s110", weight: 0.95 }, { symptomId: "s99", weight: 0.8 }, { symptomId: "s88", weight: 0.75 }],
-        precautions: ["Cognitive engagement", "Safe environment", "Structured routine", "Caregiver support"]
+        precautions: ["Cognitive engagement", "Safe environment", "Structured routine", "Caregiver support"],
+        treatments: ["Donepezil", "Memantine", "Rivastigmine", "Galantamine", "Aducanumab"]
     },
     {
         id: "d202",
@@ -257,7 +269,8 @@ export const seedDiseases: SeedDisease[] = [
         description: "Nervous system disease that weakens muscles and impacts physical function.",
         severity: "critical",
         symptoms: [{ symptomId: "s82", weight: 0.98 }, { symptomId: "s79", weight: 0.9 }, { symptomId: "s78", weight: 0.85 }],
-        precautions: ["Respiratory support", "Assistive devices", "Speech therapy", "Nutritional maintenance"]
+        precautions: ["Respiratory support", "Assistive devices", "Speech therapy", "Nutritional maintenance"],
+        treatments: ["Riluzole", "Edaravone", "Non-invasive ventilation", "Feeding tube (PEG)", "Physical therapy"]
     },
     {
         id: "d203",
@@ -265,7 +278,8 @@ export const seedDiseases: SeedDisease[] = [
         description: "Disease in which the immune system eats away at the protective covering of nerves.",
         severity: "high",
         symptoms: [{ symptomId: "s15", weight: 0.8 }, { symptomId: "s50", weight: 0.85 }, { symptomId: "s65", weight: 0.7 }],
-        precautions: ["Heat avoidence", "Physical therapy", "Disease-modifying drugs", "Stress reduction"]
+        precautions: ["Heat avoidence", "Physical therapy", "Disease-modifying drugs", "Stress reduction"],
+        treatments: ["Ocrelizumab", "Fingolimod", "Natalizumab", "Interferon beta-1a", "Methylprednisolone for relapses"]
     },
     {
         id: "d204",
@@ -273,7 +287,8 @@ export const seedDiseases: SeedDisease[] = [
         description: "Disorder of the central nervous system that affects movement, often including tremors.",
         severity: "high",
         symptoms: [{ symptomId: "s86", weight: 0.9 }, { symptomId: "s87", weight: 0.85 }, { symptomId: "s85", weight: 0.8 }],
-        precautions: ["Dopaminergic therapy", "Fall prevention", "Exercise program", "Speech training"]
+        precautions: ["Dopaminergic therapy", "Fall prevention", "Exercise program", "Speech training"],
+        treatments: ["Levodopa/Carbidopa", "Pramipexole", "Ropinirole", "Deep brain stimulation (DBS)", "MAO-B inhibitors"]
     },
     {
         id: "d205",
@@ -281,7 +296,8 @@ export const seedDiseases: SeedDisease[] = [
         description: "Neurological disorder marked by sudden recurrent episodes of sensory disturbance.",
         severity: "high",
         symptoms: [{ symptomId: "s65", weight: 0.7 }, { symptomId: "s110", weight: 0.6 }, { symptomId: "s114", weight: 1.0 }],
-        precautions: ["Anticonvulsants", "Sleep hygiene", "Seizure triggers awareness", "Safety id bracelet"]
+        precautions: ["Anticonvulsants", "Sleep hygiene", "Seizure triggers awareness", "Safety id bracelet"],
+        treatments: ["Levetiracetam", "Lamotrigine", "Valproic acid", "Vagus nerve stimulation", "Ketogenic diet"]
     },
 
     // ── Endocrinology ──────────────────────────────
@@ -291,7 +307,8 @@ export const seedDiseases: SeedDisease[] = [
         description: "Autoimmune destruction of insulin-producing beta cells in the pancreas.",
         severity: "high",
         symptoms: [{ symptomId: "s24", weight: 0.95 }, { symptomId: "s106", weight: 0.9 }, { symptomId: "s20", weight: 0.85 }],
-        precautions: ["Insulin administration", "Glucose monitoring", "Carbohydrate counting", "A1c checkups"]
+        precautions: ["Insulin administration", "Glucose monitoring", "Carbohydrate counting", "A1c checkups"],
+        treatments: ["Rapid-acting insulin", "Long-acting insulin", "Insulin pump therapy", "Continuous glucose monitoring (CGM)"]
     },
     {
         id: "d302",
@@ -299,7 +316,8 @@ export const seedDiseases: SeedDisease[] = [
         description: "Autoimmune disease in which the thyroid gland is gradually destroyed.",
         severity: "medium",
         symptoms: [{ symptomId: "s15", weight: 0.9 }, { symptomId: "s16", weight: 0.85 }, { symptomId: "s72", weight: 0.8 }],
-        precautions: ["Thyroid hormone replacement", "Iodine monitoring", "Regular blood tests", "Selenium tracking"]
+        precautions: ["Thyroid hormone replacement", "Iodine monitoring", "Regular blood tests", "Selenium tracking"],
+        treatments: ["Levothyroxine (Synthroid)", "Liothyronine (Cytomel)", "Anti-inflammatory diet"]
     },
     {
         id: "d303",
@@ -307,7 +325,8 @@ export const seedDiseases: SeedDisease[] = [
         description: "Condition that occurs from exposure to high cortisol levels for a long time.",
         severity: "high",
         symptoms: [{ symptomId: "s68", weight: 0.9 }, { symptomId: "s71", weight: 0.85 }, { symptomId: "s102", weight: 0.8 }],
-        precautions: ["Cortisol suppression", "Bone density monitoring", "Blood pressure control", "Dietary management"]
+        precautions: ["Cortisol suppression", "Bone density monitoring", "Blood pressure control", "Dietary management"],
+        treatments: ["Surgery to remove tumor", "Ketoconazole", "Metyrapone", "Pasireotide", "Pituitary radiation"]
     },
     {
         id: "d304",
@@ -315,7 +334,8 @@ export const seedDiseases: SeedDisease[] = [
         description: "Adrenal insufficiency where the adrenal glands don't produce enough hormones.",
         severity: "high",
         symptoms: [{ symptomId: "s15", weight: 0.9 }, { symptomId: "s12", weight: 0.85 }, { symptomId: "s103", weight: 0.8 }],
-        precautions: ["Steroid replacement", "Emergency kit", "Increased salt intake", "Stress dosing aware"]
+        precautions: ["Steroid replacement", "Emergency kit", "Increased salt intake", "Stress dosing aware"],
+        treatments: ["Hydrocortisone", "Fludrocortisone", "Dehydroepiandrosterone (DHEA)"]
     },
     {
         id: "d305",
@@ -323,7 +343,8 @@ export const seedDiseases: SeedDisease[] = [
         description: "Overproduction of a hormone by the butterfly-shaped gland in the neck.",
         severity: "high",
         symptoms: [{ symptomId: "s20", weight: 0.9 }, { symptomId: "s59", weight: 0.85 }, { symptomId: "s29", weight: 0.8 }],
-        precautions: ["Anti-thyroid medication", "Radioactive iodine", "Beta-blockers", "Eye protection"]
+        precautions: ["Anti-thyroid medication", "Radioactive iodine", "Beta-blockers", "Eye protection"],
+        treatments: ["Methimazole", "Propylthiouracil", "Radioactive iodine therapy", "Thyroidectomy"]
     },
 
     // ── Gastrointestinal ──────────────────────────────
@@ -333,7 +354,8 @@ export const seedDiseases: SeedDisease[] = [
         description: "Chronic inflammatory bowel disease that affects the lining of the digestive tract.",
         severity: "high",
         symptoms: [{ symptomId: "s40", weight: 0.9 }, { symptomId: "s41", weight: 0.85 }, { symptomId: "s20", weight: 0.8 }],
-        precautions: ["Low-residue diet", "Biologic therapy", "Hydration", "Vitamin supplementation"]
+        precautions: ["Low-residue diet", "Biologic therapy", "Hydration", "Vitamin supplementation"],
+        treatments: ["Infliximab", "Adalimumab", "Azathioprine", "Corticosteroids", "Bowel resection surgery"]
     },
     {
         id: "d402",
@@ -341,7 +363,8 @@ export const seedDiseases: SeedDisease[] = [
         description: "Inflammatory bowel disease that causes long-lasting inflammation and ulcers.",
         severity: "high",
         symptoms: [{ symptomId: "s41", weight: 0.9 }, { symptomId: "s62", weight: 0.95 }, { symptomId: "s35", weight: 0.7 }],
-        precautions: ["Aminosalicylates", "Avoid trigger foods", "Pelvic rest during flares", "Regular colonoscopy"]
+        precautions: ["Aminosalicylates", "Avoid trigger foods", "Pelvic rest during flares", "Regular colonoscopy"],
+        treatments: ["Mesalamine", "Sulfasalazine", "Cyclosporine", "Tofacitinib", "Colectomy"]
     },
     {
         id: "d403",
@@ -349,7 +372,8 @@ export const seedDiseases: SeedDisease[] = [
         description: "Immune reaction to eating gluten, a protein found in wheat, barley, and rye.",
         severity: "high",
         symptoms: [{ symptomId: "s41", weight: 0.85 }, { symptomId: "s31", weight: 0.8 }, { symptomId: "s15", weight: 0.7 }],
-        precautions: ["Strict gluten-free diet", "Vigilance for cross-contamination", "Osteoporosis screening", "Nutrient monitoring"]
+        precautions: ["Strict gluten-free diet", "Vigilance for cross-contamination", "Osteoporosis screening", "Nutrient monitoring"],
+        treatments: ["Life-long gluten-free diet", "DEXA scan for bone density", "Iron supplements", "Vitamin B12 injections"]
     },
     {
         id: "d404",
@@ -357,7 +381,8 @@ export const seedDiseases: SeedDisease[] = [
         description: "Chronic liver damage from a variety of causes leading to scarring and liver failure.",
         severity: "critical",
         symptoms: [{ symptomId: "s15", weight: 0.9 }, { symptomId: "s33", weight: 0.95 }, { symptomId: "s47", weight: 0.85 }],
-        precautions: ["Alcohol cessation", "Protein management", "Diuretics for ascites", "Liver transplant eval"]
+        precautions: ["Alcohol cessation", "Protein management", "Diuretics for ascites", "Liver transplant eval"],
+        treatments: ["Spironolactone", "Furosemide", "Lactulose", "Nadolol", "Transjugular intrahepatic portosystemic shunt (TIPS)"]
     },
     {
         id: "d405",
@@ -365,7 +390,8 @@ export const seedDiseases: SeedDisease[] = [
         description: "Inflammation of the organ lying behind the lower part of the stomach.",
         severity: "critical",
         symptoms: [{ symptomId: "s40", weight: 0.95 }, { symptomId: "s12", weight: 0.85 }, { symptomId: "s117", weight: 0.7 }],
-        precautions: ["Fast tracking (NPO)", "Intravenous fluids", "Pain management", "Avoidance of alcohol"]
+        precautions: ["Fast tracking (NPO)", "Intravenous fluids", "Pain management", "Avoidance of alcohol"],
+        treatments: ["Aggressive IV hydration", "Enteral nutrition", "ERCP for gallstone pancreatitis", "Necrosectomy"]
     },
 
     // ── Nephrology ──────────────────────────────
@@ -375,7 +401,8 @@ export const seedDiseases: SeedDisease[] = [
         description: "Long-standing disease of the kidneys leading to renal failure.",
         severity: "high",
         symptoms: [{ symptomId: "s15", weight: 0.85 }, { symptomId: "s34", weight: 0.9 }, { symptomId: "s71", weight: 0.8 }],
-        precautions: ["Low-protein, low-sodium diet", "Dialysis if ESRD", "Blood pressure control", "Diabetes management"]
+        precautions: ["Low-protein, low-sodium diet", "Dialysis if ESRD", "Blood pressure control", "Diabetes management"],
+        treatments: ["Lisinopril", "Losartan", "Erythropoietin-stimulating agents", "Phosphate binders", "Hemodialysis"]
     },
     {
         id: "d502",
@@ -383,7 +410,8 @@ export const seedDiseases: SeedDisease[] = [
         description: "Kidney disorder that causes your body to pass too much protein in your urine.",
         severity: "high",
         symptoms: [{ symptomId: "s71", weight: 0.95 }, { symptomId: "s20", weight: 0.6 }, { symptomId: "s15", weight: 0.7 }],
-        precautions: ["Steroid therapy", "Low-salt diet", "Diuretics", "ACE inhibitors"]
+        precautions: ["Steroid therapy", "Low-salt diet", "Diuretics", "ACE inhibitors"],
+        treatments: ["Prednisone", "Cyclophosphamide", "Rituximab", "Statin therapy", "Anticoagulation"]
     },
     {
         id: "d503",
@@ -391,7 +419,8 @@ export const seedDiseases: SeedDisease[] = [
         description: "Inherited disorder in which clusters of cysts develop primarily within your kidneys.",
         severity: "high",
         symptoms: [{ symptomId: "s38", weight: 0.85 }, { symptomId: "s40", weight: 0.8 }, { symptomId: "s34", weight: 0.6 }],
-        precautions: ["Vaptans if appropriate", "Manage hypertension", "Cyst drainage if large", "Family screening"]
+        precautions: ["Vaptans if appropriate", "Manage hypertension", "Cyst drainage if large", "Family screening"],
+        treatments: ["Tolvaptan", "Blood pressure management", "Managing pain", "Kidney transplant prep"]
     },
 
     // ── Infectious / Tropical ──────────────────────────────
@@ -401,7 +430,8 @@ export const seedDiseases: SeedDisease[] = [
         description: "Mosquito-borne viral disease causing severe flu-like illness.",
         severity: "high",
         symptoms: [{ symptomId: "s26", weight: 0.95 }, { symptomId: "s37", weight: 0.9 }, { symptomId: "s7", weight: 0.85 }],
-        precautions: ["Hydration", "Avoid NSAIDs (risk of hemorrhage)", "Rest", "Mosquito prevention"]
+        precautions: ["Hydration", "Avoid NSAIDs (risk of hemorrhage)", "Rest", "Mosquito prevention"],
+        treatments: ["Supportive care", "Fluid replacement", "Acetaminophen for fever", "Blood transfusion if severe"]
     },
     {
         id: "d602",
@@ -409,7 +439,8 @@ export const seedDiseases: SeedDisease[] = [
         description: "Parasitic infection transmitted by Anopheles mosquitoes.",
         severity: "critical",
         symptoms: [{ symptomId: "s6", weight: 0.95 }, { symptomId: "s26", weight: 0.9 }, { symptomId: "s32", weight: 0.8 }],
-        precautions: ["Artemisinin-based combinations", "Mosquito nets", "Liver monitoring", "Prophylaxis if traveling"]
+        precautions: ["Artemisinin-based combinations", "Mosquito nets", "Liver monitoring", "Prophylaxis if traveling"],
+        treatments: ["Artemether-lumefantrine", "Chloroquine", "Quinine sulfate", "Primaquine"]
     },
     {
         id: "d603",
@@ -417,7 +448,8 @@ export const seedDiseases: SeedDisease[] = [
         description: "Potentially serious infectious bacterial disease that mainly affects the lungs.",
         severity: "critical",
         symptoms: [{ symptomId: "s25", weight: 0.95 }, { symptomId: "s26", weight: 0.8 }, { symptomId: "s20", weight: 0.85 }],
-        precautions: ["DOTS therapy", "Respiratory isolation", "Nutritional support", "Regular sputum test"]
+        precautions: ["DOTS therapy", "Respiratory isolation", "Nutritional support", "Regular sputum test"],
+        treatments: ["Isoniazid", "Rifampin", "Ethambutol", "Pyrazinamide", "Bedaquiline for MDR-TB"]
     },
     {
         id: "d604",
@@ -425,7 +457,8 @@ export const seedDiseases: SeedDisease[] = [
         description: "Viral infection primarily spread by mosquitoes, significant risk during pregnancy.",
         severity: "medium",
         symptoms: [{ symptomId: "s26", weight: 0.7 }, { symptomId: "s7", weight: 0.8 }, { symptomId: "s53", weight: 0.6 }],
-        precautions: ["Avoid mosquito bites", "Safe sex practices", "Hydration", "Prenatal monitoring"]
+        precautions: ["Avoid mosquito bites", "Safe sex practices", "Hydration", "Prenatal monitoring"],
+        treatments: ["Symptomatic relief", "Rest", "Fluids", "Acetaminophen"]
     },
     {
         id: "d605",
@@ -433,7 +466,8 @@ export const seedDiseases: SeedDisease[] = [
         description: "Viral respiratory disease often leading to multi-organ dysfunction and pneumonia.",
         severity: "critical",
         symptoms: [{ symptomId: "s28", weight: 0.95 }, { symptomId: "s25", weight: 0.85 }, { symptomId: "s15", weight: 0.8 }],
-        precautions: ["Oxygen therapy", "Antivirals", "Corticosteroids", "Vaccination"]
+        precautions: ["Oxygen therapy", "Antivirals", "Corticosteroids", "Vaccination"],
+        treatments: ["Remdesivir", "Dexamethasone", "Paxlovid", "Monoclonal antibodies", "Mechanical ventilation"]
     },
 
     // ── Hematology ──────────────────────────────
@@ -443,7 +477,8 @@ export const seedDiseases: SeedDisease[] = [
         description: "Inherited red blood cell disorder that causes cells to become misshapen and break down.",
         severity: "high",
         symptoms: [{ symptomId: "s7", weight: 0.85 }, { symptomId: "s15", weight: 0.9 }, { symptomId: "s114", weight: 0.4 }],
-        precautions: ["Hydroxyurea", "Pain management", "Folic acid", "Hydration"]
+        precautions: ["Hydroxyurea", "Pain management", "Folic acid", "Hydration"],
+        treatments: ["Voxelotor", "Crizanlizumab", "L-glutamine", "Blood transfusions", "Bone marrow transplant"]
     },
     {
         id: "d702",
@@ -451,7 +486,8 @@ export const seedDiseases: SeedDisease[] = [
         description: "Genetic disorder caused by missing or defective factor VIII, a blood-clotting protein.",
         severity: "high",
         symptoms: [{ symptomId: "s67", weight: 0.95 }, { symptomId: "s7", weight: 0.8 }, { symptomId: "s114", weight: 0.2 }],
-        precautions: ["Factor VIII replacement", "Avoid contact sports", "Dental care vigilance", "Hepatitis vaccination"]
+        precautions: ["Factor VIII replacement", "Avoid contact sports", "Dental care vigilance", "Hepatitis vaccination"],
+        treatments: ["Recombinant Factor VIII", "Desmopressin (DDAVP)", "Emicizumab", "Antifibrinolytics"]
     },
 
     // ── Rare / Genetic / Misc (Aggregated for v4.0 Showcase) ──────────────────────────────
@@ -461,7 +497,8 @@ export const seedDiseases: SeedDisease[] = [
         description: "Inherited life-threatening disorder that damages the lungs and digestive system.",
         severity: "high",
         symptoms: [{ symptomId: "s25", weight: 0.9 }, { symptomId: "s51", weight: 0.85 }, { symptomId: "s20", weight: 0.6 }],
-        precautions: ["Chest percussion", "Pancreatic enzymes", "Inhaled bronchodilators", "Salt-rich diet"]
+        precautions: ["Chest percussion", "Pancreatic enzymes", "Inhaled bronchodilators", "Salt-rich diet"],
+        treatments: ["Ivacaftor", "Lumacaftor/Ivacaftor", "Tezacaftor/Ivacaftor", "Lung transplant"]
     },
     {
         id: "d802",
@@ -469,7 +506,8 @@ export const seedDiseases: SeedDisease[] = [
         description: "Genetic disorder that affects the body's connective tissue.",
         severity: "medium",
         symptoms: [{ symptomId: "s32", weight: 0.2 }, { symptomId: "s65", weight: 0.4 }, { symptomId: "s57", weight: 0.3 }],
-        precautions: ["Regular echocardiograms", "Avoid heavy lifting", "Eye examinations", "Beta-blockers"]
+        precautions: ["Regular echocardiograms", "Avoid heavy lifting", "Eye examinations", "Beta-blockers"],
+        treatments: ["Aortic root replacement", "Mitral valve repair", "Scoliosis surgery"]
     },
     {
         id: "d803",
@@ -477,7 +515,8 @@ export const seedDiseases: SeedDisease[] = [
         description: "Severe form of muscular dystrophy caused by genetic mutation of the protein dystrophin.",
         severity: "high",
         symptoms: [{ symptomId: "s82", weight: 0.95 }, { symptomId: "s121", weight: 0.9 }, { symptomId: "s88", weight: 0.6 }],
-        precautions: ["Corticosteroids", "Range of motion exercise", "Spine monitoring", "Cardiopulmonary care"]
+        precautions: ["Corticosteroids", "Range of motion exercise", "Spine monitoring", "Cardiopulmonary care"],
+        treatments: ["Eteplirsen", "Golodirsen", "Viltolarsen", "Deflazacort"]
     },
     {
         id: "d804",
@@ -485,7 +524,8 @@ export const seedDiseases: SeedDisease[] = [
         description: "Rare skin disease characterized by large areas of red, tender skin that cloud with pus.",
         severity: "high",
         symptoms: [{ symptomId: "s2", weight: 0.9 }, { symptomId: "s122", weight: 0.85 }, { symptomId: "s131", weight: 0.7 }],
-        precautions: ["Topical steroids", "Phototherapy", "Systemic retinoids", "Biologics"]
+        precautions: ["Topical steroids", "Phototherapy", "Systemic retinoids", "Biologics"],
+        treatments: ["Cyclosporine", "Methotrexate", "Acitretin", "Infliximab"]
     },
     {
         id: "d805",

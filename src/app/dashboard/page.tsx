@@ -16,6 +16,7 @@ export interface PredictionResult {
     severity: "low" | "medium" | "high" | "critical";
     description: string;
     precautions: string[];
+    treatments: string[];
     matchedSymptoms: string[];
 }
 
@@ -140,13 +141,23 @@ export default function DashboardPage() {
             // Precautions
             doc.setTextColor(15, 23, 42);
             doc.setFontSize(14);
-            doc.text("Clinical Pathway & Precautions", 20, 160);
-            doc.setFontSize(11);
-            let y = 170;
-            top.precautions.forEach(p => {
-                const splitP = doc.splitTextToSize(`• ${p}`, 170);
-                doc.text(splitP, 20, y);
-                y += (splitP.length * 6);
+            doc.text("Clinical Precautions", 20, 160);
+            doc.setFontSize(10);
+            let y = 168;
+            top.precautions.slice(0, 4).forEach(p => {
+                doc.text(`• ${p}`, 25, y);
+                y += 6;
+            });
+
+            // Treatments
+            doc.setTextColor(15, 23, 42);
+            doc.setFontSize(14);
+            doc.text("Treatment Protocol", 20, y + 10);
+            doc.setFontSize(10);
+            y += 18;
+            top.treatments.slice(0, 5).forEach(t => {
+                doc.text(`• ${t}`, 25, y);
+                y += 6;
             });
             
             // Footer
@@ -351,20 +362,32 @@ export default function DashboardPage() {
                                         <div className="space-y-8">
                                             <div className="space-y-2">
                                                 <h2 className="text-4xl font-black text-slate-900 dark:text-white tracking-tight font-display uppercase">Clinical Pathway</h2>
-                                                <p className="text-slate-500 font-medium text-sm italic">Structured medical precautions and recovery protocols.</p>
+                                                <p className="text-slate-500 font-medium text-sm italic">Structured medical treatments and recovery protocols.</p>
                                             </div>
-                                            <div className="grid gap-4">
-                                                {topPrediction.precautions.map((p, i) => (
-                                                    <div key={i} className="flex gap-4 items-start p-6 rounded-3xl bg-white dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 group hover:border-primary/50 transition-all">
-                                                        <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0 border border-primary/20">
-                                                            <Zap className="w-5 h-5 text-primary" />
-                                                        </div>
-                                                        <div className="space-y-1">
-                                                            <p className="text-xs font-black uppercase tracking-widest text-slate-400">Pathway Step {i+1}</p>
-                                                            <p className="text-slate-700 dark:text-slate-200 font-bold leading-relaxed">{p}</p>
-                                                        </div>
+                                            <div className="grid gap-6">
+                                                <div className="space-y-4">
+                                                    <h4 className="text-[10px] font-black text-primary uppercase tracking-widest">Recommended Treatments</h4>
+                                                    <div className="flex flex-wrap gap-2">
+                                                        {topPrediction.treatments.map((t, i) => (
+                                                            <span key={i} className="px-4 py-2 rounded-xl bg-primary/10 text-primary text-xs font-bold border border-primary/20">
+                                                                {t}
+                                                            </span>
+                                                        ))}
                                                     </div>
-                                                ))}
+                                                </div>
+                                                <div className="space-y-4">
+                                                    <h4 className="text-[10px] font-black text-rose-500 uppercase tracking-widest">Precautions</h4>
+                                                    <div className="grid gap-3">
+                                                        {topPrediction.precautions.map((p, i) => (
+                                                            <div key={i} className="flex gap-4 items-start p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
+                                                                <div className="w-8 h-8 rounded-lg bg-rose-500/10 flex items-center justify-center shrink-0 border border-rose-500/20">
+                                                                    <AlertCircle className="w-4 h-4 text-rose-500" />
+                                                                </div>
+                                                                <p className="text-slate-700 dark:text-slate-200 text-xs font-bold">{p}</p>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     )}

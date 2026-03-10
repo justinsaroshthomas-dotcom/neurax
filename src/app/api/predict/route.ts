@@ -14,6 +14,7 @@ interface PredictionResult {
     severity: "low" | "medium" | "high" | "critical";
     description: string;
     precautions: string[];
+    treatments: string[];
     matchedSymptoms: string[];
 }
 
@@ -80,6 +81,7 @@ function predictWithSeedData(symptoms: string[]): PredictionResult[] {
             severity: disease.severity,
             description: disease.description,
             precautions: disease.precautions,
+            treatments: (disease as any).treatments || [],
             matchedSymptoms: matched,
         });
     }
@@ -115,6 +117,7 @@ export async function POST(req: NextRequest) {
                     pred.description = pred.description || seedDisease.description;
                     pred.precautions =
                         pred.precautions.length > 0 ? pred.precautions : seedDisease.precautions;
+                    pred.treatments = (pred as any).treatments?.length > 0 ? (pred as any).treatments : (seedDisease as any).treatments || [];
                 }
             }
 

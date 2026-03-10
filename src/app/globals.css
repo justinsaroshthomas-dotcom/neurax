@@ -22,13 +22,30 @@
     --background: 210 40% 98%;
     --foreground: 222 47% 11%;
     --primary: 239 84% 67%;
+    --secondary: 210 40% 96.1%;
+    --accent: 210 40% 96.1%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 239 84% 67%;
+    --radius: 1rem;
     --neon: #6366f1;
     --neon-glow: rgba(99, 102, 241, 0.15);
+  }
+
+  [data-theme='light'] {
+    --background: 210 40% 98% !important;
+    --foreground: 222 47% 11% !important;
+    --card: 0 0% 100% !important;
+    --border: 214.3 31.8% 91.4% !important;
   }
 
   [data-theme='dark'] {
     --background: 222 47% 4%;
     --foreground: 210 40% 98%;
+    --card: 222 47% 6%;
+    --border: 217.2 32.6% 17.5%;
   }
 }
 

@@ -15,7 +15,7 @@ export function Sidebar() {
     const pathname = usePathname();
 
     return (
-        <aside className="w-20 bg-white dark:bg-slate-950 border-r border-slate-200 dark:border-slate-800/50 flex flex-col items-center py-8 z-40 shrink-0 sticky top-0 h-screen transition-colors">
+        <aside className="w-20 bg-card border-r border-border/50 flex flex-col items-center py-8 z-40 shrink-0 sticky top-0 h-screen transition-all duration-300">
             {/* Elite Brand Mark */}
             <div className="mb-12 relative group">
                 <div className="w-11 h-11 rounded-2xl bg-slate-900 dark:bg-white flex items-center justify-center shadow-2xl relative z-10 overflow-hidden transition-transform group-hover:scale-110">

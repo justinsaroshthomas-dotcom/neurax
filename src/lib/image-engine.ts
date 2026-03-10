@@ -8,9 +8,10 @@ export function getClinicalImage(diseaseName: string): string {
     // Deterministic seed based on disease name to ensure consistent imagery
     const seed = encodeURIComponent(diseaseName.toLowerCase());
     
-    // We use a curated medical-grade imagery provider (Unsplash Medical Pathology)
-    // with a unique seed to ensure 505 unique results for 505 diseases.
-    return `https://images.unsplash.com/featured/?medical,pathology,${seed},anatomy`;
+    // Neurax v3.7.1: Advanced Clinical Search Strings
+    // We append specific medical modalities to ensure Unsplash generates scans, not generic stock.
+    const modality = "mri,ct,scan,pathology,radiology";
+    return `https://images.unsplash.com/featured/?medical,${modality},${seed}`;
 }
 
 /**

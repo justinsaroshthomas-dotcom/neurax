@@ -33,7 +33,7 @@ export function TopBar() {
     }, []);
 
     return (
-        <header className="h-20 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md px-8 flex items-center justify-between shrink-0 border-b border-slate-100 dark:border-slate-800/50 sticky top-0 z-30 transition-all">
+        <header className="h-20 bg-background/80 backdrop-blur-md px-8 flex items-center justify-between shrink-0 border-b border-border/50 sticky top-0 z-30 transition-all">
             {/* Logo area & Title */}
             <div className="flex items-center gap-4">
                 <div className="flex flex-col">

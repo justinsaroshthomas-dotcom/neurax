@@ -39,6 +39,8 @@ export default function DashboardPage() {
     const [uploadStatus, setUploadStatus] = useState<string | null>(null);
     const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
     
+    const [isImageLoading, setIsImageLoading] = useState(true);
+    
     // Metrics
     const metrics = getClinicalMetrics();
     
@@ -288,19 +290,33 @@ export default function DashboardPage() {
                                                 <h2 className="text-4xl font-black text-slate-900 dark:text-white tracking-tight font-display uppercase">Neural Visualization</h2>
                                                 <p className="text-slate-500 font-medium text-sm italic">High-resolution pathology scan for {topPrediction.disease}.</p>
                                             </div>
-                                            <div className="rounded-4xl overflow-hidden border-4 border-slate-100 dark:border-slate-800 shadow-2xl aspect-[21/9] relative group">
-                                                <img src={diseaseImagePath} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-[3s]" alt="Pathology" />
-                                                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 to-transparent flex items-end p-8">
-                                                    <div className="flex items-center gap-4 text-white">
-                                                        <div className="w-10 h-10 rounded-full bg-primary/20 backdrop-blur-md flex items-center justify-center border border-white/20">
-                                                            <Target className="w-5 h-5 text-primary" />
-                                                        </div>
-                                                        <div>
-                                                            <p className="text-xs font-black uppercase tracking-widest">Scan Vector Matrix</p>
-                                                            <p className="text-[10px] opacity-70">Source ID: {Math.random().toString(16).slice(2, 8).toUpperCase()}</p>
+                                            <div className="rounded-4xl overflow-hidden border-4 border-slate-100 dark:border-slate-800 shadow-2xl aspect-[21/9] relative group bg-slate-100 dark:bg-slate-800 animate-pulse">
+                                                {isImageLoading && (
+                                                    <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-slate-50 dark:bg-slate-900/50">
+                                                        <ImageIcon className="w-12 h-12 text-slate-300 dark:text-slate-700" />
+                                                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Fetching Clinical Scan...</p>
+                                                    </div>
+                                                )}
+                                                <img 
+                                                    src={diseaseImagePath} 
+                                                    className={`w-full h-full object-cover group-hover:scale-110 transition-all duration-[3s] ${isImageLoading ? 'opacity-0' : 'opacity-100'}`} 
+                                                    alt="Pathology" 
+                                                    onLoad={() => setIsImageLoading(false)}
+                                                    onError={() => setIsImageLoading(false)}
+                                                />
+                                                {!isImageLoading && (
+                                                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 to-transparent flex items-end p-8">
+                                                        <div className="flex items-center gap-4 text-white">
+                                                            <div className="w-10 h-10 rounded-full bg-primary/20 backdrop-blur-md flex items-center justify-center border border-white/20">
+                                                                <Target className="w-5 h-5 text-primary" />
+                                                            </div>
+                                                            <div>
+                                                                <p className="text-xs font-black uppercase tracking-widest">Scan Vector Matrix</p>
+                                                                <p className="text-[10px] opacity-70">Source ID: {Math.random().toString(16).slice(2, 8).toUpperCase()}</p>
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
+                                                )}
                                             </div>
                                         </div>
                                     )}

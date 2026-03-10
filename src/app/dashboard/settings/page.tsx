@@ -11,7 +11,7 @@ export default function SettingsPage() {
     const { theme, setTheme } = useTheme();
     const [historyCount, setHistoryCount] = useState(0);
     const [mounted, setMounted] = useState(false);
-    const [profile, setProfile] = useState<UserProfile>({ clinicalLevel: "", department: "" });
+    const [profile, setProfile] = useState<UserProfile>({ clinicalLevel: "", department: "", profileImage: "" });
 
     useEffect(() => {
         setMounted(true);
@@ -31,6 +31,18 @@ export default function SettingsPage() {
         saveUserProfile(newProfile);
         // Dispatch custom event for TopBar sync
         window.dispatchEvent(new CustomEvent("neurax_profile_updated"));
+    };
+
+    const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                const base64String = reader.result as string;
+                handleProfileUpdate("profileImage", base64String);
+            };
+            reader.readAsDataURL(file);
+        }
     };
 
     const handleClearHistory = () => {
@@ -71,8 +83,22 @@ export default function SettingsPage() {
                             <UserCog className="w-24 h-24 grayscale" />
                         </div>
                         <div className="flex items-center gap-6 relative z-10">
-                            <div className="w-20 h-20 rounded-full ring-4 ring-primary/10 overflow-hidden">
-                                <img src={user?.imageUrl} alt="Profile" className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700" />
+                            <div className="relative group/avatar">
+                                <div className="w-24 h-24 rounded-full ring-4 ring-primary/10 overflow-hidden bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
+                                    {profile.profileImage || user?.imageUrl ? (
+                                        <img 
+                                            src={profile.profileImage || user?.imageUrl} 
+                                            alt="Profile" 
+                                            className="w-full h-full object-cover transition-all duration-700" 
+                                        />
+                                    ) : (
+                                        <UserCog className="w-10 h-10 text-slate-300" />
+                                    )}
+                                </div>
+                                <label className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover/avatar:opacity-100 transition-opacity cursor-pointer rounded-full">
+                                    <span className="text-[10px] font-black uppercase text-white tracking-widest">Update DP</span>
+                                    <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
+                                </label>
                             </div>
                             <div className="space-y-3 flex-1">
                                 <div>

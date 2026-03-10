@@ -8,7 +8,7 @@ import { getUserProfile, type UserProfile } from "@/lib/profile-store";
 export function TopBar() {
     const { user, isLoaded } = useUser();
     const [showNotifications, setShowNotifications] = useState(false);
-    const [profile, setProfile] = useState<UserProfile>({ clinicalLevel: "Senior Physician", department: "Neurology" });
+    const [profile, setProfile] = useState<UserProfile>({ clinicalLevel: "Senior Physician", department: "Neurology", profileImage: "" });
 
     useEffect(() => {
         // Initial load
@@ -112,14 +112,24 @@ export function TopBar() {
                     </div>
                     {isLoaded && user ? (
                         <div className="ring-2 ring-primary/20 p-0.5 rounded-full hover:ring-primary/40 transition-all">
-                            <UserButton 
-                                afterSignOutUrl="/" 
-                                appearance={{ 
-                                    elements: { 
-                                        userButtonAvatarBox: "w-9 h-9 rounded-full grayscale hover:grayscale-0 transition-all duration-500" 
-                                    } 
-                                }} 
-                            />
+                            {profile.profileImage ? (
+                                <div className="w-9 h-9 rounded-full overflow-hidden border border-slate-200 dark:border-slate-800">
+                                    <img 
+                                        src={profile.profileImage} 
+                                        alt="Profile" 
+                                        className="w-full h-full object-cover transition-all" 
+                                    />
+                                </div>
+                            ) : (
+                                <UserButton 
+                                    afterSignOutUrl="/" 
+                                    appearance={{ 
+                                        elements: { 
+                                            userButtonAvatarBox: "w-9 h-9 rounded-full grayscale hover:grayscale-0 transition-all duration-500" 
+                                        } 
+                                    }} 
+                                />
+                            )}
                         </div>
                     ) : (
                         <div className="w-9 h-9 rounded-full bg-slate-100 dark:bg-slate-800 animate-pulse border border-slate-200 dark:border-slate-700" />

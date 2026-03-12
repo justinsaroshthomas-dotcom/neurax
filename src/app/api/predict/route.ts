@@ -1,12 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { seedDiseases, seedSymptoms } from "@/db/seed";
+import { seedDiseases } from "@/db/seed";
+import { loadCatalog, normalizeCatalogInputSymptoms, scoreCatalogPredictions } from "@/lib/catalog.server";
 import { analyzeSymptoms } from "@/lib/groq";
-
-// ─────────────────────────────────────────
-// POST /api/predict
-// Tries Python ML server first (localhost:5000),
-// falls back to seed-based weighted matching.
-// ─────────────────────────────────────────
 
 interface PredictionResult {
     disease: string;
@@ -18,13 +13,25 @@ interface PredictionResult {
     matchedSymptoms: string[];
 }
 
-// ── Try Python ML Server ──────────────────
-
-async function predictWithMLServer(symptoms: string[]): Promise<{
+interface PredictionEngineResponse {
     predictions: PredictionResult[];
-    aiAnalysis: Record<string, unknown>;
+    aiAnalysis: Record<string, unknown> | null;
     model_metrics: Record<string, number>;
-} | null> {
+}
+
+function normalizeDiseaseName(value: string): string {
+    return value
+        .normalize("NFKD")
+        .replace(/[^\x00-\x7F]/g, "")
+        .toLowerCase()
+        .replace(/[^a-z0-9+\-/(),;:\n\r ]+/g, " ")
+        .replace(/\s+/g, " ")
+        .trim()
+        .replace(/\s+-\s+\d+$/, "")
+        .replace(/-\d+$/, "");
+}
+
+async function predictWithMLServer(symptoms: string[]): Promise<PredictionEngineResponse | null> {
     try {
         const res = await fetch("http://localhost:5000/predict", {
             method: "POST",
@@ -32,65 +39,50 @@ async function predictWithMLServer(symptoms: string[]): Promise<{
             body: JSON.stringify({ symptoms }),
             signal: AbortSignal.timeout(3000),
         });
-        if (!res.ok) return null;
-        return await res.json();
+        if (!res.ok) {
+            return null;
+        }
+        return (await res.json()) as PredictionEngineResponse;
     } catch {
-        return null; // ML server not running — use fallback
+        return null;
     }
 }
 
-// ── Seed-based Prediction (Fallback) ──────
+function enrichPredictions(predictions: PredictionResult[]): PredictionResult[] {
+    const seedLookup = new Map(
+        seedDiseases.map((disease) => [normalizeDiseaseName(disease.name), disease])
+    );
 
-function predictWithSeedData(symptoms: string[]): PredictionResult[] {
-    const inputSymptoms = symptoms.map((s) => s.toLowerCase().trim());
-    const validSymptomNames = new Set(seedSymptoms.map((s) => s.name.toLowerCase()));
-    const matchedInputSymptoms = inputSymptoms.filter((s) => validSymptomNames.has(s));
-
-    if (matchedInputSymptoms.length === 0) return [];
-
-    const predictions: PredictionResult[] = [];
-
-    for (const disease of seedDiseases) {
-        const diseaseSymptomEntries = disease.symptoms.map((ds) => {
-            const symptom = seedSymptoms.find((s) => s.id === ds.symptomId);
-            return { name: symptom?.name.toLowerCase() || "", weight: ds.weight };
-        });
-
-        const matched: string[] = [];
-        let weightedScore = 0;
-        let totalWeight = 0;
-
-        for (const entry of diseaseSymptomEntries) {
-            totalWeight += entry.weight;
-            if (matchedInputSymptoms.includes(entry.name)) {
-                weightedScore += entry.weight;
-                const original = seedSymptoms.find((s) => s.name.toLowerCase() === entry.name);
-                matched.push(original?.name || entry.name);
-            }
+    return predictions.map((prediction) => {
+        const seedDisease = seedLookup.get(normalizeDiseaseName(prediction.disease));
+        if (!seedDisease) {
+            return prediction;
         }
 
-        if (matched.length === 0) continue;
-
-        const baseConfidence = totalWeight > 0 ? weightedScore / totalWeight : 0;
-        const coverageBonus = matched.length / matchedInputSymptoms.length * 0.15;
-        const confidence = Math.min(baseConfidence + coverageBonus, 0.99);
-
-        predictions.push({
-            disease: disease.name,
-            confidence: parseFloat(confidence.toFixed(3)),
-            severity: disease.severity,
-            description: disease.description,
-            precautions: disease.precautions,
-            treatments: (disease as any).treatments || [],
-            matchedSymptoms: matched,
-        });
-    }
-
-    predictions.sort((a, b) => b.confidence - a.confidence);
-    return predictions.slice(0, 6);
+        return {
+            ...prediction,
+            description: prediction.description || seedDisease.description,
+            precautions:
+                prediction.precautions.length > 0
+                    ? prediction.precautions
+                    : seedDisease.precautions,
+            treatments:
+                prediction.treatments.length > 0
+                    ? prediction.treatments
+                    : seedDisease.treatments,
+        };
+    });
 }
 
-// ── Main Handler ──────────────────────────
+async function predictWithCatalog(symptoms: string[]): Promise<PredictionResult[]> {
+    const catalog = await loadCatalog();
+    const normalizedSymptoms = normalizeCatalogInputSymptoms(symptoms, catalog);
+    if (normalizedSymptoms.length === 0) {
+        return [];
+    }
+
+    return scoreCatalogPredictions(normalizedSymptoms, catalog);
+}
 
 export async function POST(req: NextRequest) {
     try {
@@ -104,42 +96,25 @@ export async function POST(req: NextRequest) {
             );
         }
 
-        // Try ML server first
         const mlResult = await predictWithMLServer(symptoms);
-
         if (mlResult && mlResult.predictions.length > 0) {
-            // Enrich ML predictions with seed descriptions/precautions
-            for (const pred of mlResult.predictions) {
-                const seedDisease = seedDiseases.find(
-                    (d) => d.name.toLowerCase() === pred.disease.toLowerCase()
-                );
-                if (seedDisease) {
-                    pred.description = pred.description || seedDisease.description;
-                    pred.precautions =
-                        pred.precautions.length > 0 ? pred.precautions : seedDisease.precautions;
-                    pred.treatments = (pred as any).treatments?.length > 0 ? (pred as any).treatments : (seedDisease as any).treatments || [];
-                }
-            }
-
             return NextResponse.json({
-                predictions: mlResult.predictions,
+                predictions: enrichPredictions(mlResult.predictions),
                 aiAnalysis: mlResult.aiAnalysis,
                 mlMetrics: mlResult.model_metrics,
                 source: "ml_model",
             });
         }
 
-        // Fallback to seed-based prediction
-        const topPredictions = predictWithSeedData(symptoms);
+        const topPredictions = enrichPredictions(await predictWithCatalog(symptoms));
         const aiAnalysis = await analyzeSymptoms(symptoms, topPredictions);
 
-        // Background audit log (best effort)
-        logToMongoDB(symptoms, topPredictions).catch(() => { });
+        logToMongoDB(symptoms, topPredictions).catch(() => {});
 
         return NextResponse.json({
             predictions: topPredictions,
             aiAnalysis,
-            source: "seed_engine",
+            source: "catalog_overlap",
         });
     } catch (err) {
         console.error("[Predict API] Error:", err);
@@ -150,14 +125,19 @@ export async function POST(req: NextRequest) {
     }
 }
 
-// ── Background audit logging ──────────────
 async function logToMongoDB(symptoms: string[], predictions: PredictionResult[]) {
-    if (!process.env.MONGODB_URI) return;
+    if (!process.env.MONGODB_URI) {
+        return;
+    }
+
     try {
         const { connectMongoDB } = await import("@/lib/mongodb");
         const { PatientLog } = await import("@/db/patient-log");
         const conn = await connectMongoDB();
-        if (!conn) return;
+        if (!conn) {
+            return;
+        }
+
         const top = predictions[0];
         await PatientLog.create({
             userId: "anonymous",
@@ -165,8 +145,10 @@ async function logToMongoDB(symptoms: string[], predictions: PredictionResult[])
             prediction: top
                 ? { disease: top.disease, confidence: top.confidence, severity: top.severity }
                 : { disease: "none", confidence: 0, severity: "low" },
-            allPredictions: predictions.map((p) => ({
-                disease: p.disease, confidence: p.confidence, severity: p.severity,
+            allPredictions: predictions.map((prediction) => ({
+                disease: prediction.disease,
+                confidence: prediction.confidence,
+                severity: prediction.severity,
             })),
             metadata: {},
         });

@@ -1,24 +1,17 @@
 import { NextResponse } from "next/server";
-
-// ─────────────────────────────────────────
-// GET /api/status
-// Returns integration connection status
-// ─────────────────────────────────────────
+import { loadCatalogSummary } from "@/lib/catalog.server";
 
 export async function GET() {
     const clerkConfigured =
         !!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY &&
         !!process.env.CLERK_SECRET_KEY;
-
     const supabaseConfigured =
         !!process.env.NEXT_PUBLIC_SUPABASE_URL &&
         !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
     const mongoConfigured = !!process.env.MONGODB_URI;
-
     const sentryConfigured = !!process.env.SENTRY_DSN;
-
     const groqConfigured = !!process.env.GROQ_API_KEY;
+    const summary = await loadCatalogSummary();
 
     const integrations = [
         {
@@ -27,7 +20,7 @@ export async function GET() {
             status: groqConfigured ? "Connected" : "Local fallback",
             connected: groqConfigured,
             mode: groqConfigured ? "cloud" : "local",
-            description: "AI-powered symptom analysis",
+            description: "AI-assisted symptom analysis",
         },
         {
             name: "Prediction Engine",
@@ -35,7 +28,7 @@ export async function GET() {
             status: "Online",
             connected: true,
             mode: "active",
-            description: "Deep Neural Network & XGBoost matching (505 diseases · 131 symptoms)",
+            description: `Generated symptom catalog (${summary.counts.diseases} diseases | ${summary.counts.coreSymptoms} core symptoms | ${summary.counts.extendedSymptoms} extended symptoms)`,
         },
         {
             name: "Local Storage",
@@ -43,7 +36,7 @@ export async function GET() {
             status: "Active",
             connected: true,
             mode: "active",
-            description: "Prediction history & analytics (browser-based)",
+            description: "Prediction history and analytics (browser-based)",
         },
         {
             name: "Clerk Authentication",
@@ -52,18 +45,18 @@ export async function GET() {
             connected: clerkConfigured,
             mode: clerkConfigured ? "cloud" : "local",
             description: clerkConfigured
-                ? "User authentication & management"
-                : "Open access — add Clerk keys to enable auth",
+                ? "User authentication and management"
+                : "Open access, add Clerk keys to enable auth",
         },
         {
             name: "Supabase (Postgres)",
             envKey: "SUPABASE_DB_URL",
-            status: supabaseConfigured ? "Connected" : "Seed data active",
+            status: supabaseConfigured ? "Connected" : "Generated catalog active",
             connected: supabaseConfigured,
-            mode: supabaseConfigured ? "cloud" : "seed",
+            mode: supabaseConfigured ? "cloud" : "generated",
             description: supabaseConfigured
                 ? "Disease database with RLS"
-                : "Using built-in disease database",
+                : "Using generated local disease catalog",
         },
         {
             name: "MongoDB Atlas",
@@ -72,7 +65,7 @@ export async function GET() {
             connected: mongoConfigured,
             mode: mongoConfigured ? "cloud" : "local",
             description: mongoConfigured
-                ? "Cloud prediction logs & audit trail"
+                ? "Cloud prediction logs and audit trail"
                 : "Using browser localStorage for history",
         },
         {
@@ -87,5 +80,5 @@ export async function GET() {
         },
     ];
 
-    return NextResponse.json({ integrations });
+    return NextResponse.json({ integrations, summary });
 }

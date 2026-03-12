@@ -1,143 +1,211 @@
 "use client";
-import React, { useState, useMemo } from 'react';
-import { seedSymptoms, seedDiseases } from '@/db/seed';
+
+import { useMemo, useState } from "react";
+import type { CatalogDisease, CatalogSymptom } from "@/lib/catalog-types";
+import { useCatalog } from "@/lib/use-catalog";
 
 export const NeuraxEncyclopedia: React.FC = () => {
+    const { data: catalog, loading } = useCatalog();
     const [search, setSearch] = useState("");
     const [activeTab, setActiveTab] = useState<"symptoms" | "diseases">("symptoms");
-    const [selectedDisease, setSelectedDisease] = useState<any | null>(null);
-    
+    const [selectedDisease, setSelectedDisease] = useState<CatalogDisease | null>(null);
+
     const filteredSymptoms = useMemo(() => {
-        return seedSymptoms.filter(s => 
-            s.name.toLowerCase().includes(search.toLowerCase()) ||
-            s.category.toLowerCase().includes(search.toLowerCase())
+        if (!catalog) {
+            return [];
+        }
+
+        return [...catalog.coreSymptoms, ...catalog.extendedSymptoms].filter(
+            (symptom) =>
+                symptom.name.toLowerCase().includes(search.toLowerCase()) ||
+                symptom.category.toLowerCase().includes(search.toLowerCase()) ||
+                symptom.aliases.some((alias) => alias.toLowerCase().includes(search.toLowerCase()))
         );
-    }, [search]);
+    }, [catalog, search]);
 
     const filteredDiseases = useMemo(() => {
-        return seedDiseases.filter(d => 
-            d.name.toLowerCase().includes(search.toLowerCase()) ||
-            d.description.toLowerCase().includes(search.toLowerCase())
+        if (!catalog) {
+            return [];
+        }
+
+        return catalog.diseases.filter(
+            (disease) =>
+                disease.name.toLowerCase().includes(search.toLowerCase()) ||
+                disease.description.toLowerCase().includes(search.toLowerCase()) ||
+                disease.symptoms.some((symptom) =>
+                    symptom.name.toLowerCase().includes(search.toLowerCase())
+                )
         );
-    }, [search]);
+    }, [catalog, search]);
+
+    const renderSymptomCard = (symptom: CatalogSymptom) => (
+        <div
+            key={symptom.id}
+            className="group rounded-2xl border border-border bg-card p-4 shadow-sm transition-all hover:border-primary/30"
+        >
+            <div className="mb-1 flex items-center gap-2">
+                <span className="text-[9px] font-black uppercase tracking-tighter text-primary">
+                    {symptom.category}
+                </span>
+                {symptom.source === "extended" ? (
+                    <span className="rounded-full border border-primary/20 bg-primary/10 px-1.5 py-0.5 text-[8px] font-black uppercase tracking-widest text-primary">
+                        Extended
+                    </span>
+                ) : null}
+            </div>
+            <h3 className="font-bold text-card-foreground">{symptom.name}</h3>
+            <p className="mt-2 text-[10px] font-mono uppercase text-muted-foreground">
+                Key: {symptom.key}
+            </p>
+        </div>
+    );
+
+    const renderDiseaseCard = (disease: CatalogDisease) => (
+        <button
+            key={disease.id}
+            onClick={() => setSelectedDisease(disease)}
+            className="group relative overflow-hidden rounded-2xl border border-border bg-card p-4 text-left shadow-sm transition-all hover:border-primary/30"
+        >
+            <div
+                className={`absolute right-0 top-0 px-3 py-1 text-[9px] font-black uppercase tracking-tighter text-white ${
+                    disease.severity === "critical"
+                        ? "bg-rose-500"
+                        : disease.severity === "high"
+                          ? "bg-orange-500"
+                          : disease.severity === "medium"
+                            ? "bg-amber-500"
+                            : "bg-emerald-500"
+                }`}
+            >
+                {disease.severity}
+            </div>
+            <h3 className="pr-12 font-bold text-card-foreground">{disease.name}</h3>
+            {disease.description ? (
+                <p className="mt-2 line-clamp-2 text-[11px] leading-relaxed text-muted-foreground">
+                    {disease.description}
+                </p>
+            ) : (
+                <p className="mt-2 text-[11px] italic text-muted-foreground">
+                    No curated description available in the local catalog.
+                </p>
+            )}
+            <div className="mt-4 flex flex-wrap gap-1">
+                {disease.symptoms.slice(0, 3).map((symptom) => (
+                    <span
+                        key={symptom.key}
+                        className="rounded-full border border-border bg-secondary px-2 py-0.5 text-[9px] text-muted-foreground"
+                    >
+                        {symptom.name}
+                    </span>
+                ))}
+            </div>
+        </button>
+    );
+
+    if (loading && !catalog) {
+        return <div className="h-80 animate-pulse rounded-3xl border border-border bg-card" />;
+    }
 
     return (
-        <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
                 <div>
-                    <h2 className="text-2xl font-black tracking-tight text-slate-900 dark:text-slate-100">
+                    <h2 className="text-2xl font-black tracking-tight text-foreground">
                         Medical <span className="text-primary italic">Archive</span>
                     </h2>
-                    <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mt-1">
-                        Neural Clinical Reference Matrix
+                    <p className="mt-1 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">
+                        Generated clinical reference matrix
                     </p>
                 </div>
 
-                <div className="relative w-full md:w-72">
-                    <input 
+                <div className="relative w-full md:w-80">
+                    <input
                         type="text"
                         placeholder="Search matrix..."
                         value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                        className="w-full bg-slate-100/50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800/50 rounded-xl px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/50 transition-all font-medium backdrop-blur-sm"
+                        onChange={(event) => setSearch(event.target.value)}
+                        className="w-full rounded-xl border border-border bg-card px-4 py-2.5 text-sm font-medium text-foreground outline-none transition-all focus:border-primary/40 focus:ring-2 focus:ring-primary/10"
                     />
-                    <svg className="absolute right-3 top-3 w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    <svg className="absolute right-3 top-3 h-4 w-4 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0 1 14 0z" />
                     </svg>
                 </div>
             </div>
 
-            <div className="flex bg-slate-100/50 dark:bg-slate-900/40 p-1 rounded-xl w-fit border border-slate-200 dark:border-slate-800/50 backdrop-blur-md">
-                <button 
+            <div className="flex w-fit rounded-xl border border-border bg-card p-1">
+                <button
                     onClick={() => setActiveTab("symptoms")}
-                    className={`px-5 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all duration-300 relative overflow-hidden group
-                        ${activeTab === 'symptoms' 
-                            ? 'bg-primary text-white shadow-[0_0_15px_rgba(0,177,64,0.3)]' 
-                            : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-white/50 dark:hover:bg-slate-800/50'}`}
+                    className={`rounded-lg px-5 py-1.5 text-[10px] font-black uppercase tracking-widest transition-all ${
+                        activeTab === "symptoms"
+                            ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
+                            : "text-muted-foreground hover:bg-accent/70 hover:text-foreground"
+                    }`}
                 >
-                    <span className="relative z-10">Symptoms [{seedSymptoms.length}]</span>
-                    {activeTab === 'symptoms' && (
-                        <div className="absolute inset-0 bg-gradient-to-tr from-white/20 to-transparent opacity-50" />
-                    )}
+                    Symptoms [{(catalog?.counts.coreSymptoms ?? 0) + (catalog?.counts.extendedSymptoms ?? 0)}]
                 </button>
-                <button 
+                <button
                     onClick={() => setActiveTab("diseases")}
-                    className={`px-5 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all duration-300 relative overflow-hidden group
-                        ${activeTab === 'diseases' 
-                            ? 'bg-primary text-white shadow-[0_0_15px_rgba(0,177,64,0.3)]' 
-                            : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-white/50 dark:hover:bg-slate-800/50'}`}
+                    className={`rounded-lg px-5 py-1.5 text-[10px] font-black uppercase tracking-widest transition-all ${
+                        activeTab === "diseases"
+                            ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
+                            : "text-muted-foreground hover:bg-accent/70 hover:text-foreground"
+                    }`}
                 >
-                    <span className="relative z-10">Diseases [505]</span>
-                    {activeTab === 'diseases' && (
-                        <div className="absolute inset-0 bg-gradient-to-tr from-white/20 to-transparent opacity-50" />
-                    )}
+                    Diseases [{catalog?.counts.diseases ?? 0}]
                 </button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 h-[500px] overflow-y-auto pr-2 custom-scrollbar">
+            <div className="grid h-[500px] grid-cols-1 gap-4 overflow-y-auto pr-2 md:grid-cols-2 lg:grid-cols-3">
                 {activeTab === "symptoms" ? (
                     filteredSymptoms.length > 0 ? (
-                        filteredSymptoms.map(s => (
-                            <div key={s.id} className="group p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-primary/30 transition-all shadow-sm">
-                                <span className="text-[9px] font-black text-primary uppercase tracking-tighter mb-1 block">{s.category}</span>
-                                <h3 className="font-bold text-slate-900 dark:text-slate-100">{s.name}</h3>
-                                <p className="text-[10px] text-slate-500 mt-2 font-mono uppercase">ID: {s.id}</p>
-                            </div>
-                        ))
+                        filteredSymptoms.map(renderSymptomCard)
                     ) : (
                         <div className="col-span-full py-20 text-center">
-                            <p className="text-sm text-slate-500 font-medium italic">No symptoms found in local matrix.</p>
+                            <p className="text-sm font-medium italic text-muted-foreground">
+                                No symptoms found in the generated catalog.
+                            </p>
                         </div>
                     )
+                ) : filteredDiseases.length > 0 ? (
+                    filteredDiseases.map(renderDiseaseCard)
                 ) : (
-                    filteredDiseases.length > 0 ? (
-                        filteredDiseases.map(d => (
-                            <div 
-                                key={d.id} 
-                                onClick={() => setSelectedDisease(d)}
-                                className="group p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-primary/30 transition-all shadow-sm relative overflow-hidden cursor-pointer active:scale-95"
-                            >
-                                <div className={`absolute top-0 right-0 px-3 py-1 text-[9px] font-black uppercase tracking-tighter text-white ${d.severity === 'critical' ? 'bg-red-500' : d.severity === 'high' ? 'bg-orange-500' : 'bg-blue-500'}`}>
-                                    {d.severity}
-                                </div>
-                                <h3 className="font-bold text-slate-900 dark:text-slate-100 pr-12">{d.name}</h3>
-                                <p className="text-[11px] text-slate-500 mt-2 line-clamp-2 leading-relaxed">{d.description}</p>
-                                <div className="mt-4 flex flex-wrap gap-1">
-                                    {d.precautions.slice(0, 2).map((p, i) => (
-                                        <span key={i} className="px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-[9px] text-slate-400 border border-slate-200 dark:border-slate-700">
-                                            {p}
-                                        </span>
-                                    ))}
-                                </div>
-                                <div className="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors pointer-events-none" />
-                            </div>
-                        ))
-                    ) : (
-                        <div className="col-span-full py-20 text-center">
-                            <p className="text-sm text-slate-500 font-medium italic">No diseases found in local matrix.</p>
-                        </div>
-                    )
+                    <div className="col-span-full py-20 text-center">
+                        <p className="text-sm font-medium italic text-muted-foreground">
+                            No diseases found in the generated catalog.
+                        </p>
+                    </div>
                 )}
             </div>
 
-            {/* --- Disease Detail Modal --- */}
-            {selectedDisease && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-md animate-in fade-in duration-300">
-                    <div className="bg-white dark:bg-slate-900 w-full max-w-lg rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden animate-in zoom-in-95 duration-300">
-                        <div className={`h-2 ${selectedDisease.severity === 'critical' ? 'bg-red-500' : selectedDisease.severity === 'high' ? 'bg-orange-500' : 'bg-blue-500'}`} />
+            {selectedDisease ? (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center bg-background/70 p-4 backdrop-blur-md">
+                    <div className="w-full max-w-lg overflow-hidden rounded-3xl border border-border bg-card shadow-2xl">
+                        <div
+                            className={`h-2 ${
+                                selectedDisease.severity === "critical"
+                                    ? "bg-rose-500"
+                                    : selectedDisease.severity === "high"
+                                      ? "bg-orange-500"
+                                      : selectedDisease.severity === "medium"
+                                        ? "bg-amber-500"
+                                        : "bg-emerald-500"
+                            }`}
+                        />
                         <div className="p-8">
-                            <div className="flex justify-between items-start mb-6">
+                            <div className="mb-6 flex items-start justify-between">
                                 <div>
-                                    <h3 className="text-2xl font-black text-slate-900 dark:text-slate-100 uppercase tracking-tight">{selectedDisease.name}</h3>
-                                    <span className="text-[10px] font-black text-primary uppercase tracking-[0.3em] mt-2 block">
-                                        Clinical Profile ID: {selectedDisease.id}
+                                    <h3 className="text-2xl font-black uppercase tracking-tight text-foreground">
+                                        {selectedDisease.name}
+                                    </h3>
+                                    <span className="mt-2 block text-[10px] font-black uppercase tracking-[0.3em] text-primary">
+                                        Catalog ID: {selectedDisease.id}
                                     </span>
                                 </div>
-                                <button 
+                                <button
                                     onClick={() => setSelectedDisease(null)}
-                                    className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
+                                    className="rounded-xl bg-secondary p-2 text-muted-foreground transition-colors hover:text-foreground"
                                 >
-                                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                                     </svg>
                                 </button>
@@ -145,65 +213,60 @@ export const NeuraxEncyclopedia: React.FC = () => {
 
                             <div className="space-y-6">
                                 <div>
-                                    <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Description</h4>
-                                    <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
-                                        {selectedDisease.description}
+                                    <h4 className="mb-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                                        Description
+                                    </h4>
+                                    <p className="text-sm font-medium leading-relaxed text-muted-foreground">
+                                        {selectedDisease.description || "No curated description available in the local catalog."}
                                     </p>
                                 </div>
 
                                 <div className="grid grid-cols-2 gap-4">
-                                    <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800">
-                                        <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Clinical Severity</h4>
-                                        <span className={`text-xs font-black uppercase ${selectedDisease.severity === 'critical' ? 'text-red-500' : selectedDisease.severity === 'high' ? 'text-orange-500' : 'text-blue-500'}`}>
+                                    <div className="rounded-2xl border border-border bg-secondary/50 p-4">
+                                        <h4 className="mb-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                                            Clinical Severity
+                                        </h4>
+                                        <span className="text-xs font-black uppercase text-primary">
                                             {selectedDisease.severity}
                                         </span>
                                     </div>
-                                    <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800">
-                                        <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Symptom Density</h4>
+                                    <div className="rounded-2xl border border-border bg-secondary/50 p-4">
+                                        <h4 className="mb-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                                            Symptom Density
+                                        </h4>
                                         <span className="text-xs font-black text-primary">
-                                            {selectedDisease.symptoms.length} Clinical Indicators
+                                            {selectedDisease.symptoms.length} indicators
                                         </span>
                                     </div>
                                 </div>
 
                                 <div>
-                                    <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">Clinical Precautions</h4>
+                                    <h4 className="mb-3 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                                        Characteristic Symptoms
+                                    </h4>
                                     <div className="flex flex-wrap gap-2">
-                                        {selectedDisease.precautions.map((p: string, i: number) => (
-                                            <span key={i} className="px-3 py-1 rounded-full bg-primary/10 text-primary text-[10px] font-bold border border-primary/20">
-                                                {p}
+                                        {selectedDisease.symptoms.map((symptom) => (
+                                            <span
+                                                key={symptom.key}
+                                                className="rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-[10px] font-bold text-primary"
+                                            >
+                                                {symptom.name}
                                             </span>
                                         ))}
                                     </div>
                                 </div>
                             </div>
 
-                            <button 
+                            <button
                                 onClick={() => setSelectedDisease(null)}
-                                className="w-full mt-8 py-4 rounded-2xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-black text-[11px] uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-all shadow-xl"
+                                className="mt-8 w-full rounded-2xl bg-foreground py-4 text-[11px] font-black uppercase tracking-widest text-background transition-all hover:scale-[1.01]"
                             >
                                 Close Profile
                             </button>
                         </div>
                     </div>
                 </div>
-            )}
-            
-            <style jsx>{`
-                .custom-scrollbar::-webkit-scrollbar {
-                    width: 4px;
-                }
-                .custom-scrollbar::-webkit-scrollbar-track {
-                    background: transparent;
-                }
-                .custom-scrollbar::-webkit-scrollbar-thumb {
-                    background: #CBD5E1;
-                    border-radius: 10px;
-                }
-                .dark .custom-scrollbar::-webkit-scrollbar-thumb {
-                    background: #334155;
-                }
-            `}</style>
+            ) : null}
         </div>
     );
 };

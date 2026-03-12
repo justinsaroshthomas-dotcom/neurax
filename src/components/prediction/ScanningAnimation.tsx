@@ -1,11 +1,13 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { useCatalogSummary } from "@/lib/use-catalog";
 
 export function ScanningAnimation() {
     const containerRef = useRef<HTMLDivElement>(null);
     const line1Ref = useRef<HTMLDivElement>(null);
     const line2Ref = useRef<HTMLDivElement>(null);
+    const { data: catalogSummary } = useCatalogSummary();
 
     useEffect(() => {
         const doAnimate = async () => {
@@ -116,7 +118,7 @@ export function ScanningAnimation() {
                         Analyzing Neural Patterns
                     </h3>
                     <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed font-medium">
-                        Consulting the 250+ disease knowledge base for clinical correlation...
+                        Consulting the {catalogSummary?.counts.diseases ?? 0}-disease local knowledge base for clinical correlation...
                     </p>
                 </div>
 

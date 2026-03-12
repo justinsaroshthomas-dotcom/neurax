@@ -1,0 +1,34 @@
+{
+  "counts": {
+    "diseases": 764,
+    "coreSymptoms": 131,
+    "extendedSymptoms": 295,
+    "rows": 257004
+  },
+  "metrics": {
+    "accuracy": 77.13,
+    "precision": 75.67,
+    "recall": 77.13,
+    "f1": 74.43,
+    "top3": 90.22,
+    "top5": 93.34
+  },
+  "generatedAt": "2026-03-11T09:20:06.683539+00:00",
+  "trainingMetadata": {
+    "includedSources": [
+      "IndianServers",
+      "QuyenAnh",
+      "celikmus",
+      "dhivyeshrk",
+      "duxTecblic",
+      "itachi9604",
+      "symptom2disease"
+    ],
+    "excludedSources": [
+      "ventis"
+    ],
+    "minDiseaseRows": 5,
+    "extendedSymptomMinFrequency": 20,
+    "extendedSymptomMinDiseases": 3
+  }
+}

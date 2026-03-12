@@ -1,48 +1,55 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import Image from "next/image";
 import { useUser } from "@clerk/nextjs";
+import { CheckCircle2, Cpu, Database, Trash2, UserCog } from "lucide-react";
 import { useTheme } from "next-themes";
-import { Shield, Smartphone, Palette, Database, Trash2, Cpu, CheckCircle2, UserCog } from "lucide-react";
+import { THEME_OPTIONS, normalizeAppTheme } from "@/lib/theme-config";
+import { useCatalogSummary } from "@/lib/use-catalog";
 import { getUserProfile, saveUserProfile, type UserProfile } from "@/lib/profile-store";
+
+function readHistoryCount() {
+    if (typeof window === "undefined") {
+        return 0;
+    }
+
+    try {
+        const raw = localStorage.getItem("neurax_history");
+        const history = raw ? JSON.parse(raw) : [];
+        return history.length;
+    } catch {
+        return 0;
+    }
+}
 
 export default function SettingsPage() {
     const { user, isLoaded } = useUser();
     const { theme, setTheme } = useTheme();
-    const [historyCount, setHistoryCount] = useState(0);
-    const [mounted, setMounted] = useState(false);
-    const [profile, setProfile] = useState<UserProfile>({ clinicalLevel: "", department: "", profileImage: "" });
-
-    useEffect(() => {
-        setMounted(true);
-        setProfile(getUserProfile());
-        try {
-            const raw = localStorage.getItem("neurax_history");
-            const history = raw ? JSON.parse(raw) : [];
-            setHistoryCount(history.length);
-        } catch {
-            setHistoryCount(0);
-        }
-    }, []);
+    const currentTheme = normalizeAppTheme(theme);
+    const { data: catalogSummary } = useCatalogSummary();
+    const [historyCount, setHistoryCount] = useState(readHistoryCount);
+    const [profile, setProfile] = useState<UserProfile>(() => getUserProfile());
+    const profileImageSrc = profile.profileImage ?? user?.imageUrl ?? null;
 
     const handleProfileUpdate = (key: keyof UserProfile, value: string) => {
-        const newProfile = { ...profile, [key]: value };
-        setProfile(newProfile);
-        saveUserProfile(newProfile);
-        // Dispatch custom event for TopBar sync
+        const nextProfile = { ...profile, [key]: value };
+        setProfile(nextProfile);
+        saveUserProfile(nextProfile);
         window.dispatchEvent(new CustomEvent("neurax_profile_updated"));
     };
 
-    const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                const base64String = reader.result as string;
-                handleProfileUpdate("profileImage", base64String);
-            };
-            reader.readAsDataURL(file);
+    const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (!file) {
+            return;
         }
+
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            handleProfileUpdate("profileImage", reader.result as string);
+        };
+        reader.readAsDataURL(file);
     };
 
     const handleClearHistory = () => {
@@ -50,79 +57,92 @@ export default function SettingsPage() {
         setHistoryCount(0);
     };
 
-    if (!mounted || !isLoaded) return null;
-
-    const themes = [
-        { id: "light", name: "Clinical Light", color: "#2563eb", desc: "Elite Medical Clarity" },
-        { id: "emerald", name: "Modern Emerald", color: "#1dbb91", desc: "Clinical Precision" },
-        { id: "midnight", name: "Deep Indigo", color: "#7c83fd", desc: "Neural Deep Dark" },
-        { id: "cyber", name: "System Amber", color: "#f59e0b", desc: "High Contrast Gold" },
-        { id: "corporate", name: "Clinical Blue", color: "#2563eb", desc: "Professional Grade" },
-        { id: "ultraviolet", name: "Ultra Violet", color: "#8b5cf6", desc: "Neural Spectrum" },
-        { id: "crimson", name: "Clinical Red", color: "#eb2626", desc: "Urgent Priority" },
-    ];
+    if (!isLoaded) {
+        return null;
+    }
 
     return (
-        <div className="max-w-4xl mx-auto space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-1000">
-            {/* Header */}
+        <div className="mx-auto max-w-4xl space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
             <div className="flex flex-col gap-2">
-                <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white font-display">
+                <h1 className="font-display text-4xl font-extrabold tracking-tight text-foreground">
                     System Configuration
                 </h1>
-                <p className="text-slate-500 font-medium max-w-2xl">
-                    Manage your clinical intelligence preferences, interface themes, and security protocols.
+                <p className="max-w-2xl text-sm font-medium text-muted-foreground">
+                    Manage your profile, choose one of the three maintained themes, and inspect the
+                    generated local disease catalog.
                 </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-10">
-                {/* Main Settings Area */}
-                <div className="md:col-span-8 space-y-10">
-                    {/* User Profile Info (Read-only aesthetic) */}
-                    <div className="p-8 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 relative overflow-hidden group">
-                         <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
-                            <UserCog className="w-24 h-24 grayscale" />
+            <div className="grid grid-cols-1 gap-10 md:grid-cols-12">
+                <div className="space-y-10 md:col-span-8">
+                    <div className="relative overflow-hidden rounded-3xl border border-border bg-card p-8 shadow-sm">
+                        <div className="absolute right-0 top-0 p-8 opacity-5">
+                            <UserCog className="h-24 w-24" />
                         </div>
-                        <div className="flex items-center gap-6 relative z-10">
-                            <div className="relative group/avatar">
-                                <div className="w-24 h-24 rounded-full ring-4 ring-primary/10 overflow-hidden bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
-                                    {profile.profileImage || user?.imageUrl ? (
-                                        <img 
-                                            src={profile.profileImage || user?.imageUrl} 
-                                            alt="Profile" 
-                                            className="w-full h-full object-cover transition-all duration-700" 
+                        <div className="relative z-10 flex items-center gap-6">
+                            <div className="group/avatar relative">
+                                <div className="flex h-24 w-24 items-center justify-center overflow-hidden rounded-full bg-secondary ring-4 ring-primary/10">
+                                    {profileImageSrc ? (
+                                        <Image
+                                            src={profileImageSrc}
+                                            alt="Profile"
+                                            width={96}
+                                            height={96}
+                                            unoptimized
+                                            className="h-full w-full object-cover"
                                         />
                                     ) : (
-                                        <UserCog className="w-10 h-10 text-slate-300" />
+                                        <UserCog className="h-10 w-10 text-muted-foreground" />
                                     )}
                                 </div>
-                                <label className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover/avatar:opacity-100 transition-opacity cursor-pointer rounded-full">
-                                    <span className="text-[10px] font-black uppercase text-white tracking-widest">Update DP</span>
-                                    <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
+                                <label className="absolute inset-0 flex cursor-pointer items-center justify-center rounded-full bg-black/45 opacity-0 transition-opacity group-hover/avatar:opacity-100">
+                                    <span className="text-[10px] font-black uppercase tracking-widest text-white">
+                                        Update
+                                    </span>
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        className="hidden"
+                                        onChange={handleImageUpload}
+                                    />
                                 </label>
                             </div>
-                            <div className="space-y-3 flex-1">
+
+                            <div className="flex-1 space-y-3">
                                 <div>
-                                    <h3 className="text-2xl font-bold tracking-tight">{user?.fullName || user?.username}</h3>
-                                    <p className="text-sm font-medium text-slate-400">{user?.primaryEmailAddress?.emailAddress}</p>
+                                    <h3 className="text-2xl font-bold tracking-tight text-foreground">
+                                        {user?.fullName || user?.username}
+                                    </h3>
+                                    <p className="text-sm font-medium text-muted-foreground">
+                                        {user?.primaryEmailAddress?.emailAddress}
+                                    </p>
                                 </div>
-                                
+
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="space-y-1">
-                                        <label className="text-[9px] font-black uppercase tracking-widest text-slate-400">Clinical Identity</label>
-                                        <input 
+                                        <label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground">
+                                            Clinical Identity
+                                        </label>
+                                        <input
                                             value={profile.clinicalLevel}
-                                            onChange={(e) => handleProfileUpdate("clinicalLevel", e.target.value)}
+                                            onChange={(event) =>
+                                                handleProfileUpdate("clinicalLevel", event.target.value)
+                                            }
                                             placeholder="e.g. Senior Physician"
-                                            className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-lg px-3 py-2 text-xs font-bold focus:ring-2 focus:ring-primary/20 transition-all"
+                                            className="w-full rounded-lg border border-border bg-background px-3 py-2 text-xs font-bold outline-none transition-all focus:border-primary/40 focus:ring-2 focus:ring-primary/10"
                                         />
                                     </div>
                                     <div className="space-y-1">
-                                        <label className="text-[9px] font-black uppercase tracking-widest text-slate-400">Department</label>
-                                        <input 
+                                        <label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground">
+                                            Department
+                                        </label>
+                                        <input
                                             value={profile.department}
-                                            onChange={(e) => handleProfileUpdate("department", e.target.value)}
+                                            onChange={(event) =>
+                                                handleProfileUpdate("department", event.target.value)
+                                            }
                                             placeholder="e.g. Neurology"
-                                            className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-lg px-3 py-2 text-xs font-bold focus:ring-2 focus:ring-primary/20 transition-all"
+                                            className="w-full rounded-lg border border-border bg-background px-3 py-2 text-xs font-bold outline-none transition-all focus:border-primary/40 focus:ring-2 focus:ring-primary/10"
                                         />
                                     </div>
                                 </div>
@@ -130,81 +150,112 @@ export default function SettingsPage() {
                         </div>
                     </div>
 
-                    {/* Interface Styling */}
                     <div className="space-y-6">
                         <div className="flex items-center gap-3">
-                            <div className="w-1.5 h-6 bg-primary rounded-full" />
-                            <h2 className="text-xl font-bold tracking-tight font-display">Interface Visuals</h2>
+                            <div className="h-6 w-1.5 rounded-full bg-primary" />
+                            <h2 className="font-display text-xl font-bold tracking-tight text-foreground">
+                                Interface Visuals
+                            </h2>
                         </div>
-                        
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            {themes.map((t) => (
-                                <button
-                                    key={t.id}
-                                    onClick={() => setTheme(t.id)}
-                                    className={`relative p-5 rounded-2xl border-2 transition-all duration-300 text-left overflow-hidden group
-                                        ${theme === t.id ? 'border-primary bg-primary/5 ring-4 ring-primary/5' : 'border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm'}`}
-                                >
-                                    <div className="flex items-center justify-between mb-3">
-                                        <div className="w-8 h-8 rounded-lg shadow-inner" style={{ backgroundColor: t.color }} />
-                                        {theme === t.id && <CheckCircle2 className="w-4 h-4 text-primary" />}
-                                    </div>
-                                    <p className="font-bold text-sm tracking-tight">{t.name}</p>
-                                    <p className="text-[10px] font-medium text-slate-400 uppercase tracking-wider mt-0.5">{t.desc}</p>
-                                </button>
-                            ))}
+
+                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                            {THEME_OPTIONS.map((option) => {
+                                const isActive = currentTheme === option.id;
+                                return (
+                                    <button
+                                        key={option.id}
+                                        onClick={() => setTheme(option.id)}
+                                        className={`rounded-2xl border-2 p-5 text-left transition-all ${
+                                            isActive
+                                                ? "border-primary bg-primary/5 ring-4 ring-primary/5"
+                                                : "border-border bg-card shadow-sm hover:border-primary/25"
+                                        }`}
+                                    >
+                                        <div className="mb-3 flex items-center justify-between">
+                                            <div
+                                                className="h-8 w-8 rounded-xl shadow-inner"
+                                                style={{ backgroundColor: option.color }}
+                                            />
+                                            {isActive ? <CheckCircle2 className="h-4 w-4 text-primary" /> : null}
+                                        </div>
+                                        <p className="text-sm font-bold tracking-tight text-card-foreground">
+                                            {option.name}
+                                        </p>
+                                        <p className="mt-1 text-[11px] text-muted-foreground">
+                                            {option.description}
+                                        </p>
+                                    </button>
+                                );
+                            })}
                         </div>
                     </div>
                 </div>
 
-                {/* Sidebar Settings Area */}
-                <div className="md:col-span-4 space-y-8">
-                    {/* Machine Metrics */}
-                    <div className="p-6 rounded-3xl bg-slate-900 text-white space-y-6 shadow-xl relative overflow-hidden group">
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-primary/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:bg-primary/30 transition-colors" />
-                        
-                        <div className="flex items-center justify-between relative z-10">
-                            <h3 className="text-xs font-black uppercase tracking-[0.2em] text-primary">Core Metrics</h3>
-                            <Cpu className="w-4 h-4 text-primary" />
-                        </div>
-                        
-                        <div className="space-y-4 relative z-10">
-                            {[
-                                { label: "Pathology Load", value: "98.2%" },
-                                { label: "Sync Latency", value: "4ms" },
-                            ].map(m => (
-                                <div key={m.label} className="flex justify-between items-end border-b border-white/10 pb-2">
-                                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{m.label}</span>
-                                    <span className="text-lg font-bold font-mono text-primary italic">{m.value}</span>
+                <div className="space-y-8 md:col-span-4">
+                    <div className="relative overflow-hidden rounded-3xl bg-foreground p-6 text-background shadow-xl">
+                        <div className="absolute right-0 top-0 h-32 w-32 -translate-y-1/2 translate-x-1/2 rounded-full bg-primary/20 blur-3xl" />
+                        <div className="relative z-10 space-y-6">
+                            <div className="flex items-center justify-between">
+                                <h3 className="text-xs font-black uppercase tracking-[0.2em] text-primary">
+                                    Catalog Metrics
+                                </h3>
+                                <Cpu className="h-4 w-4 text-primary" />
+                            </div>
+
+                            <div className="space-y-4">
+                                <div className="flex items-end justify-between border-b border-white/10 pb-2">
+                                    <span className="text-[10px] font-bold uppercase tracking-wider text-white/60">
+                                        Diseases
+                                    </span>
+                                    <span className="text-lg font-bold text-primary">
+                                        {catalogSummary?.counts.diseases ?? 0}
+                                    </span>
                                 </div>
-                            ))}
+                                <div className="flex items-end justify-between border-b border-white/10 pb-2">
+                                    <span className="text-[10px] font-bold uppercase tracking-wider text-white/60">
+                                        Core Symptoms
+                                    </span>
+                                    <span className="text-lg font-bold text-primary">
+                                        {catalogSummary?.counts.coreSymptoms ?? 0}
+                                    </span>
+                                </div>
+                                <div className="flex items-end justify-between">
+                                    <span className="text-[10px] font-bold uppercase tracking-wider text-white/60">
+                                        Extended Symptoms
+                                    </span>
+                                    <span className="text-lg font-bold text-primary">
+                                        {catalogSummary?.counts.extendedSymptoms ?? 0}
+                                    </span>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    {/* Data Vault */}
-                    <div className="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-6">
+                    <div className="space-y-6 rounded-3xl border border-border bg-card p-6 shadow-sm">
                         <div className="flex items-center gap-3">
-                             <Database className="w-5 h-5 text-slate-400" />
-                             <h3 className="text-sm font-bold tracking-tight">Clinical Vault</h3>
+                            <Database className="h-5 w-5 text-muted-foreground" />
+                            <h3 className="text-sm font-bold tracking-tight text-card-foreground">
+                                Clinical Vault
+                            </h3>
                         </div>
-                        <p className="text-xs text-slate-500 font-medium leading-relaxed">
-                            Your local diagnostics store contains <span className="text-slate-900 dark:text-white font-bold">{historyCount} sessions</span>. 
-                            Purging will permanently clear this terminal.
+                        <p className="text-xs font-medium leading-relaxed text-muted-foreground">
+                            Your local diagnostics store contains{" "}
+                            <span className="font-bold text-foreground">{historyCount} sessions</span>.
+                            Purging clears browser-stored history only.
                         </p>
                         <button
                             onClick={handleClearHistory}
                             disabled={historyCount === 0}
-                            className="w-full py-3.5 rounded-xl bg-rose-500 hover:bg-rose-600 text-white text-[10px] font-black uppercase tracking-[0.2em] transition-all disabled:opacity-30 disabled:grayscale flex items-center justify-center gap-2 group shadow-lg shadow-rose-500/10"
+                            className="flex w-full items-center justify-center gap-2 rounded-xl bg-rose-500 py-3.5 text-[10px] font-black uppercase tracking-[0.2em] text-white shadow-lg shadow-rose-500/10 transition-all hover:bg-rose-600 disabled:cursor-not-allowed disabled:opacity-30"
                         >
-                            <Trash2 className="w-3.5 h-3.5 group-hover:animate-bounce" />
+                            <Trash2 className="h-3.5 w-3.5" />
                             Purge Records
                         </button>
                     </div>
 
-                    {/* IBM Credit */}
                     <div className="pt-4 text-center">
-                        <p className="text-[8px] font-black text-slate-400 uppercase tracking-[0.3em]">
-                            Clinical Protocol <span className="text-primary italic">IBM TEAM 63</span>
+                        <p className="text-[8px] font-black uppercase tracking-[0.3em] text-muted-foreground">
+                            Clinical Protocol <span className="text-primary italic">IBM Team 63</span>
                         </p>
                     </div>
                 </div>
